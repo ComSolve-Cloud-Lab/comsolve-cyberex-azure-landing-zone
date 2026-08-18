@@ -53,17 +53,26 @@ This identity will later be used by:
 
 🔐 Infrastructure Automation
 
+
+
 🏗️ What We Created
 
 Component      	                           Configuration
 
 🆔 App Registration	                        Shrikant_Nadgauda_GitHub_Actions
+
 🏢 Tenant Model	                           Single Tenant
+
 👤 Service Principal	                        Shrikant_Nadgauda_GitHub_Actions
+
 🎭 Azure RBAC	                              Contributor
+
 📍 RBAC Scope	                               Azure Subscription
+
 🔄 Redirect URI	                           Not configured
+
 🔐 Authentication	                           Client Credentials
+
 
 ---
 
