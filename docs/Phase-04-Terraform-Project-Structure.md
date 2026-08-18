@@ -121,6 +121,8 @@ tree terraform /F
 
 # Expected structure:
 
+```text
+
 terraform
 │
 ├── locals.tf
@@ -151,6 +153,8 @@ terraform
         ├── outputs.tf
         └── variables.tf
 
+```
+
 # 🐙 Step 09 — Push Structure to GitHub
 
 At this stage, Terraform code will not be added yet.
@@ -166,6 +170,8 @@ git push
 
 # 🎯 Phase Completion
 
+```text
+
  Component	          Status
 📁 Terraform Root	✅ Created
 📦 Modules Directory	✅ Created
@@ -179,9 +185,14 @@ git push
 
 Phase 04 establishes a scalable Terraform folder structure using reusable Parent and Child Modules for future Azure infrastructure deployment.
 
+```
+
 # ⏭️ Next Phase
 
 # 🏗️ Phase 05 — Terraform Provider & Azure Authentication
+
+
+```text
 
 In the next phase we will start writing the actual Terraform code:
 
@@ -197,3 +208,4 @@ In the next phase we will start writing the actual Terraform code:
         ↓
 🌍 Public IPs
 
+```
