@@ -14,9 +14,7 @@
 ![Azure](https://img.shields.io/badge/Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
 ![Security](https://img.shields.io/badge/Secrets-Secure-success?style=for-the-badge)
 
-</p>
-
-> 🎯 **Objective:** Establish a secure connection between GitHub and Azure for future Terraform and GitHub Actions automation.
+</p > 🎯 **Objective:** Establish a secure connection between GitHub and Azure for future Terraform and GitHub Actions automation.
 
 ---
 
