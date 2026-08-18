@@ -327,15 +327,3 @@ The next phase will cover:
 🔐 Secure by Design • 🏗️ Infrastructure as Code • ⚙️ Automation First
 
 </p> ```
-🔥 अब बस 3 काम कर
-पुरानी phase-02-github-repository-secrets.md की पूरी content delete कर।
-ऊपर वाला पूरा content एक साथ paste कर।
-Save Ctrl + S.
-
-फिर terminal:
-
-git add docs/phase-02-github-repository-secrets.md
-git commit -m "docs: improve phase 2 github secrets documentation"
-git push
-
-बस। इस बार GitHub पर Phase 02 proper headings, badges, tables और diagrams के साथ render होना चाहिए। 🚀
