@@ -73,8 +73,13 @@ Phase 05 से हमारे Azure Landing Zone project में **actual Te
                               ▼
                            ☁️ Azure
 
+```
+
 
 # 📂 PROJECT STRUCTURE
+
+
+```text
 
 हमारे Terraform project का current structure:
 
@@ -108,9 +113,15 @@ terraform/
         ├── variables.tf
         └── outputs.tf
 
-🏗️ PHASE 05 — Resource Group Foundation
+
+```
+
+
+# 🏗️ PHASE 05 — Resource Group Foundation
 
 हम सिर्फ ये files बनाएँगे:
+
+```text
 
 terraform/
 │
@@ -122,7 +133,10 @@ terraform/
     └── resource-group/
         ├── main.tf
         └── variables.tf
-1️⃣ Parent main.tf
+
+```
+
+# 1️⃣ Parent main.tf
 
 📄 terraform/main.tf
 
@@ -136,6 +150,8 @@ module "resource_groups" {
 
 
 }
+
+
 🧠 इसका simple मतलब
 
 Parent module बोल रहा है:
@@ -144,7 +160,9 @@ Parent module बोल रहा है:
 
 यहाँ कोई Resource Group name hard-code नहीं है। ✅
 
-2️⃣ Parent variables.tf
+
+
+# 2️⃣ Parent variables.tf
 
 📄 terraform/variables.tf
 
@@ -170,6 +188,8 @@ location
 
 इसलिए:
 
+```text
+
 resource_groups
       │
       ├── network
@@ -183,7 +203,10 @@ resource_groups
       └── platform
             ├── name
             └── location
-3️⃣ terraform.tfvars
+
+```
+
+# 3️⃣ terraform.tfvars
 
 📄 terraform/terraform.tfvars
 
@@ -220,7 +243,8 @@ resource_groups = {
 
 ✅ Actual values सिर्फ terraform.tfvars में।
 
-4️⃣ Child variables.tf
+
+# 4️⃣ Child variables.tf
 
 📄 terraform/modules/resource-group/variables.tf
 
@@ -237,7 +261,10 @@ variable "resource_groups" {
 
 
 }
-🧠 अब Parent → Child connection समझ
+
+
+# 🧠 अब Parent → Child connection समझ
+
 
 Parent:
 
@@ -249,6 +276,8 @@ variable "resource_groups"
 
 मतलब:
 
+```text
+
               PARENT
                  │
                  │ resource_groups
@@ -258,7 +287,10 @@ variable "resource_groups"
         │                 │
         │ resource_groups │
         └─────────────────┘
-5️⃣ Child main.tf
+
+```
+
+# 5️⃣ Child main.tf
 
 📄 terraform/modules/resource-group/main.tf
 
@@ -274,7 +306,8 @@ resource "azurerm_resource_group" "Rgs" {
 
 }
 
-🔥 अब सबसे important part यही है।
+
+# 🔥 अब सबसे important part यही है।
 
 for_each
 
@@ -288,7 +321,8 @@ platform
 
 Terraform automatically तीन Resource Groups बनाएगा।
 
-🧠 each को ऐसे समझ
+
+# 🧠 each को ऐसे समझ
 
 पहली iteration:
 
@@ -330,7 +364,9 @@ location = each.value.location
 
 उसी RG की location ले लो।
 
-🔥 पूरा Flow
+# 🔥 पूरा Flow
+
+```text
 
 अब पूरा architecture देख:
 
@@ -356,14 +392,18 @@ modules/resource-group/main.tf
         │
         │ for_each
         ▼
- ┌──────────────┬──────────────┬──────────────┐
+ ┌──────────────┬──────────────┬
  │              │              │
  ▼              ▼              ▼
 Network       Security       Platform
  │              │              │
  ▼              ▼              ▼
 RG-1           RG-2           RG-3
-6️⃣ terraform.tfstate
+
+```
+
+# 6️⃣ terraform.tfstate
+
 
 अब एक important चीज़:
 
@@ -395,7 +435,8 @@ Terraform State
 
 Production Landing Zone में remote state बहुत important है।
 
-⚠️ एक जरूरी बात — terraform.tfvars
+
+# ⚠️ एक जरूरी बात — terraform.tfvars
 
 तुमने सही पकड़ा कि values hard-code नहीं होनी चाहिए।
 
@@ -410,7 +451,8 @@ Production Landing Zone में remote state बहुत important है।
 
 इन चीजों के लिए आगे Azure Key Vault / GitHub OIDC / Secret Management करेंगे।
 
-🚀 अब Run करो
+---
+# 🚀 अब Run करो
 
 terraform folder में:
 
@@ -431,11 +473,17 @@ terraform plan
 plan में तुम्हें 3 Resource Groups दिखने चाहिए:
 
 rg-comsolve-cyberex-network
+
 rg-comsolve-cyberex-security
+
 rg-comsolve-cyberex-platform
 
 और locations:
 
 Central India
+
 East US
+
 West Europe
+
+---
