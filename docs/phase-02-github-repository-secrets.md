@@ -2,7 +2,7 @@
 
 # 📗 `docs/phase-02-github-repository-secrets.md`
 
-अब दूसरी file में यह डालो:
+
 
 ```markdown
 # 🐙 Phase 02 — GitHub Repository & Secrets
