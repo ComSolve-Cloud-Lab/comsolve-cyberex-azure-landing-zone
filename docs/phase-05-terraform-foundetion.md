@@ -301,6 +301,7 @@ resource "azurerm_resource_group" "Rgs" {
 
 
   name     = each.value.name
+  
   location = each.value.location
 
 
@@ -329,6 +330,7 @@ Terraform automatically तीन Resource Groups बनाएगा।
 each.key   = network
 each.value = {
     name     = "rg-comsolve-cyberex-network"
+
     location = "Central India"
 }
 
@@ -337,6 +339,7 @@ each.value = {
 each.key   = security
 each.value = {
     name     = "rg-comsolve-cyberex-security"
+
     location = "East US"
 }
 
@@ -345,6 +348,7 @@ each.value = {
 each.key   = platform
 each.value = {
     name     = "rg-comsolve-cyberex-platform"
+
     location = "West Europe"
 }
 
