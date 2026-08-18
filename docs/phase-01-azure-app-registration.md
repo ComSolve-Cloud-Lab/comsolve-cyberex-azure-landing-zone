@@ -53,7 +53,7 @@ This identity will later be used by:
 
 🔐 Infrastructure Automation
 
-
+```text
 
 🏗️ What We Created
 
@@ -73,6 +73,8 @@ Component      	                           Configuration
 
 🔐 Authentication	                           Client Credentials
 
+
+```
 
 ---
 
