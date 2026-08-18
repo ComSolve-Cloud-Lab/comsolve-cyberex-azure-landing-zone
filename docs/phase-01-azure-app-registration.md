@@ -37,28 +37,41 @@
                                   ▼
                        ☁️ Azure Subscription
 
+```
 
-
-🎯 Objective
+# 🎯 Objective
 
 The objective of this phase is to create a dedicated Microsoft Entra ID App Registration / Service Principal that will be used by GitHub Actions for Azure authentication.
 
 This identity will later be used by:
 
 ⚙️ GitHub Actions
+
 🏗️ Terraform
+
 ☁️ Azure Resource Deployment
+
 🔐 Infrastructure Automation
+
 🏗️ What We Created
-Component	Configuration
-🆔 App Registration	Shrikant_Nadgauda_GitHub_Actions
-🏢 Tenant Model	Single Tenant
-👤 Service Principal	Shrikant_Nadgauda_GitHub_Actions
-🎭 Azure RBAC	Contributor
-📍 RBAC Scope	Azure Subscription
-🔄 Redirect URI	Not configured
-🔐 Authentication	Client Credentials
-🟦 Step 01 — Open App Registrations
+
+Component      	                           Configuration
+
+🆔 App Registration	                        Shrikant_Nadgauda_GitHub_Actions
+🏢 Tenant Model	                           Single Tenant
+👤 Service Principal	                        Shrikant_Nadgauda_GitHub_Actions
+🎭 Azure RBAC	                              Contributor
+📍 RBAC Scope	                               Azure Subscription
+🔄 Redirect URI	                           Not configured
+🔐 Authentication	                           Client Credentials
+
+---
+
+
+# 🟦 Step 01 — Open                            App Registrations
+
+```text
+
 
 Navigate to:
 
@@ -74,17 +87,22 @@ Click:
 
 ➕ New registration
 
-🟦 Step 02 — Register the Application
+```
+
+# 🟦 Step 02 — Register the Application
+
 📝 Application Name
 
 Enter:
 
 Shrikant_Nadgauda_GitHub_Actions
+
 👤 Supported Account Types
 
 Select:
 
 Single tenant only - Default Directory
+
 🔄 Redirect URI
 
 Leave:
@@ -97,7 +115,9 @@ Then click:
 
 🟢 Register
 
-🟦 Step 03 — Application Overview
+
+
+#  🟦 Step 03 — Application Overview
 
 After registration, open:
 
@@ -109,13 +129,25 @@ Overview
 
 Record the following:
 
+
 🆔 Application (Client) ID
-666a02fd-9186-4647-bcac-b9fd1943a1e7
+
+666a02fd-9186-4647-bcac-b9fd194xxxxxx
+
+
 🆔 Directory (Tenant) ID
-402a28d6-9ea1-462e-8338-dc09423ff348
+
+402a28d6-9ea1-462e-8338-dc0xxxxxxxxx
+
+
 🆔 Object ID
-26321fcc-5286-46f1-893e-202526f54094
-🔐 Step 04 — Create Client Secret
+
+26321fcc-5286-46f1-893e-2025xxxxxxxx
+
+
+# 🔐 Step 04 — Create Client Secret
+
+```text
 
 Navigate to:
 
@@ -126,8 +158,14 @@ Certificates & secrets
 Client secrets
    ↓
 New client secret
+
+
+
 📝 Description
+
+
 GitHub_Actions_Learning
+
 ⏳ Expiration
 
 For the learning environment:
@@ -138,14 +176,19 @@ Click:
 
 🟢 Add
 
-🚨 Step 05 — Secure the Client Secret
+```
+
+# 🚨 Step 05 — Secure the Client Secret
 
 After creating the secret, Azure displays:
 
 Secret ID
+
 Value
+
 Expires
-⚠️ Important
+
+# ⚠️ Important
 
 The Secret Value must be copied immediately.
 
@@ -161,6 +204,9 @@ Azure does not display the complete secret value again after leaving the page.
 
 The secret will later be stored securely in:
 
+```text
+
+
 🐙 GitHub
    ↓
 Settings
@@ -168,7 +214,10 @@ Settings
 Secrets and variables
    ↓
 Actions
-🟦 Step 06 — Verify Service Principal
+
+```
+
+#  🟦 Step 06 — Verify Service Principal
 
 Open:
 
@@ -184,7 +233,7 @@ Shrikant_Nadgauda_GitHub_Actions
 
 This represents the application's Service Principal in the Azure tenant.
 
-🟦 Step 07 — Get Azure Subscription ID
+# 🟦 Step 07 — Get Azure Subscription ID
 
 Navigate:
 
@@ -198,8 +247,11 @@ Overview
 
 Subscription ID:
 
-7cf9c45e-0a1e-4828-9c98-3e8f25397732
-🟦 Step 08 — Assign Contributor Role
+7cf9c45e-0a1e-4828-9c98-3e8f253xxxxxx
+
+
+
+# 🟦 Step 08 — Assign Contributor Role
 
 Navigate:
 
@@ -212,16 +264,20 @@ Access control (IAM)
 Add
    ↓
 Add role assignment
+
+
 🎭 Role
 
 Select:
 
 Contributor
+
 👤 Assign Access To
 
 Select:
 
 User, group, or service principal
+
 🔍 Member
 
 Search:
@@ -240,7 +296,9 @@ Then:
 
 🟢 Review + assign
 
-🟦 Step 09 — Verify RBAC
+
+
+# 🟦 Step 09 — Verify RBAC
 
 Navigate:
 
@@ -257,19 +315,30 @@ Shrikant_Nadgauda_GitHub_Actions
 Expected:
 
 Property	Value
+
 👤 Identity	Shrikant_Nadgauda_GitHub_Actions
+
 🎭 Role	Contributor
+
 📍 Scope	Azure Subscription
+
 🔑 Authentication Information
 
 The following values are required for the next phase:
 
 Variable	Purpose
-AZURE_CLIENT_ID	Identifies the App Registration
-AZURE_CLIENT_SECRET	Authenticates the Service Principal
-AZURE_TENANT_ID	Identifies the Azure tenant
-AZURE_SUBSCRIPTION_ID	Identifies the Azure subscription
-🛡️ Security Notes
+
+AZURE_CLIENT_ID	         Identifies the App Registration
+
+AZURE_CLIENT_SECRET	      Authenticates the Service Principal
+
+AZURE_TENANT_ID	         Identifies the Azure tenant
+
+AZURE_SUBSCRIPTION_ID   	Identifies the Azure subscription
+
+
+# 🛡️ Security Notes
+
 🔐 Principle of Least Privilege
 
 The Service Principal currently has:
@@ -282,7 +351,9 @@ This is acceptable for the initial learning environment.
 
 For a production implementation, permissions should be evaluated and reduced according to actual deployment requirements.
 
-🚨 Secret Protection
+---
+
+# 🚨 Secret Protection
 
 Never expose:
 
@@ -291,21 +362,36 @@ AZURE_CLIENT_SECRET
 in source code, Git commits, logs or documentation.
 
 ✅ Phase 01 Checklist
+
  🆔 App Registration created
+
  🏢 Single Tenant configured
+
  🔄 Redirect URI left empty
+
  🆔 Client ID obtained
+
  🆔 Tenant ID obtained
+
  🔐 Client Secret created
+
  👤 Service Principal verified
+
  🆔 Subscription ID obtained
+
  🎭 Contributor role assigned
+
  📍 Subscription scope configured
+
  🔍 RBAC access verified
+
 🏁 Phase Status
+
 <p align="center">
 🟢 COMPLETED
 
 Azure Identity Foundation Successfully Configured
 
 </p>
+
+---
