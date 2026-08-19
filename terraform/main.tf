@@ -77,3 +77,22 @@ module "subnets" {
   ]
 
 }
+
+
+# ==============================================================================
+# Network Interface Module
+# ==============================================================================
+
+module "nics" {
+
+  source = "./modules/nic"
+
+  nic_name            = var.nic_name
+  location            = var.nic_location
+  resource_group_name = var.resource_groups["network"].name
+  subnet_id           = module.subnets.subnet_ids["web"]
+
+}
+
+
+

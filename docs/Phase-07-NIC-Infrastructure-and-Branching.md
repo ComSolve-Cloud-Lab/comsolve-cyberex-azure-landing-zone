@@ -543,6 +543,386 @@ git push origin --delete feature/nic-infrastructure
 
 ---
 
+# 🔌 Step 18 — Azure Network Interface
+
+## 🧠 What is an Azure NIC?
+
+**NIC = Network Interface Card**
+
+An Azure Network Interface provides network connectivity to Azure Virtual Machines and other compute resources.
+
+```text
+☁️ Azure VM
+    │
+    ▼
+🔌 Network Interface
+    │
+    ▼
+🌐 Subnet
+    │
+    ▼
+🌐 Virtual Network
+```
+
+The NIC can provide:
+
+- Private IP address
+- Subnet connectivity
+- Network Security Group association
+- Public IP association
+- Network connectivity for Azure compute resources
+
+> 💡 In this phase, we create a **private Network Interface** only.
+
+---
+
+# 📁 Step 19 — NIC Module Structure
+
+```text
+terraform/
+│
+├── main.tf
+├── variables.tf
+├── terraform.tfvars
+│
+└── modules/
+    │
+    └── nic/
+        ├── main.tf
+        ├── variables.tf
+        └── outputs.tf
+```
+
+---
+
+# 🧩 Step 20 — NIC Child Module
+
+The NIC is implemented as a reusable Terraform Child Module.
+
+```text
+Parent Module
+     │
+     ▼
+modules/nic
+     │
+     ├── variables.tf
+     ├── main.tf
+     └── outputs.tf
+```
+
+The Child Module receives:
+
+```text
+NIC Name
+Azure Location
+Resource Group
+Subnet ID
+```
+```text
+
+🧠 इसका मतलब
+
+Child module बोल रहा है:
+
+मुझे NIC बनाने के लिए 4 चीजें चाहिए।
+
+nic_name
+location
+resource_group_name
+subnet_id
+
+Parent module ये values देगा।
+
+```
+
+---
+
+# 🔌 Step 21 — Network Interface Configuration
+
+The NIC contains an IP configuration.
+
+```text
+Network Interface
+       │
+       ▼
+IP Configuration
+       │
+       ├── Configuration Name
+       ├── Subnet ID
+       └── Private IP Allocation
+```
+
+The private IP address is configured as:
+
+```text
+Dynamic
+```
+
+Azure automatically assigns an available private IP from the selected subnet.
+
+---
+```text
+
+🧠 इसे समझ
+
+सबसे ऊपर:
+
+resource "azurerm_network_interface" "Nic"
+
+Terraform को बोलता है:
+
+Azure में Network Interface create करो।
+
+फिर:
+
+name = var.nic_name
+
+NIC का नाम Parent से आएगा।
+
+location = var.location
+
+Azure region Parent से आएगा।
+
+resource_group_name = var.resource_group_name
+
+NIC किस RG में बनेगा, वो Parent बताएगा।
+
+```
+
+```text
+
+🌐 ip_configuration
+
+यह NIC का सबसे important हिस्सा है।
+
+ip_configuration {
+
+मतलब NIC की network configuration।
+
+subnet_id = var.subnet_id
+
+यह NIC को हमारे Phase 06 वाले existing subnet से connect करेगा।
+
+और:
+
+private_ip_address_allocation = "Dynamic"
+
+मतलब Azure subnet के available IP pool से private IP automatically assign करेगा।
+
+Example:
+
+Subnet
+10.10.1.0/24
+     │
+     ├── 10.10.1.4
+     ├── 10.10.1.5
+     ├── 10.10.1.6  ← NIC
+     └── ...
+
+```
+----
+
+
+# 🔗 Step 22 — NIC to Subnet Connection
+
+The NIC is connected to the existing subnet created during Phase 06.
+
+```text
+Phase 06
+   │
+   ▼
+VNet
+   │
+   ▼
+Subnet
+   │
+   │ Subnet ID
+   ▼
+Phase 07
+   │
+   ▼
+NIC
+```
+
+This demonstrates how Terraform modules can exchange resource information using outputs.
+
+---
+
+# 📤 Step 23 — NIC Outputs
+
+The NIC module exposes useful information through Terraform outputs.
+
+```text
+NIC Module
+    │
+    ├── NIC ID
+    │
+    └── Private IP Address
+```
+
+These outputs can be consumed by future modules.
+
+For example:
+
+```text
+NIC
+ │
+ └── NIC ID
+       │
+       ▼
+    Azure VM
+```
+
+
+```text
+🧠 Output क्यों?
+
+मान लो आगे Phase में VM बनाते हैं।
+
+VM को NIC चाहिए।
+
+तो Parent को NIC की information चाहिए होगी।
+
+हम Child से निकाल सकते हैं:
+
+NIC Child
+   │
+   ├── nic_id
+   └── private_ip_address
+
+फिर Parent इसे दूसरे module में भेज सकता है।
+
+यही Terraform modules का असली फायदा है। 🔥
+
+```
+
+---
+
+# 🧪 Step 24 — Terraform Validation
+
+Format the Terraform code:
+
+```powershell
+terraform fmt -recursive
+```
+
+Initialize Terraform:
+
+```powershell
+terraform init
+```
+
+Validate the configuration:
+
+```powershell
+terraform validate
+```
+
+Generate the execution plan:
+
+```powershell
+terraform plan
+```
+
+Expected result:
+
+```text
+Plan: 1 to add, 0 to change, 0 to destroy.
+```
+
+> ⚠️ `terraform plan` only previews the changes. It does not create the Azure resource.
+
+---
+
+# 💾 Step 25 — Commit NIC Implementation
+
+Check the changes:
+
+```powershell
+git status
+```
+
+Stage the files:
+
+```powershell
+git add .
+```
+
+Create the commit:
+
+```powershell
+git commit -m "feat: implement Azure network interface"
+```
+
+Push the feature branch:
+
+```powershell
+git push
+```
+
+---
+
+# 🔀 Step 26 — Update Pull Request
+
+The existing Pull Request will automatically receive the latest commit.
+
+```text
+feature/nic-infrastructure
+          │
+          ▼
+      New Commit
+          │
+          ▼
+       Git Push
+          │
+          ▼
+     Existing PR
+          │
+          ▼
+     Code Review
+```
+
+---
+
+# 🎯 Phase 07 Final Architecture
+
+```text
+☁️ Azure
+   │
+   ▼
+📦 Resource Group
+   │
+   ▼
+🌐 VNet
+   │
+   ▼
+🌐 Subnet
+   │
+   ▼
+🔌 Network Interface
+```
+
+---
+
+# 🏆 Phase 07 Skills Completed
+
+- 🌿 Git Feature Branch
+- 🧩 Terraform Child Module
+- 👨‍👦 Parent → Child Module communication
+- 🔌 Azure Network Interface
+- 🌐 NIC → Subnet association
+- 📤 Terraform Outputs
+- 🧪 Terraform Format
+- 🔍 Terraform Validate
+- 📋 Terraform Plan
+- 💾 Git Commit
+- 🚀 Git Push
+- 🔀 Pull Request
+- 👀 Infrastructure Code Review
+
+---
+
+
 # 🧠 Complete Git Workflow
 
 ```text

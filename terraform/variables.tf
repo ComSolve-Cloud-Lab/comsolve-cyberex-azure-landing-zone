@@ -51,3 +51,18 @@ variable "subnets" {
   }))
 
 }
+
+# ==============================================================================
+# Network Interface Variables
+# ==============================================================================
+
+variable "nic_name" {
+  description = "Network Interface name"
+  type        = string
+}
+
+variable "nic_location" {
+  description = "Azure region for Network Interface"
+  type        = string
+}
+
