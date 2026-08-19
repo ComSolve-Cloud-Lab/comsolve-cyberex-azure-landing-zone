@@ -137,6 +137,43 @@ variable "resource_group_name" {
 
 ```
 
+```text
+
+यह Child VNet Module का input box है।
+
+इसमें हमने 4 चीजें मांगी हैं:
+
+vnet_name
+address_space
+location
+resource_group_name
+
+मतलब Child Module खुद से कुछ decide नहीं करेगा।
+
+Parent उसे बताएगा:
+
+VNet का नाम क्या है?
+VNet का IP range क्या है?
+किस Azure region में बनाना है?
+किस Resource Group में बनाना है?
+Simple analogy 🧠
+Parent
+  │
+  │ "ये लो VNet की information"
+  ▼
+Child variables.tf
+  │
+  ├── Name
+  ├── IP Range
+  ├── Location
+  └── Resource Group
+
+इसलिए variables.tf में resource create नहीं होता।
+
+यह सिर्फ input receive करता है।
+
+```
+
 
 # 🔹 STEP 02 — VNet Child Module
 
@@ -180,6 +217,52 @@ VNet Name
      └── resource_group_name
 
 Child module इन values का उपयोग करके Azure में VNet बनाएगा।
+
+```
+
+```text
+
+यह actual VNet create करने वाला code है।
+
+यहाँ:
+
+azurerm_virtual_network
+
+AzureRM provider को बताता है:
+
+Azure में Virtual Network बनाओ।
+
+फिर:
+
+var.vnet_name
+
+का मतलब:
+
+Child module को जो VNet name मिला है, वो इस्तेमाल करो।
+
+इसी तरह:
+
+var.location
+var.address_space
+var.resource_group_name
+
+सभी values Child module के variables से आती हैं।
+
+Flow:
+terraform.tfvars
+       ↓
+root variables.tf
+       ↓
+root main.tf
+       ↓
+VNet Module
+       ↓
+VNet variables.tf
+       ↓
+VNet main.tf
+       ↓
+☁️ Azure VNet
+
 
 ```
 
@@ -235,6 +318,85 @@ variable "resource_group_name" {
 
 }
 
+map(object({...})) क्यों?
+
+यह Terraform का important concept है।
+
+हम कह रहे हैं:
+
+subnets एक map होगा और map के अंदर हर item एक object होगा।
+
+Conceptually:
+
+MAP
+ │
+ ├── web → OBJECT
+ │          ├── name
+ │          └── address_prefixes
+ │
+ ├── application → OBJECT
+ │
+ ├── data → OBJECT
+ │
+ ├── management → OBJECT
+ │
+ └── security → OBJECT
+
+इससे Terraform को पहले से पता रहता है कि data कैसा दिखना चाहिए।
+
+अगर गलती से:
+
+address_prefixes = "10.10.1.0/24"
+
+दे दिया जबकि list चाहिए, Terraform validation/error देगा।
+
+यही type safety है। 🔐
+
+```
+
+```text
+
+
+
+यह थोड़ा interesting है। 😄
+
+हमारे पास 5 Subnets हैं।
+
+अगर हम 5 अलग variables बनाते:
+
+web_subnet
+app_subnet
+data_subnet
+management_subnet
+security_subnet
+
+तो code unnecessarily बड़ा हो जाता।
+
+इसलिए हमने:
+
+subnets
+
+नाम का एक variable बनाया।
+
+उसके अंदर हर subnet की information है।
+
+Concept:
+
+subnets
+   │
+   ├── web
+   ├── application
+   ├── data
+   ├── management
+   └── security
+
+हर subnet के अंदर:
+
+name
+address_prefixes
+
+है।
+
 ```
 
 
@@ -282,6 +444,85 @@ subnets
    ├── management
    └── security
 
+  यह actual Subnet creation है।
+
+सबसे important line:
+
+for_each = var.subnets
+
+🔥 इसका मतलब:
+
+var.subnets में जितने items हैं, उतने subnet resources create करो।
+
+हमारे पास:
+
+web
+application
+data
+management
+security
+
+यानि:
+
+5 entries
+     ↓
+for_each
+     ↓
+5 subnet resources
+
+
+
+each.value.name क्या है?
+
+यह बहुत important है।
+
+मान लो Terraform अभी web subnet पर काम कर रहा है।
+
+तो:
+
+each.key
+
+होगा:
+
+web
+
+और:
+
+each.value
+
+होगा:
+
+{
+    name = "snet-web"
+    address_prefixes = ["10.10.1.0/24"]
+}
+
+इसलिए:
+
+each.value.name
+
+का मतलब:
+
+Current subnet का name निकालो।
+
+और:
+
+each.value.address_prefixes
+
+का मतलब:
+
+Current subnet का IP range निकालो।
+
+याद रखने का तरीका 🧠
+each.key
+   ↓
+कौन सा item?
+
+
+each.value
+   ↓
+उस item की पूरी information
+  
    ```
 
 
@@ -339,6 +580,28 @@ variable "subnets" {
 
 }
 
+
+यह Parent का input definition है।
+
+हम यहाँ बताते हैं:
+
+VNet और Subnets की information किस format में आएगी?
+
+यह actual values नहीं रखता।
+
+इसमें सिर्फ structure/type होता है।
+
+variables.tf
+     ↓
+"Data कैसा दिखना चाहिए?"
+
+जबकि:
+
+terraform.tfvars
+     ↓
+"Actual Data क्या है?"
+
+🔥 यही difference याद रखना।
 
 ```
 
@@ -416,6 +679,37 @@ subnets = {
 
 }
 
+यहाँ actual configuration आती है।
+
+उदाहरण concept:
+
+VNet
+ ├── Name
+ ├── Address Space
+ │
+ └── Subnets
+      ├── Web
+      ├── Application
+      ├── Data
+      ├── Management
+      └── Security
+
+इसका फायदा:
+
+कल अगर VNet बदलना है:
+
+10.10.0.0/16
+
+से:
+
+10.20.0.0/16
+
+तो Terraform resource code बदलने की जरूरत नहीं।
+
+सिर्फ variable value बदलेंगे।
+
+यही Infrastructure as Code का अच्छा pattern है।
+
 ```
 
 
@@ -450,6 +744,85 @@ module "vnet" {
 
 
 }
+
+यह पूरा Parent / Orchestrator है।
+
+इसका काम खुद VNet बनाना नहीं है।
+
+इसका काम है:
+
+सही data सही module को देना।
+
+Concept:
+
+                  ROOT main.tf
+                       │
+             ┌─────────┴─────────┐
+             │                   │
+             ▼                   ▼
+       Resource Group           VNet
+                                 │
+                                 ▼
+                              Subnets
+
+यानि root main.tf धीरे-धीरे हमारा Landing Zone controller बन रहा है।
+
+
+🔟 resource_group_name = var.resource_groups["network"].name
+
+यह line भी बहुत important है।
+
+हमने Phase 05 में Resource Groups बनाए थे:
+
+network
+security
+platform
+
+अब VNet को network RG में रखना है।
+
+इसलिए:
+
+var.resource_groups["network"]
+
+का मतलब:
+
+Resource Groups में से network वाला object निकालो।
+
+फिर:
+
+.name
+
+का मतलब:
+
+उस object का name निकालो।
+
+पूरी chain:
+
+var.resource_groups
+        ↓
+     ["network"]
+        ↓
+       .name
+        ↓
+rg-comsolve-cyberex-network
+
+🔥 इससे Resource Group का नाम दोबारा hard-code करने की जरूरत नहीं पड़ती।
+
+1️⃣1️⃣ depends_on = [module.vnet]
+
+यह Terraform को explicitly बताता है:
+
+पहले VNet बनाओ, उसके बाद Subnets बनाना।
+
+Architecture:
+
+Resource Group
+      ↓
+     VNet
+      ↓
+   Subnets
+
+हालाँकि Terraform कई बार resource references देखकर dependency खुद समझ सकता है, लेकिन यहाँ learning और explicit dependency के लिए depends_on दिखाना useful है।
 
 ```
 
@@ -513,6 +886,26 @@ module "subnets" {
                          ▼           ▼
                       Management   Security
 
+
+🧠 सबसे Important Concept — Parent vs Child
+
+इसे अच्छे से याद कर भाई:
+
+👨 Parent
+terraform/main.tf
+
+का काम:
+
+Module को call करना
++
+Module को data देना
+👶 Child
+terraform/modules/vnet/
+terraform/modules/subnet/
+
+का काम:
+
+Actual Azure resource create करना
 
 ```
 
