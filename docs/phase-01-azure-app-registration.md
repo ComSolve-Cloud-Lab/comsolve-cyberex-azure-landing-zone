@@ -230,6 +230,8 @@ Actions
 
 #  🟦 Step 06 — Verify Service Principal
 
+```text
+
 Open:
 
 App Registration
@@ -244,7 +246,11 @@ Shrikant_Nadgauda_GitHub_Actions
 
 This represents the application's Service Principal in the Azure tenant.
 
+```
+
 # 🟦 Step 07 — Get Azure Subscription ID
+
+```text
 
 Navigate:
 
@@ -260,10 +266,11 @@ Subscription ID:
 
 7cf9c45e-0a1e-4828-9c98-3e8f253xxxxxx
 
-
+```
 
 # 🟦 Step 08 — Assign Contributor Role
 
+```text
 Navigate:
 
 Subscriptions
@@ -274,6 +281,7 @@ Access control (IAM)
    ↓
 Add
    ↓
+
 Add role assignment
 
 
@@ -307,9 +315,11 @@ Then:
 
 🟢 Review + assign
 
-
+```
 
 # 🟦 Step 09 — Verify RBAC
+
+```text
 
 Navigate:
 
@@ -347,6 +357,7 @@ AZURE_TENANT_ID	         Identifies the Azure tenant
 
 AZURE_SUBSCRIPTION_ID   	Identifies the Azure subscription
 
+```
 
 # 🛡️ Security Notes
 
