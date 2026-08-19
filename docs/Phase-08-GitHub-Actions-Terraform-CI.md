@@ -334,7 +334,7 @@ jobs:
 ```
 ---
 
-### 🧠 अब असली मज़ा — YAML को line-by-line समझ
+# 🧠 अब असली मज़ा — YAML को line-by-line समझ
 
 1️⃣ name
 name: Terraform CI
