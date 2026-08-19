@@ -136,9 +136,157 @@ terraform/
 
 ```
 
-# 1️⃣ Parent main.tf
+# 1️⃣ provider.tf — Terraform + Azure Connection
+
+📄 terraform/provider.tf
+
+```text
+
+terraform {
+
+
+  required_version = ">= 1.6.0"
+
+
+  required_providers {
+
+
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.0"
+    }
+
+
+  }
+}
+
+
+
+
+provider "azurerm" {
+
+
+  features {}
+
+
+}
+
+```
+
+🧠 इसे आसान भाषा में समझ
+
+
+इस file में दो अलग चीजें हैं:
+
+@@  🔹 Part 1 — terraform {}
+
+```text
+
+terraform {
+
+
+  required_version = ">= 1.6.0"
+
+
+  required_providers {
+
+
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.0"
+    }
+
+
+  }
+}
+
+
+
+यह Terraform को बताता है:
+
+🗣️ "Terraform भाई, Azure infrastructure manage करना है और इसके लिए AzureRM provider चाहिए."
+
+यहाँ:
+
+source = "hashicorp/azurerm"
+
+मतलब AzureRM provider HashiCorp का provider है।
+
+और:
+
+version = "~> 4.0"
+
+मतलब हम AzureRM Provider की 4.x compatible version use करेंगे।
+
+
+2️⃣ provider "azurerm"
+
+provider "azurerm" {
+
+
+  features {}
+
+
+}
+
+यह actual Azure provider configuration है।
+
+Simple language में:
+
+terraform {}
+     │
+     │ बताता है कौन सा provider चाहिए
+     ▼
+azurerm
+     │
+     ▼
+provider "azurerm"
+     │
+     │ Azure से communicate
+     ▼
+☁️ Azure
+
+```
+
+
+# 3️⃣ Authentication कहाँ है?
+
+```text
+
+यह बहुत important है भाई। 👇
+
+हम अभी इसमें:
+
+client_id
+client_secret
+tenant_id
+subscription_id
+
+नहीं डालेंगे।
+
+क्यों?
+
+क्योंकि हम credentials को Terraform code में hard-code नहीं करना चाहते।
+
+हम आगे GitHub Actions + Azure OIDC use करेंगे।
+
+Local development के लिए तुम Azure CLI से login कर सकते हो:
+
+az login
+
+फिर:
+
+az account set --subscription "7cf9c45e-0a1e-4828-9c98-3e8f25397732"
+
+इससे local Terraform Azure credentials use कर सकता है।
+
+```
+
+# 4️⃣ Parent main.tf
 
 📄 terraform/main.tf
+
+```text
 
 module "resource_groups" {
 
@@ -161,8 +309,22 @@ Parent module बोल रहा है:
 यहाँ कोई Resource Group name hard-code नहीं है। ✅
 
 
+यह Parent है।
 
-# 2️⃣ Parent variables.tf
+इसका काम सिर्फ Child Module को call करना है।
+
+main.tf
+   │
+   │ calls
+   ▼
+modules/resource-group
+
+```
+
+
+# 5️⃣ Parent variables.tf
+
+```text
 
 📄 terraform/variables.tf
 
@@ -188,7 +350,6 @@ location
 
 इसलिए:
 
-```text
 
 resource_groups
       │
@@ -206,7 +367,9 @@ resource_groups
 
 ```
 
-# 3️⃣ terraform.tfvars
+# 6️⃣ terraform.tfvars
+
+```text
 
 📄 terraform/terraform.tfvars
 
@@ -235,6 +398,20 @@ resource_groups = {
 
 }
 
+🔥 यहाँ actual values हैं।
+
+इसलिए:
+
+variables.tf
+     │
+     │ Structure
+     ▼
+terraform.tfvars
+     │
+     │ Actual Values
+     ▼
+main.tf
+
 अब देख:
 
 ❌ main.tf में कोई hard-coded name नहीं।
@@ -243,8 +420,12 @@ resource_groups = {
 
 ✅ Actual values सिर्फ terraform.tfvars में।
 
+```
 
-# 4️⃣ Child variables.tf
+
+# 7️⃣ Child variables.tf
+
+```text
 
 📄 terraform/modules/resource-group/variables.tf
 
@@ -262,15 +443,16 @@ variable "resource_groups" {
 
 }
 
+```
 
 # 🧠 अब Parent → Child connection समझ
 
 
-Parent:
+Parent से:
 
 resource_groups = var.resource_groups
 
-Child:
+Child में आता है:
 
 variable "resource_groups"
 
@@ -290,7 +472,9 @@ variable "resource_groups"
 
 ```
 
-# 5️⃣ Child main.tf
+# 8️⃣ Child main.tf
+
+```text
 
 📄 terraform/modules/resource-group/main.tf
 
@@ -307,6 +491,66 @@ resource "azurerm_resource_group" "Rgs" {
 
 }
 
+
+यह actual Azure Resource Group create करेगा।
+
+```
+
+
+# 🧠 अब पूरा Phase 05 एक बार समझ
+
+```text
+                    👨‍💻 YOU
+                      │
+                      ▼
+              terraform.tfvars
+                      │
+             Actual RG Values
+                      │
+                      ▼
+               variables.tf
+                      │
+                 var.resource_groups
+                      │
+                      ▼
+                  main.tf
+                PARENT MODULE
+                      │
+                      │ module call
+                      ▼
+           CHILD RESOURCE GROUP
+                      │
+                      ▼
+              child variables.tf
+                      │
+                      ▼
+               child main.tf
+                      │
+                   for_each
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+       Network     Security     Platform
+          │           │           │
+          ▼           ▼           ▼
+         RG1         RG2         RG3
+          │           │           │
+          └───────────┼───────────┘
+                      ▼
+                  ☁️ AZURE
+
+और side में:
+
+provider.tf
+     │
+     ├── terraform version
+     ├── AzureRM provider
+     └── Azure provider
+             │
+             ▼
+          ☁️ Azure
+
+```
 
 # 🔥 अब सबसे important part यही है।
 
@@ -458,7 +702,15 @@ Production Landing Zone में remote state बहुत important है।
 ---
 # 🚀 अब Run करो
 
-terraform folder में:
+पहले Azure login:
+
+az login
+
+फिर subscription:
+
+az account set --subscription "7cf9c45e-0a1e-4828-9c98-3e8f25397732"
+
+Terraform folder में:
 
 terraform fmt -recursive
 
