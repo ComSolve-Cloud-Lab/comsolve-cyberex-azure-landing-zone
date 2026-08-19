@@ -558,9 +558,11 @@ AzureRM
 
 है।
 
-```powershell
 
-🔍 1️⃣1️⃣ Terraform Validate
+# 🔍 1️⃣1️⃣ Terraform Validate
+
+```text
+
 terraform validate
 
 यह check करता है:
@@ -635,6 +637,106 @@ What will Terraform destroy?
 
 
 ```
+---
+# 🧪 Step 05 — पहले Local YAML Check
+
+```text
+
+YAML में indentation गलत हुई तो pipeline fail हो सकती है।
+
+इसलिए file save करने के बाद:
+
+git status
+
+फिर:
+
+git add .github\workflows\terraform-ci.yml
+
+Commit:
+
+git commit -m "ci: add Terraform GitHub Actions pipeline"
+
+Push:
+
+git push
+
+```
+
+# 🚀 Step 06 — GitHub पर Pipeline देखना
+
+```text
+
+GitHub Repository खोल।
+
+फिर:
+
+🐙 Repository
+      │
+      ▼
+     Actions
+      │
+      ▼
+Terraform CI
+
+तुझे workflow दिखाई देगा:
+
+Terraform CI
+   │
+   └── Terraform Validation
+
+उस पर click कर।
+
+फिर steps दिखाई देंगे:
+
+✅ Checkout Repository
+✅ Setup Terraform
+✅ Terraform Format Check
+✅ Terraform Init
+✅ Terraform Validate
+✅ Terraform Plan
+
+
+🔥 यही तेरा पहला CI Pipeline Run है।
+
+```
+
+🧠 अगर कोई Step FAIL हो गया?
+
+मान ले:
+
+Terraform Validate ❌
+
+तो नीचे जाकर उस step को खोल।
+
+GitHub exact error दिखाएगा।
+
+Example:
+
+Error: Unsupported attribute
+
+फिर:
+
+Developer
+   │
+   ▼
+Fix Terraform
+   │
+   ▼
+git add
+   │
+   ▼
+git commit
+   │
+   ▼
+git push
+   │
+   ▼
+GitHub Actions
+   │
+   ▼
+Pipeline Again
+
+🔥 यही CI का असली मज़ा है।
 ---
 # 🚦 Step 05 — Workflow Trigger
 
