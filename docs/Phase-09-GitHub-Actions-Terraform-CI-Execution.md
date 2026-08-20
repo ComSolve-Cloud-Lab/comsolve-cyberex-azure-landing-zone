@@ -1205,3 +1205,784 @@ var.nic_location
 
 
 और अब अगला असली मज़ा: terraform plan को बिना interactive prompt के चलाना, nic_location को GitHub Actions में सही तरीके से देना, और उसके बाद Azure authentication + security scanning जोड़ना। 🔥
+
+
+
+# 🔐 Phase 09 — GitHub Actions → Azure OIDC Authentication
+
+<p align="center">
+
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+![Microsoft Azure](https://img.shields.io/badge/Microsoft%20Azure-Cloud-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![OIDC](https://img.shields.io/badge/OIDC-Keyless%20Authentication-6F42C1?style=for-the-badge)
+![Terraform](https://img.shields.io/badge/Terraform-Automation-844FBA?style=for-the-badge&logo=terraform&logoColor=white)
+
+</p>
+
+> 🎯 **Objective:** GitHub Actions को Azure से securely authenticate करना ताकि Terraform बिना किसी local `az login` और बिना long-lived Client Secret के Azure resources का plan/apply कर सके।
+
+---
+
+# 🧭 Phase 09 Overview
+
+इस Phase में हम सीखेंगे:
+
+- 🔐 Azure App Registration
+- 👤 Service Principal
+- 🔑 Federated Identity Credential
+- 🐙 GitHub Actions OIDC
+- ☁️ Azure Login
+- 🏗️ Terraform Authentication
+- 📋 Terraform Plan
+
+---
+
+# 🧠 1. सबसे पहले Problem समझो
+
+हमारी GitHub Actions pipeline यहाँ तक successfully पहुँच रही थी:
+
+```text
+GitHub Actions
+      │
+      ▼
+Checkout Repository
+      │
+      ▼
+Setup Terraform
+      │
+      ▼
+terraform fmt
+      │
+      ▼
+terraform init
+      │
+      ▼
+terraform validate
+      │
+      ▼
+terraform plan
+      │
+      ▼
+❌ Azure Authentication
+
+```
+Pipeline में यह error आया:
+
+ERROR: Please run 'az login' to setup account.
+
+इसका मतलब Terraform को Azure से बात करनी है लेकिन GitHub Runner के पास Azure credentials नहीं हैं।
+---
+
+# 💡 2. Local Machine और GitHub Runner में Difference
+
+हमारे Local Computer पर:
+
+Azure CLI
+    │
+    ▼
+az login
+    │
+    ▼
+Azure Account
+    │
+    ▼
+Terraform
+    │
+    ▼
+Azure
+
+लेकिन GitHub Actions में:
+
+GitHub Runner
+      │
+      ▼
+Terraform
+      │
+      ▼
+Azure
+
+GitHub Runner एक temporary machine है।
+
+उसे हमारे local computer का:
+
+❌ Azure Login
+
+❌ Azure Session
+
+❌ Azure CLI Token
+
+नहीं मिलता।
+
+इसलिए हमें GitHub और Azure के बीच secure trust बनाना होगा।
+---
+
+# 🔐 3. Solution — GitHub OIDC
+
+हम यहाँ OIDC (OpenID Connect) authentication इस्तेमाल करेंगे।
+
+सबसे important बात:
+
+GitHub Actions को Azure से authenticate करने के लिए हम long-lived Client Secret पर depend नहीं करेंगे।
+
+```text
+
+Flow:
+
+                    🐙 GitHub
+                       │
+                       │ OIDC Token
+                       ▼
+              GitHub Actions Runner
+                       │
+                       ▼
+              Microsoft Entra ID
+                       │
+                       │ Verify Token
+                       ▼
+             Federated Credential
+                       │
+                       ▼
+              Service Principal
+                       │
+                       ▼
+             Azure Subscription
+                       │
+                       ▼
+                  Terraform
+                       │
+                       ▼
+                Azure Resources
+```
+---
+
+# ⭐ 4. OIDC क्यों बेहतर है?
+
+```text
+
+Traditional तरीका:
+
+GitHub
+  │
+  ▼
+Client ID + Client Secret
+  │
+  ▼
+Azure
+
+Problem:
+
+🔴 Secret rotate करना पड़ेगा
+
+🔴 Secret leak हो सकता है
+
+🔴 Long-lived credential
+
+🔴 GitHub Secret management
+
+OIDC:
+
+GitHub
+  │
+  ▼
+Short-lived OIDC Token
+  │
+  ▼
+Microsoft Entra ID
+  │
+  ▼
+Azure Access Token
+
+इसलिए:
+
+✅ No long-lived Client Secret
+
+✅ Short-lived authentication
+
+✅ Better security
+
+✅ GitHub Actions friendly
+
+✅ Terraform automation के लिए ideal
+
+🏢 5. हमारा Azure App Registration
+
+
+हमने पहले ही App Registration बनाई है:
+
+Application Name:
+Shrikant_Nadgauda_GitHub_Actions
+
+Application / Client ID:
+
+666a02fd-9186-4647-bcac-b9fd1943a1e7
+
+Tenant ID:
+
+402a28d6-9ea1-462e-8338-dc09423ff348
+
+Subscription ID:
+
+7cf9c45e-0a1e-4828-9c98-3e8f25397732
+
+```
+---
+
+# 🔎 6. App Registration Verify करो
+
+Azure Portal में जाओ:
+
+Azure Portal
+   ↓
+Microsoft Entra ID
+   ↓
+App registrations
+   ↓
+Shrikant_Nadgauda_GitHub_Actions
+
+Overview में verify करो:
+
+Application (client) ID
+
+Directory (tenant) ID
+
+Object ID
+---
+
+# 👤 7. Service Principal का मतलब
+
+App Registration का Azure में एक Service Principal होता है।
+
+Simple language में:
+
+App Registration
+      │
+      ▼
+Service Principal
+      │
+      ▼
+Azure में Identity
+
+हमने Service Principal को Subscription पर:
+
+Contributor
+
+role दिया है।
+
+इसका मतलब Terraform इस identity के माध्यम से Azure resources manage कर सकता है।
+---
+
+# 🔐 8. Contributor Role Verify करो
+
+Azure Portal:
+
+Subscriptions
+   ↓
+Azure Subscription
+   ↓
+Access control (IAM)
+   ↓
+Role assignments
+
+Search करो:
+
+Shrikant_Nadgauda_GitHub_Actions
+
+Expected:
+
+Role:
+Contributor
+
+
+Scope:
+Subscription
+
+# 🔗 9. Federated Identity Credential बनाना
+
+अब Azure App Registration खोलो:
+
+App registrations
+   ↓
+Shrikant_Nadgauda_GitHub_Actions
+   ↓
+Certificates & secrets
+   ↓
+Federated credentials
+   ↓
+Add credential
+
+# 🐙 10. Federated Credential Scenario
+
+Select:
+
+GitHub Actions deploying Azure resources
+
+यह option GitHub Actions के OIDC authentication के लिए है।
+---
+
+# 🌐 11. Issuer
+
+Issuer में:
+
+https://token.actions.githubusercontent.com
+
+रहेगा।
+
+यह GitHub का OIDC token issuer है।
+---
+
+# 🏷️ 12. Organization
+
+यहाँ अपना GitHub organization/user name डालना है।
+
+हमारे repository के हिसाब से:
+
+Shrikant-Nadgaudaa
+---
+
+# 📦 13. Repository
+
+Repository:
+
+comsolve-cyberex-azure-landing-zone
+
+पूरा GitHub URL नहीं डालना है।
+
+❌ गलत:
+
+https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone
+
+✅ सही:
+
+comsolve-cyberex-azure-landing-zone
+---
+
+# 🌿 14. Entity Type
+
+हमारी CI pipeline feature branch से चलती है।
+
+इसलिए Federated Credential को हमारी GitHub workflow की identity के साथ match करना होगा।
+
+अगर credential केवल एक branch के लिए बनाया जाता है तो:
+
+Entity Type:
+Branch
+
+और branch:
+
+main
+
+या जिस branch को specifically Azure access देना हो।
+
+# ⚠️ 15. Feature Branch के लिए Important Concept
+
+हमारी pipeline:
+
+on:
+
+
+  push:
+    branches:
+      - "feature/**"
+
+
+  pull_request:
+    branches:
+      - main
+
+इसका मतलब:
+
+feature/*
+    ↓
+Terraform Validation
+
+और:
+
+Pull Request
+    ↓
+main
+    ↓
+Terraform Validation
+
+Security Principle
+
+Azure में वही GitHub identity allow करनी चाहिए जिसे वास्तव में Azure access चाहिए।
+
+इसलिए OIDC में:
+
+Repository
++
+Branch / Entity
+
+को restrict करना security के लिए बेहतर है।
+---
+
+# 📝 16. Credential Name
+
+Example:
+
+github-actions-terraform
+
+Description:
+
+OIDC trust for GitHub Actions Terraform automation
+
+Audience:
+
+api://AzureADTokenExchange
+---
+
+# 🔐 17. OIDC Trust का मतलब
+
+अब Azure कह रहा है:
+
+"अगर GitHub से आने वाला OIDC token मेरी configured repository/branch identity से match करता है, तो मैं इस application को authenticate करने दूँगा।"
+
+Flow:
+
+GitHub Repository
+       │
+       │ OIDC Token
+       ▼
+Microsoft Entra ID
+       │
+       │ Check
+       ├── Organization
+       ├── Repository
+       └── Branch / Entity
+       │
+       ▼
+Service Principal
+       │
+       ▼
+Azure Subscription
+---
+
+# 🐙 18. GitHub Workflow में Azure Login
+
+अब हमारी Terraform pipeline में Azure Login step add होगा।
+
+```text
+
+Concept:
+
+- name: Azure Login
+  uses: azure/login@v2
+  with:
+    client-id: ${{ secrets.AZURE_CLIENT_ID }}
+    tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+    subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    
+```
+
+यहाँ ध्यान दो:
+
+Client Secret ❌
+Password ❌
+
+नहीं है।
+
+हम OIDC authentication use कर रहे हैं।
+---
+
+🔑 19. GitHub Repository Variables / Secrets
+
+GitHub Repository में:
+
+Settings
+   ↓
+Secrets and variables
+   ↓
+Actions
+
+हम required Azure identifiers configure करेंगे।
+
+Conceptually:
+
+AZURE_CLIENT_ID
+AZURE_TENANT_ID
+AZURE_SUBSCRIPTION_ID
+
+इन values को workflow में direct hard-code करने के बजाय GitHub configuration से reference करना बेहतर है।
+---
+
+# 🔥 20. Azure Login के बाद Terraform
+
+अब pipeline का flow होगा:
+
+Checkout
+   ↓
+Setup Terraform
+   ↓
+Terraform Format
+   ↓
+Terraform Init
+   ↓
+Terraform Validate
+   ↓
+Azure Login 🔐
+   ↓
+Terraform Plan
+   ↓
+Azure ☁️
+
+# 🏗️ 21. Terraform को Azure Authentication कैसे मिलता है?
+
+Terraform AzureRM provider Azure authentication information Azure environment से obtain कर सकता है।
+
+हमारा flow:
+
+GitHub OIDC
+     ↓
+azure/login
+     ↓
+Azure Authentication Context
+     ↓
+Terraform AzureRM Provider
+     ↓
+Azure Resource Manager API
+
+इसलिए Terraform को अलग से:
+
+az login
+
+करने की जरूरत नहीं होगी।
+
+# 🧪 22. Terraform Plan
+
+हमारा command:
+
+terraform plan -input=false
+
+क्यों?
+
+-input=false
+
+का मतलब:
+
+Terraform interactive input के लिए runner को wait नहीं करेगा।
+
+अगर कोई required variable missing है:
+
+❌ Pipeline fail
+
+होगी।
+
+यह:
+
+5 घंटे तक wait
+
+नहीं करेगी। 😄
+---
+
+# 🔍 23. Successful Pipeline का Expected Flow
+
+GitHub Actions में:
+
+✅ Checkout Repository
+
+
+✅ Setup Terraform
+
+
+✅ Terraform Format Check
+
+
+✅ Terraform Init
+
+
+✅ Terraform Validate
+
+
+✅ Azure Login
+
+
+✅ Terraform Plan
+
+
+🎉 Pipeline Successful
+---
+
+# 🧠 24. अभी तक हमने क्या सीख लिया?
+
+हमारी CI pipeline अब:
+
+GitHub
+   │
+   ▼
+GitHub Actions
+   │
+   ├── Checkout
+   │
+   ├── Terraform Setup
+   │
+   ├── Format
+   │
+   ├── Init
+   │
+   ├── Validate
+   │
+   ├── Azure Authentication
+   │
+   └── Plan
+   │
+   ▼
+Azure
+---
+
+# 🛡️ 25. Security Architecture
+
+हमारा authentication model:
+
+                🔐 SECURITY LAYER
+
+
+GitHub Repository
+       │
+       │ OIDC
+       ▼
+Federated Identity
+       │
+       ▼
+Microsoft Entra ID
+       │
+       ▼
+Service Principal
+       │
+       │ Contributor
+       ▼
+Azure Subscription
+
+Security Benefits
+
+✅ No hard-coded password
+
+✅ No long-lived Client Secret
+
+✅ OIDC based authentication
+
+✅ Repository identity validation
+
+✅ Branch restriction possible
+
+✅ Azure RBAC
+
+✅ Short-lived authentication
+
+# 📌 26. Important Difference
+
+❌ Local Authentication
+
+az login
+
+terraform plan
+
+यह हमारे personal/local session पर depend करता है।
+
+✅ CI/CD Authentication
+```text 
+GitHub Actions
+      ↓
+OIDC
+      ↓
+Azure Login
+      ↓
+Terraform
+
+यह automation के लिए designed है।
+```
+---
+
+# 🎯 27. Phase 09 Final Architecture
+
+```text
+                    🐙 GITHUB
+                       │
+                       │ Push / Pull Request
+                       ▼
+               GitHub Actions
+                       │
+                       ▼
+              Checkout Repository
+                       │
+                       ▼
+                Setup Terraform
+                       │
+                       ▼
+              Terraform Format
+                       │
+                       ▼
+                Terraform Init
+                       │
+                       ▼
+              Terraform Validate
+                       │
+                       ▼
+                 🔐 Azure Login
+                       │
+                       │ OIDC
+                       ▼
+              Microsoft Entra ID
+                       │
+                       ▼
+             Federated Credential
+                       │
+                       ▼
+              Service Principal
+                       │
+                  Contributor
+                       │
+                       ▼
+              Azure Subscription
+                       │
+                       ▼
+                Terraform Plan
+                       │
+                       ▼
+                  ☁️ AZURE
+```
+---
+
+# 🏆 Phase 09 Outcome
+
+इस Phase के बाद हमें यह समझ आना चाहिए:
+
+GitHub Actions को Azure से connect करने के लिए local az login की जरूरत नहीं है।
+
+हम:
+
+GitHub OIDC
+     +
+Microsoft Entra ID
+     +
+Federated Identity Credential
+     +
+Service Principal
+     +
+Azure RBAC
+
+का उपयोग करके secure authentication बना सकते हैं।
+---
+
+# 🧠 याद रखने वाला Golden Rule
+GitHub = Code
+
+GitHub Actions = Automation
+
+OIDC = Authentication
+
+Entra ID = Identity
+
+Service Principal = Azure Identity
+
+RBAC = Permission
+
+Terraform = Infrastructure Automation
+
+Azure = Infrastructure
+
+
+🔥 यही पूरा GitHub Actions + Azure Terraform CI/CD architecture का foundation है।
+---
+
+# 🚀 Next Phase
+Phase 10 — Terraform Plan Automation & Pull Request Security
