@@ -95,6 +95,7 @@ Ubuntu Runner
 comsolve-cyberex-azure-landing-zone
 
 इसलिए runner Terraform files को access कर पाया।
+
 ---
 
 # 🔐 Step 03 — GITHUB_TOKEN Permissions
@@ -111,6 +112,7 @@ Workflow को repository contents पढ़ने की permission है।
 हम अभी repository में कोई modification नहीं करवा रहे।
 
 यह Least Privilege principle का हिस्सा है।
+
 ---
 
 # 🏗️ Step 04 — Terraform Setup
@@ -130,6 +132,7 @@ terraform init
 terraform validate
 
 terraform plan
+
 ---
 
 
@@ -153,6 +156,7 @@ terraform fmt -check
 सिर्फ check करता है
 
 CI pipeline में -check useful है क्योंकि pipeline developer के code को silently modify नहीं करती।
+
 ---
 
 # 🔧 Step 06 — Terraform Init
@@ -183,6 +187,7 @@ Providers
 Dependency Lock File
 
 initialize किया।
+
 ---
 
 # 📦 Step 07 — Terraform Modules
@@ -232,6 +237,7 @@ AzureRM Provider
 v5.1.0
 
 Terraform इसी provider के माध्यम से Azure resources को understand करता है।
+
 ---
 
 # 🔒 Step 09 — .terraform.lock.hcl
@@ -245,6 +251,7 @@ Terraform ने dependency lock file को भी use किया:
 Terraform provider versions और checksums को lock करना।
 
 इससे अलग-अलग environments में unexpected provider version changes का risk कम होता है।
+
 ---
 
 # 🔍 Step 10 — Terraform Validate
@@ -266,6 +273,7 @@ terraform validate
       │
       ▼
 ✅ Configuration Valid
+
 ---
 
 # 📋 Step 11 — Terraform Plan
@@ -300,6 +308,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 3 resources → Create
 0 resources → Modify
 0 resources → Destroy
+
 ---
 
 # ⚠️ Step 12 — हमारी Pipeline यहाँ क्यों रुकी?
@@ -322,6 +331,7 @@ var.nic_location
 एक input variable है।
 
 लेकिन GitHub Actions runner को अभी इसका value नहीं मिला।
+
 ---
 
 # 🧠 Local Machine और GitHub Runner में Difference
@@ -379,6 +389,7 @@ GitHub Secrets
 GitHub OIDC
        +
 Azure Service Principal
+
 ---
 
 # 🚨 Important Learning
@@ -502,6 +513,7 @@ Infrastructure changes का preview देखने के लिए।
 var.nic_location
 
 का value GitHub runner को उपलब्ध नहीं हुआ।
+
 ---
 
 🚀 Next Phase
@@ -527,7 +539,9 @@ terraform plan
 और इसके बाद:
 
 🔐 Security Scanning
+
 🔍 IaC Security
+
 🕵️ Secret Detection
 
 को pipeline में integrate करेंगे।
@@ -602,6 +616,7 @@ Confirm
 कर सकते हो।
 
 ⚠️ अभी नई pipeline मत चलाना। पहले पुराने stuck runs cancel करो।
+
 ---
 
 अब हम तेरे actual GitHub log को पढ़ेंगे।
@@ -710,8 +725,11 @@ Run actions/checkout@v4
 हमारी YAML में कुछ ऐसा है:
 
 - name: Checkout Repository
+
   uses: actions/checkout@v4
+
 uses का मतलब?
+
 uses:
 
 का मतलब है:
@@ -746,6 +764,7 @@ Runner के अंदर Repository
 ले आती है।
 
 Log में यह दिखाई दिया
+
 Syncing repository:
 Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone
 
@@ -796,6 +815,7 @@ Run hashicorp/setup-terraform@v3
 
 - name: Setup Terraform
   uses: hashicorp/setup-terraform@v3
+
 इसका काम?
 
 GitHub runner में Terraform CLI उपलब्ध कराना।
@@ -832,6 +852,7 @@ This workflow is running with Node 24 by default.
 मतलब GitHub Actions के underlying runtime में Node version transition चल रहा है।
 
 अभी इसे देखकर panic करने की जरूरत नहीं है। 😄
+
 ---
 
 # 🟢 STEP 16 — Terraform Format
@@ -881,6 +902,7 @@ terraform fmt -check -recursive
 हमारे पूरे Terraform codebase की formatting check कर रहा है।
 
 और यह successfully pass हुआ। ✅
+
 ---
 
 # 🟢 STEP 17 — Terraform Init
@@ -961,6 +983,7 @@ Installing hashicorp/azurerm v5.1.0
 Installed hashicorp/azurerm v5.1.0
 
 ✅ Successfully installed.
+
 ---
 
 # 🟢 STEP 18 — Terraform Validate
@@ -1062,6 +1085,7 @@ Fresh Environment
 है।
 
 इसलिए उसे automatically तुम्हारे local machine की values नहीं मिलतीं।
+
 ---
 
 🔥 यही हमारी अगली Learning है
@@ -1171,6 +1195,7 @@ terraform plan
 var.nic_location
 
 इसलिए अभी उस GitHub App token warning को ignore कर सकते हैं।
+
 ---
 
 # 🎯 Phase 09 का Final Lesson
@@ -1228,11 +1253,17 @@ var.nic_location
 इस Phase में हम सीखेंगे:
 
 - 🔐 Azure App Registration
+
 - 👤 Service Principal
+
 - 🔑 Federated Identity Credential
+
 - 🐙 GitHub Actions OIDC
+
 - ☁️ Azure Login
+
 - 🏗️ Terraform Authentication
+
 - 📋 Terraform Plan
 
 ---
@@ -1271,6 +1302,7 @@ Pipeline में यह error आया:
 ERROR: Please run 'az login' to setup account.
 
 इसका मतलब Terraform को Azure से बात करनी है लेकिन GitHub Runner के पास Azure credentials नहीं हैं।
+
 ---
 
 # 💡 2. Local Machine और GitHub Runner में Difference
@@ -1314,11 +1346,12 @@ GitHub Runner एक temporary machine है।
 नहीं मिलता।
 
 इसलिए हमें GitHub और Azure के बीच secure trust बनाना होगा।
+
 ---
 
 # 🔐 3. Solution — GitHub OIDC
 
-हम यहाँ OIDC (OpenID Connect) authentication इस्तेमाल करेंगे।
+हम यहाँ OIDC (Open ID Connect) authentication इस्तेमाल करेंगे।
 
 सबसे important बात:
 
@@ -1429,6 +1462,7 @@ Subscription ID:
 
 # 🔎 6. App Registration Verify करो
 
+
 Azure Portal में जाओ:
 
 Azure Portal
@@ -1446,6 +1480,7 @@ Application (client) ID
 Directory (tenant) ID
 
 Object ID
+
 ---
 
 # 👤 7. Service Principal का मतलब
@@ -1469,6 +1504,7 @@ Contributor
 role दिया है।
 
 इसका मतलब Terraform इस identity के माध्यम से Azure resources manage कर सकता है।
+
 ---
 
 # 🔐 8. Contributor Role Verify करो
