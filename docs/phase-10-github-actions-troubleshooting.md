@@ -336,6 +336,8 @@ Environment values
 
 इसलिए production environment में सामान्य practice:
 
+```text
+
 terraform.tfvars
         ↓
 .gitignore
@@ -359,7 +361,7 @@ GitHub Secrets
 OIDC
         +
 Azure
-
+```
 का use करेंगे।
 
 ---
@@ -387,6 +389,8 @@ var.nic_location
 ---
 
 # 🧠 Step 12 — इसका मतलब क्या है?
+
+```text
 
 Terraform पूछ रहा था:
 
@@ -435,7 +439,7 @@ Terraform waits for input
 GitHub Runner waits
       ↓
 Workflow remains Running
-
+```
 ---
 
 # 🚨 Step 13 — सबसे Important Lesson
@@ -454,6 +458,8 @@ terraform plan -input=false
 
 अगर required variable missing है:
 
+```text
+
 Pipeline
    ↓
 Terraform plan
@@ -461,6 +467,8 @@ Terraform plan
 Missing variable
    ↓
 Immediate failure ❌
+
+```
 
 यह अच्छा है।
 
@@ -485,6 +493,8 @@ Use करें।
 
 अब:
 
+```text
+
 Missing variable
       ↓
 No interactive prompt
@@ -492,7 +502,7 @@ No interactive prompt
 Terraform exits
       ↓
 GitHub Actions = FAILED
-
+```
 
 # 🔐 Step 15 — Azure Authentication Error
 
@@ -542,7 +552,11 @@ az login
 
 available नहीं होता।
 
+---
+
 # 🏗️ Step 17 — Correct Architecture
+
+```text
 
 हम eventually use करेंगे:
 
@@ -563,6 +577,7 @@ Azure Subscription
       │
       ▼
 Terraform
+```
 
 इसमें:
 
@@ -575,6 +590,8 @@ Terraform
 ---
 
 # 🔍 Step 18 — Pipeline Logs कैसे पढ़ें?
+
+```text
 
 GitHub Actions में:
 
@@ -593,6 +610,9 @@ Step
 Logs
 
 हर step का log पढ़ना चाहिए।
+```
+
+---
 
 # 📊 Step 19 — Setup Job में क्या देखना है?
 
@@ -613,6 +633,8 @@ GITHUB_TOKEN Permissions
 कौन-सा OS?
 
 कौन-सी permissions?
+
+---
 
 # 🔎 Step 20 — Checkout Repository
 
@@ -708,6 +730,8 @@ Subdirectories
 
 सब check होंगे।
 
+---
+
 # 📦 Step 23 — Terraform Init
 
 Command:
@@ -768,6 +792,7 @@ CI/CD
        ↓
 Consistent Provider Version
 
+---
 
 # ✅ Step 25 — Terraform Validate
 
@@ -861,12 +886,15 @@ failed
 
 permission
 
+---
 
 # 🧠 Step 28 — First Real Error Rule
 
 Golden Rule:
 
 🔥 Log में सबसे नीचे दिखने वाला error हमेशा Root Cause नहीं होता।
+
+```text
 
 Example:
 
@@ -885,6 +913,7 @@ Error A
 समझो।
 
 क्योंकि B और C कभी-कभी A के consequences होते हैं।
+```
 
 ---
 
@@ -989,6 +1018,8 @@ SubscriptionNotFound
 
 हमारे project का target:
 
+```text
+
 GitHub
    │
    ▼
@@ -1005,6 +1036,7 @@ Service Principal
    │
    ▼
 Azure
+```
 
 ```text
 
@@ -1476,3 +1508,5 @@ Azure authentication क्यों fail हुई?
 🚀 From "Pipeline Failed" → "I Know Why It Failed"
 🛠️ Observe → Diagnose → Fix → Test → Automate
 </p> ```
+
+---
