@@ -567,9 +567,11 @@ FIX
 PIPELINE PASS
 
 🔥 This is DevOps.
+
 ---
 
 भाई, तेरे current log के हिसाब से **`fmt`, `init`, और `validate` तीनों successfully pass हुए हैं**। `plan` पर `var.nic_location` के कारण input मांग रहा है; अगला practical step इसी को **GitHub-safe तरीके से variable/secrets handling** के साथ solve करना होगा।
+
 ---
 
 # 🛑 पहले: जो 5 घंटे से pipeline चल रही है उसे बंद करो
@@ -712,6 +714,7 @@ Read Repository
 यहाँ principle है:
 
 🔐 जितनी permission जरूरी है, उतनी ही दो।
+
 ---
 
 # 🟢 STEP 14 — Checkout Repository
@@ -803,6 +806,7 @@ git log -1 --format=%H
 इसका मतलब pipeline exact commit पर काम कर रही है।
 
 🔥 यह बहुत important DevOps concept है।
+
 ---
 
 # 🟢 STEP 15 — Setup Terraform
@@ -1011,6 +1015,7 @@ Terraform Configuration
 terraform validate यह guarantee नहीं करता कि Azure में deployment definitely successful होगा।
 
 यह मुख्यतः configuration validity check करता है।
+
 ----
 
 # 🔴 STEP 19 — Terraform Plan
@@ -1128,6 +1133,7 @@ Azure
 ❌ Secret को terraform.tfvars में commit करना
 
 हम इसे proper तरीके से करेंगे।
+
 ---
 
 
@@ -1176,6 +1182,7 @@ Cancel workflow
 नई run अभी मत चलाना।
 
 पहले हम nic_location को सही तरीके से handle करेंगे।
+
 ---
 
 # ℹ️ GitHub का दूसरा Message
@@ -1553,6 +1560,7 @@ Select:
 GitHub Actions deploying Azure resources
 
 यह option GitHub Actions के OIDC authentication के लिए है।
+
 ---
 
 # 🌐 11. Issuer
@@ -1564,6 +1572,24 @@ https://token.actions.githubusercontent.com
 रहेगा।
 
 यह GitHub का OIDC token issuer है।
+
+```text
+
+Flow:
+
+GitHub Actions
+      │
+      │ OIDC Token
+      ▼
+https://token.actions.githubusercontent.com
+      │
+      ▼
+Microsoft Entra ID
+
+👉 इसे change मत करना।
+
+```
+
 ---
 
 # 🏷️ 12. Organization
@@ -1573,6 +1599,81 @@ https://token.actions.githubusercontent.com
 हमारे repository के हिसाब से:
 
 Shrikant-Nadgaudaa
+⚠️ यहाँ पूरा URL नहीं डालना है।
+
+❌ गलत:
+
+https://github.com/Shrikant-Nadgaudaa
+
+❌ गलत:
+
+github.com/Shrikant-Nadgaudaa
+
+✅ सही:
+
+Shrikant-Nadgaudaa
+
+---
+
+# 🌐 Organization ID ⭐
+
+यह नया और important field है।
+
+यह GitHub Organization/User का immutable numeric ID है।
+
+मतलब:
+
+Organization Name
+        ↓
+Shrikant-Nadgaudaa
+
+लेकिन GitHub username/name future में change हो सकता है।
+
+इसलिए Microsoft का नया format:
+
+Organization Name
++
+Organization ID
+
+दोनों को identity में use करता है।
+
+तुम्हें क्या करना है?
+
+Azure screen में Organization भरने के बाद Organization ID field को select/enter करना है।
+
+अगर Azure तुम्हारे GitHub account को successfully connect कर पा रहा है तो यह information automatically resolve हो सकती है।
+
+अगर manually माँग रहा है, तो GitHub API/account details से तुम्हारा numeric Organization/User ID लेना पड़ेगा।
+
+⚠️ यह Azure Tenant ID नहीं है।
+
+मतलब:
+
+❌ Azure Tenant ID
+402a28d6-9ea1-462e-8338-dc09423ff348
+
+यहाँ नहीं डालना।
+
+यह GitHub Organization/User ID है।
+
+---
+
+# 🔎 GitHub User/Organization ID निकालना
+
+तुम्हारे case में GitHub account:
+
+Shrikant-Nadgaudaa
+
+PowerShell में यह command चला:
+
+curl.exe -s https://api.github.com/users/Shrikant-Nadgaudaa
+
+Output में यह देखना:
+
+"id": 123456789
+
+👉 यही GitHub User/Organization ID है।
+
 ---
 
 # 📦 13. Repository
@@ -1590,6 +1691,87 @@ https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone
 ✅ सही:
 
 comsolve-cyberex-azure-landing-zone
+
+---
+
+# Repository ID ⭐
+
+यह भी नया important field है।
+
+यह तुम्हारे GitHub repository का immutable numeric ID है।
+
+इसका purpose:
+
+Repository Name
+       +
+Repository ID
+
+को एक unique identity बनाना है।
+
+क्यों?
+
+क्योंकि repository का नाम बदला जा सकता है:
+
+old-name
+   ↓
+new-name
+
+लेकिन immutable repository ID same रहती है।
+
+इसलिए security के लिए Azure अब ID-based subject को prefer करता है।
+
+---
+
+# 🔎 Repository ID निकालना
+
+यह command चला:
+
+curl.exe -s https://api.github.com/repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone
+
+Output में:
+
+"id": 987654321
+
+👉 यही Repository ID है।
+
+⚠️ लेकिन एक important बात
+
+तुम्हारा account personal GitHub account है या actual GitHub Organization?
+
+अगर repository URL है:
+
+github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone
+
+तो Shrikant-Nadgaudaa personal user account होने की संभावना है।
+
+इसलिए पहले ऊपर वाला:
+
+curl.exe -s https://api.github.com/users/Shrikant-Nadgaudaa
+
+चलाकर देख।
+इसी PowerShell में यह command चला:
+
+curl.exe -s https://api.github.com/repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone
+
+Output में मुझे सिर्फ यह line चाहिए:
+
+"id": XXXXXXXX
+
+वह output यहाँ paste कर दे।
+
+---
+
+✅ तुम्हारी Exact Values
+Azure Field	क्या भरना है
+Issuer	https://token.actions.githubusercontent.com
+Organization	Shrikant-Nadgaudaa
+Organization ID	247837213xxxxx
+Repository	comsolve-cyberex-azure-landing-zone
+Repository ID	1338145312xxxxx
+Audience	api://AzureADTokenExchange
+
+तुम्हारा GitHub repository वास्तव में personal account के अंदर है, इसलिए यहाँ Shrikant-Nadgaudaa को organization field में GitHub का owner/account identifier मानकर Azure का नया immutable-subject format इस्तेमाल किया जा रहा है।
+
 ---
 
 # 🌿 14. Entity Type
@@ -1608,6 +1790,35 @@ Branch
 main
 
 या जिस branch को specifically Azure access देना हो।
+
+यह बहुत important है।
+
+यह decide करता है कि कौन-सा GitHub workflow identity Azure में trusted होगी।
+
+Dropdown में तुम्हें options दिखाई देंगे।
+
+हमारे use-case में initially ध्यान देना है:
+
+Branch
+
+अगर तुम्हारा workflow किसी specific branch से Azure access करेगा।
+
+लेकिन हमारे project में:
+
+push:
+  branches:
+    - "feature/**"
+
+
+pull_request:
+  branches:
+    - main
+
+है।
+
+इसलिए एक ही Federated Credential में हर possible branch को blindly trust करना security-wise अच्छा नहीं है।
+
+---
 
 # ⚠️ 15. Feature Branch के लिए Important Concept
 
@@ -1650,21 +1861,209 @@ Repository
 Branch / Entity
 
 को restrict करना security के लिए बेहतर है।
+
+```text
+
+🔐 Recommended Learning Setup
+
+अभी तुम्हारे project में हम पहले एक dedicated branch रख सकते हैं:
+
+feature/terraform-ci
+
+और Federated Credential को उसी branch तक सीमित रख सकते हैं।
+
+फिर बाद में Phase में:
+
+main
+
+के लिए अलग Federated Credential बनाएँगे।
+
+यह ज्यादा साफ और secure architecture है:
+
+                    GitHub
+                       │
+             ┌─────────┴─────────┐
+             │                   │
+      feature/terraform-ci       main
+             │                   │
+             ▼                   ▼
+       FIC - CI           FIC - Deployment
+             │                   │
+             ▼                   ▼
+        Terraform CI       Terraform Apply
+             │                   │
+             └─────────┬─────────┘
+                       ▼
+                Azure Subscription
+
+
+
+💡 क्यों 2 FIC?
+
+क्योंकि:
+
+CI identity
+
+Terraform fmt
+Terraform init
+Terraform validate
+Terraform plan
+
+और Deployment identity
+
+Terraform apply
+
+एक ही trust boundary में रखना security की दृष्टि से अच्छा नहीं है।
+
+📝 Credential Details
+Name
+github-actions-comsolve-terraform-ci
+Description
+OIDC trust for GitHub Actions Terraform CI validation and planning
+Audience
+api://AzureADTokenExchange
+
+
+⭐ एक बहुत जरूरी correction
+
+भाई, Organization ID और Repository ID मिलने का मतलब यह नहीं है कि हमें अब Client Secret बनाना है।
+
+हमारा target है:
+
+GitHub
+   │
+   │ OIDC
+   ▼
+Microsoft Entra ID
+   │
+   │ Federated Credential
+   ▼
+Service Principal
+   │
+   ▼
+Azure
+
+इसमें:
+
+❌ Client Secret
+❌ Password
+❌ Long-lived GitHub Secret
+
+की जरूरत नहीं पड़ेगी।
+
+यही GitHub Actions + Azure के लिए ज्यादा modern तरीका है। 🔥
+```
+---
+
+# 🌿 Subject Identifier ⭐⭐⭐
+
+यह सबसे important field है।
+
+Azure इसे automatically calculate करेगा।
+
+तुम्हारे screen पर नया format कुछ इस तरह होगा:
+
+repo:{Organization}@{Organization ID}/{Repository}@{Repository ID}:{Entity}
+
+Example structure:
+
+repo:Shrikant-Nadgaudaa@123456789/comsolve-cyberex-azure-landing-zone@987654321:ref:refs/heads/main
+
+⚠️ ऊपर के numeric IDs सिर्फ example हैं।
+
+अपने Azure screen में जो Subject Identifier automatically generate हो रहा है, वही use करना है।
+
+इसे manually अनुमान लगाकर मत लिखना।
+
+---
+
+# 🌿🔥  Entity Type का practical example ⭐⭐⭐
+
+अगर:
+
+```text
+
+Entity Type = Branch
+Branch = main
+
+तो subject conceptually होगा:
+
+GitHub Organization
+        +
+Organization ID
+        +
+Repository
+        +
+Repository ID
+        +
+main branch
+
+इसका मतलब:
+
+केवल उस repository की main branch से आने वाली GitHub OIDC identity Azure में इस application के लिए trusted होगी।
+
+🔥 यही security है।
+```
+
 ---
 
 # 📝 16. Credential Name
 
 Example:
 
-github-actions-terraform
+github-actions-terraform  /  github-actions-comsolve-terraform
 
-Description:
+या:
 
-OIDC trust for GitHub Actions Terraform automation
+github-actions-terraform-ci
+
+मैं recommend करूँगा:
+
+github-actions-comsolve-terraform
+
+Description
+
+यह डाल:
+
+OIDC trust for GitHub Actions Terraform CI/CD automation
+
+या थोड़ा detailed:
+
+Federated OIDC trust between GitHub Actions and Azure for Terraform CI/CD automation
+
+मैं दूसरा recommend करूँगा।
 
 Audience:
 
+यह:
+
 api://AzureADTokenExchange
+
+रहने दो।
+
+इसका मतलब क्या है?
+
+GitHub का OIDC token Azure Entra ID को दिया जाएगा और Azure उसे token exchange के लिए use करेगा।
+
+```text
+
+Flow:
+
+GitHub OIDC Token
+       │
+       ▼
+Microsoft Entra ID
+       │
+       │ Token Exchange
+       ▼
+Azure Access Token
+       │
+       ▼
+Terraform
+
+👉 इसे normally change मत करना।
+```
+
 ---
 
 # 🔐 17. OIDC Trust का मतलब
@@ -1691,6 +2090,7 @@ Service Principal
        │
        ▼
 Azure Subscription
+
 ---
 
 # 🐙 18. GitHub Workflow में Azure Login
@@ -1718,9 +2118,10 @@ Password ❌
 नहीं है।
 
 हम OIDC authentication use कर रहे हैं।
+
 ---
 
-🔑 19. GitHub Repository Variables / Secrets
+# 🔑 19. GitHub Repository Variables / Secrets
 
 GitHub Repository में:
 
@@ -1739,6 +2140,62 @@ AZURE_TENANT_ID
 AZURE_SUBSCRIPTION_ID
 
 इन values को workflow में direct hard-code करने के बजाय GitHub configuration से reference करना बेहतर है।
+
+---
+
+# 🏗️ Final Trust Model
+
+```text
+
+अब हमारी architecture और ज्यादा secure हो गई:
+
+                    🐙 GitHub
+                       │
+                       │
+                OIDC Identity
+                       │
+                       ▼
+          ┌──────────────────────┐
+          │ Organization         │
+          │ Organization ID      │
+          │ Repository           │
+          │ Repository ID        │
+          │ Entity / Branch      │
+          └──────────┬───────────┘
+                     │
+                     ▼
+             Federated Credential
+                     │
+                     ▼
+              Microsoft Entra ID
+                     │
+                     ▼
+              Service Principal
+                     │
+                 Contributor
+                     │
+                     ▼
+              Azure Subscription
+                     │
+                     ▼
+                 Terraform
+🎯 Simple language में:
+
+GitHub कहता है:
+
+"मैं इस particular repository/identity से आया हूँ।"
+
+Azure कहता है:
+
+"मैं Organization + Repository + immutable IDs + Entity को verify करता हूँ।"
+
+Match हुआ: ✅ Authentication
+
+Match नहीं हुआ: ❌ Access denied
+
+यही OIDC Federation का पूरा खेल है भाई। 🔥
+```
+
 ---
 
 # 🔥 20. Azure Login के बाद Terraform
@@ -1808,6 +2265,7 @@ Terraform interactive input के लिए runner को wait नहीं क
 5 घंटे तक wait
 
 नहीं करेगी। 😄
+
 ---
 
 # 🔍 23. Successful Pipeline का Expected Flow
@@ -1836,6 +2294,7 @@ GitHub Actions में:
 
 
 🎉 Pipeline Successful
+
 ---
 
 # 🧠 24. अभी तक हमने क्या सीख लिया?
@@ -1863,6 +2322,7 @@ GitHub Actions
    │
    ▼
 Azure
+
 ---
 
 # 🛡️ 25. Security Architecture
@@ -1997,6 +2457,7 @@ Service Principal
 Azure RBAC
 
 का उपयोग करके secure authentication बना सकते हैं।
+
 ---
 
 # 🧠 याद रखने वाला Golden Rule
@@ -2018,6 +2479,7 @@ Azure = Infrastructure
 
 
 🔥 यही पूरा GitHub Actions + Azure Terraform CI/CD architecture का foundation है।
+
 ---
 
 # 🚀 Next Phase
