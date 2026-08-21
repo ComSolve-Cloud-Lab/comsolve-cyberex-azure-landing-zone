@@ -61,6 +61,125 @@
 
 ---
 
+# 🧩 Step 00 — Complete Terraform CI YAML
+
+अब हमारी complete workflow इस प्रकार होगी:
+
+```text
+
+# ==============================================================================
+      # ------------------------------------------------------------------------
+
+
+      - name: Checkout Repository
+
+
+        uses: actions/checkout@v4
+
+
+      # ------------------------------------------------------------------------
+      # Step 02 — Azure OIDC Login
+      # ------------------------------------------------------------------------
+
+
+      - name: Azure Login
+
+
+        uses: azure/login@v2
+
+
+        with:
+
+
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+
+
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+
+
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+
+      # ------------------------------------------------------------------------
+      # Step 03 — Verify Azure Login
+      # ------------------------------------------------------------------------
+
+
+      - name: Verify Azure Login
+
+
+        run: az account show
+
+
+      # ------------------------------------------------------------------------
+      # Step 04 — Verify Azure Subscription
+      # ------------------------------------------------------------------------
+
+
+      - name: Verify Azure Subscription
+
+
+        run: az account show --query "{subscription:id, tenant:tenantId, user:user.name}"
+
+
+      # ------------------------------------------------------------------------
+      # Step 05 — Setup Terraform
+      # ------------------------------------------------------------------------
+
+
+      - name: Setup Terraform
+
+
+        uses: hashicorp/setup-terraform@v3
+
+
+      # ------------------------------------------------------------------------
+      # Step 06 — Terraform Format Check
+      # ------------------------------------------------------------------------
+
+
+      - name: Terraform Format Check
+
+
+        run: terraform fmt -check -recursive
+
+
+      # ------------------------------------------------------------------------
+      # Step 07 — Terraform Init
+      # ------------------------------------------------------------------------
+
+
+      - name: Terraform Init
+
+
+        run: terraform init
+
+
+      # ------------------------------------------------------------------------
+      # Step 08 — Terraform Validate
+      # ------------------------------------------------------------------------
+
+
+      - name: Terraform Validate
+
+
+        run: terraform validate
+
+
+      # ------------------------------------------------------------------------
+      # Step 09 — Terraform Plan
+      # ------------------------------------------------------------------------
+
+
+      - name: Terraform Plan
+
+
+        run: terraform plan -input=false
+
+```
+
+---
+
 # 🐙 Step 01 — GitHub Repository Settings खोलें
 
 ```text
@@ -108,11 +227,11 @@ New repository variable
 
 - Variable Name	Value
 
-- AZURE_CLIENT_ID	App Registration → Application (client) ID
+- AZURE_CLIENT_ID : ------->	App Registration → Application (client) ID
 
-- AZURE_TENANT_ID	Azure → Directory (tenant) ID
+- AZURE_TENANT_ID : ------->    Azure → Directory (tenant) ID
 
-- AZURE_SUBSCRIPTION_ID	Azure Subscription ID
+- AZURE_SUBSCRIPTION_ID  : -------->	Azure Subscription ID
 
 
 
@@ -781,6 +900,8 @@ Terraform
 
 Phase 11 complete होने के बाद हमारा authentication flow:
 
+```text
+
 Developer
     │
     │ git push
@@ -807,7 +928,8 @@ Terraform
     │
     ▼
 Terraform Plan
-🔐 Security Rules
+```
+***🔐 Security Rules***
 
 ⚠️ इन rules को हमेशा follow करें:
 
