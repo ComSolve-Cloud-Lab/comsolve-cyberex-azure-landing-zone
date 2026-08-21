@@ -255,6 +255,8 @@ Success! The configuration is valid.
 
 # ⭐ Lesson
 
+```text
+
 Terraform module का output name और parent module का reference बिल्कुल match होना चाहिए।
 
 Example:
@@ -269,6 +271,7 @@ Parent Module
      │
      ▼
 module.subnets.subnet_ids
+```
 
 ---
 
@@ -296,15 +299,19 @@ Git इस file को track नहीं कर रहा था।
 
 हमारे .gitignore में था:
 
+```text
+
 #==========================================
 #Terraform variable files
 #==========================================
-
+```
 
 *.tfvars
 *.tfvars.json
 
 इसका मतलब:
+
+```text
 
 *.tfvars
     ↓
@@ -317,6 +324,7 @@ Git ignore करेगा
 terraform.tfvars
 
 GitHub पर नहीं गई।
+```
 
 ---
 
@@ -403,6 +411,9 @@ Local machine पर हमारे पास:
 terraform.tfvars
 
 थी।
+```
+
+```text
 
 लेकिन GitHub Runner पर वह file मौजूद नहीं थी।
 
@@ -704,6 +715,8 @@ check करें।
 
 # 🎨 Step 22 — Terraform Format
 
+```text
+
 Command:
 
 terraform fmt -check -recursive
@@ -729,6 +742,7 @@ Modules
 Subdirectories
 
 सब check होंगे।
+```
 
 ---
 
@@ -784,6 +798,8 @@ Installing hashicorp/azurerm...
 
 इसका purpose:
 
+```text
+
 Developer Machine
        +
 GitHub Runner
@@ -791,6 +807,7 @@ GitHub Runner
 CI/CD
        ↓
 Consistent Provider Version
+```
 
 ---
 
@@ -1483,8 +1500,7 @@ Azure authentication क्यों fail हुई?
 
 
 # 🏁 Phase 10 Complete
-
-```text 
+ 
 
 हमने सीखा:
 ✅ NIC module error troubleshooting
@@ -1507,6 +1523,6 @@ Azure authentication क्यों fail हुई?
 <p align="center">
 🚀 From "Pipeline Failed" → "I Know Why It Failed"
 🛠️ Observe → Diagnose → Fix → Test → Automate
-</p> ```
+</p> 
 
 ---
