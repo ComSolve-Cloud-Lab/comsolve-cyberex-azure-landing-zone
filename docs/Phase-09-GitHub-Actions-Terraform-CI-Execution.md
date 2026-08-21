@@ -2091,6 +2091,17 @@ Service Principal
        ▼
 Azure Subscription
 
+✅ तुम्हारी Exact Values
+Azure Field	क्या भरना है
+Issuer	https://token.actions.githubusercontent.com
+Organization	Shrikant-Nadgaudaa
+Organization ID	247837213
+Repository	comsolve-cyberex-azure-landing-zone
+Repository ID	1338145312
+Audience	api://AzureADTokenExchange
+
+तुम्हारा GitHub repository वास्तव में personal account के अंदर है, इसलिए यहाँ Shrikant-Nadgaudaa को organization field में GitHub का owner/account identifier मानकर Azure का नया immutable-subject format इस्तेमाल किया जा रहा है।
+
 ---
 
 # 🐙 18. GitHub Workflow में Azure Login
@@ -2179,6 +2190,8 @@ AZURE_SUBSCRIPTION_ID
                      │
                      ▼
                  Terraform
+
+
 🎯 Simple language में:
 
 GitHub कहता है:
