@@ -81,6 +81,7 @@ Actions
 🔐 Secrets
 
 📦 Variables
+
 ---
 
 # 📦 Step 02 — Repository Variables बनाएं
@@ -138,6 +139,7 @@ Subscription ID
 ```text
 
 🔑 Client ID
+
 कौन-सी Azure Application authenticate करेगी?
 
 यह App Registration का:
@@ -268,25 +270,42 @@ repository को runner पर checkout कर सकता है।
 
 **🔐 id-token: write क्या करता है?**
 
+```text
+
 यह सबसे important permission है।
 
 id-token: write
        ↓
 GitHub Actions OIDC Token request कर सकता है
+```
 
 यही token Azure authentication में इस्तेमाल होगा।
+
 ---
 
 # 🔑 Step 05 — Azure Login Action Add करें
 
 Terraform commands से पहले Azure Login step रखें:
 
-- name: Azure Login
+```text
+
+ name: Azure Login
+
   uses: azure/login@v2
+
   with:
+
+
     client-id: ${{ vars.AZURE_CLIENT_ID }}
+
+
     tenant-id: ${{ vars.AZURE_TENANT_ID }}
+
+
     subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+```
+---
 
 **🧠 यहाँ क्या हो रहा है?**
 ```text
@@ -313,9 +332,14 @@ Azure Authentication
 Azure Login के तुरंत बाद temporary test step डालें:
 
 - name: Verify Azure Login
+
   run: az account show
 
 इससे GitHub Runner बताएगा कि वह किस Azure account/subscription से authenticated है।
+
+इसका purpose है verify करना कि GitHub Runner Azure से successfully authenticated है।
+
+Expected output में Azure account/subscription information दिखाई देगी।
 
 Expected:
 
@@ -323,7 +347,7 @@ Subscription
 Tenant
 User / Service Principal
 
-🎯 इसका purpose
+**🎯 इसका purpose**
 
 हम पहले यह verify कर रहे हैं:
 
@@ -345,6 +369,8 @@ SUCCESS
 
 # 🧪 Step 07 — Azure Subscription Verify करें
 
+```text
+
 और detailed verification के लिए:
 
 - name: Verify Azure Subscription
@@ -355,11 +381,18 @@ SUCCESS
 Subscription ID
 Tenant ID
 Authenticated Identity
-🏗️ Step 08 — Terraform Authentication समझें
+
+```
+
+---
+
+# 🏗️ Step 08 — Terraform Authentication समझें
 
 Azure Login successful होने के बाद Terraform AzureRM provider के जरिए Azure से communicate कर सकता है।
 
-Flow:
+Complete flow:
+
+```text
 
 GitHub Actions
       │
@@ -377,7 +410,10 @@ AzureRM Provider
       │
       ▼
 Azure Resources
-🧠 Important
+```
+
+***🧠 Important***
+```text
 
 Local machine पर हम normally:
 
@@ -385,26 +421,36 @@ az login
 
 करते हैं।
 
-लेकिन GitHub Runner एक temporary machine है।
+```
+लेकिन GitHub Actions का Runner temporary environment होता है।
 
-इसलिए वहाँ manually:
+इसलिए:
 
-❌ az login
+```text
 
-नहीं करेंगे।
+❌ GitHub Runner पर manually az login नहीं
 
-हम use करेंगे:
+हमारा सही तरीका:
 
-GitHub OIDC
-     ↓
+GitHub Actions
+      ↓
+OIDC
+      ↓
 Microsoft Entra ID
-     ↓
+      ↓
 azure/login@v2
-     ↓
+      ↓
 Terraform
-🔍 Step 09 — GitHub Actions में Pipeline Check करें
+
+```
+
+---
+
+# 🔍 Step 09 — GitHub Actions में Pipeline Check करें
 
 अब GitHub पर जाएँ:
+
+```text
 
 Repository
    ↓
@@ -413,6 +459,7 @@ Actions
 Terraform CI
    ↓
 Latest Workflow Run
+```
 
 यहाँ हर step का status देखेंगे:
 
@@ -435,7 +482,21 @@ Latest Workflow Run
 
 
 ✓ Terraform Plan
-🎯 हमारा target
+
+***🎯 Pipeline में क्या देखना है?***
+
+हर step के सामने:
+
+**🟢 Success**
+**🔴 Failed**
+**🟡 Running**
+
+देखें।
+
+विशेष रूप से:
+
+```text
+
 Azure Login
      ↓
      PASS
@@ -454,7 +515,11 @@ Terraform Validate
 Terraform Plan
      ↓
      PASS
-🚨 Step 10 — Authentication Failure Troubleshooting
+```
+---
+
+
+# 🚨 Step 10 — Authentication Failure Troubleshooting
 
 अगर यह error आए:
 
@@ -468,6 +533,8 @@ No matching federated identity record found
 
 Path:
 
+```text
+
 Azure Portal
    ↓
 Microsoft Entra ID
@@ -479,26 +546,79 @@ Shrikant_Nadgauda_GitHub_Actions
 Certificates & secrets
    ↓
 Federated credentials
+```
 
-इन values को verify करें:
+**इन values को verify करें:**
 
 Issuer
+
 Organization
+
 Organization ID
+
 Repository
+
 Repository ID
+
 Entity Type
+
 Branch
+
 Audience
-🚨 Step 11 — az login Error को समझें
+
+
+---
+
+# 🔎 Step 11 — Federated Credential कैसे Match होता है?
+
+GitHub Actions Azure को identity information देता है।
+
+Azure Federated Credential उस information को verify करता है।
+
+```text
+
+Conceptually:
+
+GitHub
+  │
+  ├── Organization
+  ├── Repository
+  ├── Branch
+  ├── Issuer
+  └── Audience
+        │
+        ▼
+Microsoft Entra ID
+        │
+        ▼
+Federated Credential
+        │
+        ├── Match ✅
+        │
+        └── No Match ❌
+
+अगर values match नहीं हुईं:
+
+❌ Azure Authentication Failed
+
+```
+
+---
+
+# 🚨 Step 12 — az login Error को समझें
 
 अगर GitHub Actions में यह error आए:
 
+```text
+
 Please run 'az login' to setup account.
+```
 
 तो तुरंत अपने laptop पर az login करने की जरूरत नहीं है।
 
 पहले check करें:
+
+```text
 
 GitHub Workflow
        ↓
@@ -513,13 +633,21 @@ Tenant ID सही है?
 Subscription ID सही है?
        ↓
 Federated Credential सही है?
-❌ गलत Flow
+```
+
+***❌ गलत Flow***
+
+```text
+
 GitHub Runner
       ↓
 terraform plan
       ↓
 az login required ❌
-✅ सही Flow
+```
+
+***✅ सही Flow***
+```text
 GitHub Runner
       ↓
 OIDC Token
@@ -531,9 +659,14 @@ Azure Authentication
 terraform plan
       ↓
 SUCCESS ✅
-🔐 Step 12 — Client Secret क्यों नहीं इस्तेमाल कर रहे?
+
+``` 
+
+# 🔐Client Secret क्यों नहीं इस्तेमाल कर रहे?
 
 Traditional authentication:
+
+```text
 
 GitHub
    │
@@ -541,8 +674,11 @@ GitHub
    ├── Tenant ID
    ├── Subscription ID
    └── Client Secret 🔑
+```
 
 इसमें long-lived secret manage करना पड़ता है।
+
+```text
 
 हमारा architecture:
 
@@ -562,15 +698,32 @@ Temporary Azure Authentication
    │
    ▼
 Terraform
-🛡️ Benefits
+```
+
+---
+
+# 🛡️ OIDC के Benefits
+
+
 ✅ No Client Secret
+
 ✅ No Password
+
 ✅ No long-lived credential
+
 ✅ No secret rotation
+
 ✅ Branch-based trust
+
 ✅ Repository-based trust
+
 ✅ Better CI/CD security
-🏆 Phase 11 — Final Architecture
+
+---
+
+# 🏆 Phase 11 — Final Architecture
+
+```text
                     🐙 GitHub
                        │
                        ▼
@@ -599,16 +752,162 @@ Terraform
              ▼         ▼         ▼
             RG        VNet       NIC
 ```
-🔐 सबसे important rule
+
+***🔐 सबसे important rule***
+
 ❌ Client Secret GitHub Repository में नहीं
+
 ❌ Password code में नहीं
+
 ❌ Azure credentials Terraform code में नहीं
+
 ❌ Secrets को Git में commit नहीं करना
+
 ✅ GitHub OIDC
+
 ✅ Federated Credential
+
 ✅ Repository Variables
+
 ✅ Branch-based trust
+
 ✅ Temporary authentication
 
-🎯 Phase 11 का लक्ष्य: GitHub Actions को secure, secretless और branch-aware तरीके से Azure से authenticate करना।
+***🎯 Phase 11 का लक्ष्य: GitHub Actions को secure, secretless और branch-aware तरीके से Azure से authenticate करना।***
+
 ---
+
+🚀 Phase 11 Final Goal
+
+Phase 11 complete होने के बाद हमारा authentication flow:
+
+Developer
+    │
+    │ git push
+    ▼
+Feature Branch
+    │
+    ▼
+GitHub Actions
+    │
+    ▼
+OIDC Token
+    │
+    ▼
+Microsoft Entra ID
+    │
+    ▼
+Federated Credential
+    │
+    ▼
+Azure Login
+    │
+    ▼
+Terraform
+    │
+    ▼
+Terraform Plan
+🔐 Security Rules
+
+⚠️ इन rules को हमेशा follow करें:
+
+❌ Client Secret GitHub Repository में commit नहीं करना
+
+
+❌ Password code में नहीं रखना
+
+
+❌ Azure credentials Terraform code में hard-code नहीं करना
+
+
+❌ Secrets को Git में commit नहीं करना
+
+
+❌ terraform.tfvars में secrets रखकर GitHub पर push नहीं करना
+
+इसके बजाय:
+
+✅ GitHub OIDC
+
+
+✅ Federated Credential
+
+
+✅ GitHub Repository Variables
+
+
+✅ Branch-based Trust
+
+
+✅ Short-lived Authentication
+
+📚 What We Learned
+
+इस Phase में हमने सीखा:
+
+🔐 OIDC क्या है
+
+🔑 Federated Credential क्या करता है
+
+🐙 GitHub Actions Azure से कैसे authenticate करता है
+
+📦 GitHub Repository Variables क्या हैं
+
+🔒 GitHub Secrets कब इस्तेमाल करने चाहिए
+
+⚙️ azure/login@v2 कैसे काम करता है
+
+🪪 id-token: write क्यों जरूरी है
+
+☁️ Azure Login को Terraform के साथ कैसे use करते हैं
+
+🚨 Authentication failures को कैसे troubleshoot करते हैं
+
+🛡️ Client Secret के बिना secure CI/CD authentication
+
+---
+# 🔜 Next Phase
+# 🚀 Phase 12 — Secure Terraform Plan Pipeline
+
+अगले Phase में हम बनाएँगे:
+
+```text
+
+Feature Branch
+      ↓
+GitHub Actions
+      ↓
+OIDC Login
+      ↓
+Terraform fmt
+      ↓
+Terraform init
+      ↓
+Terraform validate
+      ↓
+Security Scan
+      ↓
+Terraform Plan
+      ↓
+Plan Artifact
+      ↓
+Pull Request Review
+
+इसके बाद deployment flow:
+
+main
+  ↓
+Approval
+  ↓
+Terraform Apply
+  ↓
+☁️ Azure Infrastructure
+```
+
+
+<p align="center">
+🔐 Secure Authentication → 🏗️ Terraform → ☁️ Azure
+
+Infrastructure as Code • Secure CI/CD • GitHub OIDC
+
+</p> ```
