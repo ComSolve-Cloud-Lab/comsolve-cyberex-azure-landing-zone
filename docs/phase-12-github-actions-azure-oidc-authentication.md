@@ -702,3 +702,40 @@ Missing Variable
 बस यह verify करना।
 
 अगले चरण में इसी foundation के ऊपर security scanning + Plan artifact + PR checks + approval + main branch Apply बनाएँगे।
+
+----
+
+# 🎓 What We Learned
+
+इस Phase में हमने सीखा:
+
+🔐 GitHub OIDC Authentication
+
+🪪 Federated Identity Credential
+
+👤 Azure App Registration
+
+🔑 Azure Login Action
+
+📦 GitHub Repository Variables
+
+🛡️ id-token: write
+
+🧪 Azure Authentication Verification
+
+☁️ Azure Subscription Verification
+
+🏗️ Terraform CI Integration
+
+✨ Terraform Format Check
+
+📦 Terraform Init
+
+✅ Terraform Validate
+
+📋 Terraform Plan
+
+🛑 terraform plan -input=false
+
+🔒 Passwordless Azure Authentication
+---
