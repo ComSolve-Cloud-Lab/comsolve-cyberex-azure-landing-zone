@@ -129,6 +129,25 @@ jobs:
 
       - name: Terraform Validate
         run: terraform validate
+      
+      # ------------------------------------------------------------------------
+      # Checkov Security Scan
+      # ------------------------------------------------------------------------
+      - name: Checkov Security Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: terraform
+          framework: terraform
+
+
+      # ------------------------------------------------------------------------
+      # Trivy Security Scan
+      # ------------------------------------------------------------------------
+      - name: Trivy IaC Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: terraform
 
       # ------------------------------------------------------------------------
       # Terraform Plan
