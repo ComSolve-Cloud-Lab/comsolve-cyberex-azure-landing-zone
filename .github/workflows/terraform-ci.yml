@@ -103,35 +103,35 @@ jobs:
         run: terraform fmt -check -recursive
 
       # ------------------------------------------------------------------------
-      # Setup Terraform
+      # Step 05 Setup Terraform
       # ------------------------------------------------------------------------
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       # ------------------------------------------------------------------------
-      # Terraform Format Check
+      # Step 06 — Terraform Format Check
       # ------------------------------------------------------------------------
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
       # ------------------------------------------------------------------------
-      # Terraform Init
+      # Step 07 — Terraform Init
       # ------------------------------------------------------------------------
 
       - name: Terraform Init
         run: terraform init
 
       # ------------------------------------------------------------------------
-      # Terraform Validate
+      # Step 08 — Terraform Validate
       # ------------------------------------------------------------------------
 
       - name: Terraform Validate
         run: terraform validate
       
       # ------------------------------------------------------------------------
-      # Checkov Security Scan
+      # Step 09 — Checkov Security Scan / Gate
       # ------------------------------------------------------------------------
       - name: Checkov Security Scan
         uses: bridgecrewio/checkov-action@master
@@ -141,16 +141,18 @@ jobs:
 
 
       # ------------------------------------------------------------------------
-      # Trivy Security Scan
+      # Step 10 — Trivy Security Scan /Gate
       # ------------------------------------------------------------------------
       - name: Trivy IaC Security Scan
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: config
           scan-ref: terraform
+          severity: HIGH,CRITICAL
+          exit-code: 1
 
       # ------------------------------------------------------------------------
-      # Terraform Plan
+      # Step 11 — Terraform Plan
       # ------------------------------------------------------------------------
 
       - name: Terraform Plan
