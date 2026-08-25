@@ -1,8 +1,8 @@
-### 📂 Step 1: Google Drive में फोल्डर बनाएं, फोटो अपलोड करें और Public Link निकालें
+# 📂 Step 1: Google Drive में फोल्डर बनाएं, फोटो अपलोड करें और Public Link निकालें
 
 अगर आपको Google Drive यूज़ करना नहीं आता, तो बस इन आसान स्टेप्स को फॉलो करें:
 
-#### 1️⃣ Google Drive खोलें और नया फोल्डर बनाएं:
+# 1️⃣ Google Drive खोलें और नया फोल्डर बनाएं:
 
 * अपने ब्राउज़र (Chrome) में **[drive.google.com](https://drive.google.com)** खोलें।
 
@@ -12,7 +12,9 @@
 
 * फोल्डर का नाम `Signature Images` रखें और **`Create`** पर क्लिक कर दें।
 
-#### 2️⃣ फोल्डर के अंदर फोटो अपलोड करें:
+---
+
+# 2️⃣ फोल्डर के अंदर फोटो अपलोड करें:
 
 * अभी-अभी बनाए गए `Signature Images` फोल्डर पर डबल-क्लिक करके उसे खोलें।
 
@@ -22,7 +24,9 @@
 
 * अपने कंप्यूटर/मोबाइल से अपनी पासपोर्ट साइज़ फोटो सेलेक्ट करें और **Open / Upload** कर दें।
 
-#### 3️⃣ फोटो को पब्लिक (Shareable) बनाएं:
+---
+
+# 3️⃣ फोटो को पब्लिक (Shareable) बनाएं:
 
 > ⚠️ **ध्यान दें:** By default Drive की फोटो प्राइवेट होती है। इसे पब्लिक करना ज़रूरी है ताकि ईमेल पाने वाले को फोटो दिखे।
 
@@ -34,7 +38,9 @@
 
 * इसके बाद नीचे **`📋 Copy link`** बटन पर क्लिक करें और **`Done`** कर दें।
 
-#### 4️⃣ Direct Image Link (HTML URL) बनाएं:
+---
+
+# 4️⃣ Direct Image Link (HTML URL) बनाएं:
 
 आपकी कॉपी की गई लिंक ऐसी दिखेगी:
 
@@ -47,10 +53,9 @@
 
 *(यही डायरेक्ट URL आपको अपने HTML कोड के फोटो टैग में यूज़ करना है!)*
 
+---
 
-
-
-### step 2 🛠️ Live Online Editor, Image & Icon Customization & Explanation
+# step 2 🛠️ Live Online Editor, Image & Icon Customization & Explanation
 
 Easy and best way to edit file
 
@@ -58,7 +63,7 @@ Easy and best way to edit file
 
 ---
 
-#### 1️⃣ कोड को कहाँ खोलें और लाइव एडिट करें? (बिना किसी इंस्टॉल के)
+# 1️⃣ कोड को कहाँ खोलें और लाइव एडिट करें? (बिना किसी इंस्टॉल के)
 
 1. अपने ब्राउज़र (Chrome) में मुफ़्त ऑनलाइन टूल **[htmledit.squarefree.com](https://htmledit.squarefree.com/)** खोलें।
 
@@ -70,7 +75,7 @@ Easy and best way to edit file
 
 ---
 
-#### 2️⃣ फोटो, नाम और आइकन्स के लिंक्स कैसे बदलें?
+# 2️⃣ फोटो, नाम और आइकन्स के लिंक्स कैसे बदलें?
 
 ##### 🖼️ A. अपनी पासपोर्ट साइज़ फोटो का लिंक बदलें
 
@@ -91,13 +96,12 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 ### OR
 ---
 
-### 🛠️ Step 2.1: HTML Code Structure & Complete Explanation
+# 🛠️ Step 2.1: HTML Code Structure & Complete Explanation
 
 इस स्टेप में हम समझेंगे कि कोड कैसे काम करता है, इसे कहाँ एडिट करना है और अपनी पसंद के आइकन्स (Icons) कैसे लगाने हैं।
 
----
 
-#### 1️⃣ HTML कोड को कहाँ खोलें और एडिट करें? (How to Edit)
+### 1️⃣ HTML कोड को कहाँ खोलें और एडिट करें? (How to Edit)
 
 1. अपने सिस्टम में **VS Code** या **Notepad** खोलें।
 
@@ -198,11 +202,11 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 ```
 ---
 
-#### 2️⃣ Code Explanation (शब्द-दर-शब्द आसान भाषा में)
+# 2️⃣ Code Explanation (शब्द-दर-शब्द आसान भाषा में)
 
 यहाँ कोड के हर टैग और CSS प्रॉपर्टी का गहराई से मतलब समझाया गया है:
 
-##### **A. Main Container (`<div>` & Text Styling)**
+# **A. Main Container (`<div>` & Text Styling)**
 `<div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 14px; color: #111111; line-height: 1.5;">`
 
 * **`<div>`**: यह एक ब्लॉक (कंटेनर) बनाता है जो पूरे सिग्नेचर को अपने अंदर रखता है।
@@ -217,7 +221,7 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 ---
 
-##### **B. Layout Table Structure (`<table>`, `<tr>`, `<td>`)**
+# **B. Layout Table Structure (`<table>`, `<tr>`, `<td>`)**
 `<table style="border-collapse: collapse;">`
 
 * **`<table>`**: ईमेल क्लाइंट्स (Gmail, Outlook) में लेआउट को हिलने से बचाने के लिए टेबल का उपयोग सबसे सुरक्षित होता है।
@@ -236,7 +240,7 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 ---
 
-##### **C. Profile Photo Box Styling (`<div>` & `<img>`)**
+# **C. Profile Photo Box Styling (`<div>` & `<img>`)**
 
 `<div style="width: 90px; height: 90px; border-radius: 50%; overflow: hidden; border: 2.5px solid #0077b5; box-shadow: 0 3px 6px rgba(0,0,0,0.18);">`
 `<img src="..." style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;" />`
@@ -257,7 +261,7 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 ---
 
-##### **D. Name, Title & DevOps Symbol**
+# **D. Name, Title & DevOps Symbol**
 `<div style="font-size: 18px; font-weight: bold; color: #111111; letter-spacing: 0.3px;">`
 
 * **`font-weight: bold / 700`**: टेक्स्ट को मोटा (Bold) बनाता है।
@@ -270,7 +274,7 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 ---
 
-##### **E. Links & Interactive Buttons (`<a>` Tag)**
+# **E. Links & Interactive Buttons (`<a>` Tag)**
 
 `<a href="mailto:shri.gaudaa@gmail.com" style="color: #0066cc; text-decoration: underline;">`
 `<a href="https://..." target="_blank" title="LinkedIn Profile">`
@@ -290,9 +294,9 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 ---
 
-#### 3️⃣ नए Icons कहाँ से लाएं और Link कैसे बदलें?
+# 3️⃣ नए Icons कहाँ से लाएं और Link कैसे बदलें?
 
-##### 🔹 Step A: Icon डाउनलोड / लिंक कॉपी कहाँ से करें?
+# 🔹 Step A: Icon डाउनलोड / लिंक कॉपी कहाँ से करें?
 
 1. अपने ब्राउज़र में **[Flaticon.com](https://www.flaticon.com/)** वेबसाइट खोलें।
 
@@ -300,7 +304,9 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 3. जो आइकॉन पसंद आए, उस पर **Right-Click** 🖱️ करें और **`Copy Image Address`** (या *Copy Image Link*) सेलेक्ट करें।
 
-##### 🔹 Step B: Code में Icon Link कैसे बदलें?
+---
+
+# 🔹 Step B: Code में Icon Link कैसे बदलें?
 
 
 कोड में जिस आइकॉन को बदलना है, उसके `<img src="..." />` वाले हिस्से को ढूंढें और `src` के अंदर का URL रिप्लेस कर दें।
@@ -321,56 +327,185 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 ---
 
+# 🎨 B. नए Icons कहाँ से लाएं?
 
-### 📩 Step 3: Gmail में नया Signature कैसे बनाएं या पुराना कैसे बदलें?
+* अपने ब्राउज़र में मुफ़्त आइकॉन वेबसाइट Flaticon.com खोलें।
+
+- सर्च बार में अपने पसंदीदा टूल का नाम लिखें (जैसे: docker, kubernetes, aws, python, devops, git).
+
+- जो आइकॉन पसंद आए, उस पर Right-Click 🖱️ करें और Copy Image Address (या Copy Image Link) पर क्लिक कर लें।
+
+---
+
+# 🔄 C. Tech Stack Icons के लिंक कैसे बदलें?
+
+- Flaticon से कॉपी की गई इमेज लिंक को कोड के सही src="..." में पेस्ट करें:
+
+### 1. Designation के आगे वाला DevOps Symbol बदलें:
+
+HTML
+
+
+<!-- 🔴 Designation के आगे वाला DevOps Icon -->
+<img src="यहाँ_FLATICON_की_LINK_डालें" width="20" height="20" alt="DevOps" style="vertical-align: middle; margin-right: 6px;" />
+
+### 2. Niche के Tech Icons (Docker, K8s, Git...) बदलें:
+
+HTML
+
+
+<!-- 🔴 Docker Icon -->
+<span title="Docker" style="margin-right: 8px;">
+  <img src="यहाँ_DOCKER_FLATICON_LINK_डालें" width="20" height="20" alt="Docker" style="vertical-align: middle;" />
+</span>
+
+<!-- 🔴 Kubernetes Icon -->
+<span title="Kubernetes" style="margin-right: 8px;">
+  <img src="यहाँ_K8S_FLATICON_LINK_डालें" width="20" height="20" alt="Kubernetes" style="vertical-align: middle;" />
+</span>
+
+> # ⚠️ सुरक्षा टिप्स:
+
+alt="LinkedIn" और alt="GitHub" वाले <a href="..."> टैग में सिर्फ अपने प्रोफाइल की यूज़र लिंक बदलें (href="https://www.linkedin.com/in/YOUR_PROFILE").
+
+इनके आइकॉन की src="..." लिंक को न छेड़े, ताकि प्रोफाइल आइकन सही से दिखता रहे!
+
+---
+
+# 3️⃣ HTML Code Explanation (कोड की आसान भाषा में जानकारी)
+
+यहाँ समझाया गया है कि कोड की कौन सी लाइन क्या काम करती है:
+
+
+# 📌 1. Main Outer Box (<div>)
+HTML
+
+
+<div style="font-family: 'Segoe UI', Arial; font-size: 14px; color: #111111; line-height: 1.5;">
+font-family: टेक्स्ट की लिखावट का स्टाइल (Font Style) सेट करता है।
+
+- font-size: 14px: पूरे टेक्स्ट का साइज़ 14 पिक्सल रखता है।
+
+- color: #111111: टेक्स्ट का रंग गहरा काला (Professional Dark Black) रखता है।
+
+- line-height: 1.5: दो लाइनों के बीच सही गैप (अंतर) रखता है ताकि पढ़ने में आसानी हो।
+
+---
+
+# 📌 2. Table Layout (<table>, <tr>, <td>)
+HTML
+
+
+<table style="border-collapse: collapse;">
+<table>: ईमेल क्लाइंट्स (Gmail, Outlook) में लेआउट इधर-उधर न हिले, इसके लिए टेबल का इस्तेमाल सबसे सुरक्षित होता है।
+
+- <tr> (Row): एक सीधी पंक्ति बनाता है।
+
+- <td> (Column): दो कॉलम बनाता है—पहला कॉलम फोटो के लिए और दूसरा कॉलम वर्टिकल नीली लाइन के साथ आपकी डिटेल्स के लिए।
+
+- vertical-align: middle: फोटो और लिखावट को ऊपर-नीचे से एकदम सेंटर (बीच में) रखता है।
+
+---
+
+# 📌 3. Profile Photo Frame (<div> & <img>)
+
+- width & height: 90px: फोटो का फ्रेम 90x90 पिक्सल पर फिक्स करता है।
+
+- border-radius: 50%: चौकोर फोटो को एकदम गोल-गोल (Circle) बना देता है।
+
+- overflow: hidden: गोल फ्रेम से बाहर जाने वाले हिस्से को काट देता है।
+
+- border: 2.5px solid #0077b5: फोटो के चारों ओर सुंदर नीली आउटलाइन बाउंड्री बनाता है।
+
+- box-shadow: फोटो के पीछे हल्की परछाईं (Shadow) देता है।
+
+- object-fit: cover: फोटो खिंचने या चपटी होने के बजाय सही रेश्यो में रहती है।
+
+---
+
+# 📌 4. Clickable Contact & Social Links (<a> Tag)
+
+- href="mailto:...": क्लिक करते ही डायरेक्ट ईमेल टाइप करने का विंडो खोलता है।
+
+- href="tel:...": मोबाइल में क्लिक करते ही डायरेक्ट कॉल डायलर खोलता है।
+
+- target="_blank": लिंक्डइन/गिटहब पर क्लिक करने पर लिंक को ब्राउज़र के नए टैब (New Tab) में खोलता है।
+
+- title="...": माउस का कर्सर आइकॉन पर ले जाने पर टूल का नाम (Tooltip) दिखाता है।
+
+
+---
+
+# 📩 Step 4: Gmail में नया Signature कैसे बनाएं या पुराना कैसे बदलें?
 
 इस स्टेप में हम ऑनलाइन एडिटर से अपना तैयार डिज़ाइन कॉपी करके Gmail में नया सिग्नेचर लगाना या पुराने सिग्नेचर को बदलना सीखेंगे। 
 
 ---
 
-#### 1️⃣ ऑनलाइन एडिटर से डिज़ाइन Copy करें
+# 1️⃣ ऑनलाइन एडिटर से डिज़ाइन Copy करें
+
+
 1. सबसे पहले अपने ब्राउज़र में खोला हुआ ऑनलाइन एडिटर **[htmledit.squarefree.com](https://htmledit.squarefree.com/)** देखें।
+
 2. **नीचे वाले बॉक्स (Bottom Box)** में आपको आपकी फोटो, नाम और आइकन्स वाला सुंदर डिज़ाइन दिख रहा होगा।
+
 3. अपने माउस के कर्सर से उस पूरे डिज़ाइन को **सेलेक्ट / हाईलाइट (Highlight)** करें (फोटो से लेकर नीचे के आइकन्स तक)।
+
 4. अपने कीबोर्ड से **`Ctrl + C`** दबाकर उस visual design को कॉपी कर लें।
 
 ---
 
-#### 2️⃣ Gmail Settings में जाएं
+# 2️⃣ Gmail Settings में जाएं
+
 1. अपने कंप्यूटर पर **[Gmail](https://mail.google.com)** खोलें।
+
 2. स्क्रीन पर ऊपर दाईं तरफ दिए गए **Settings ⚙️ (गियर)** आइकॉन पर क्लिक करें।
+
 3. इसके बाद **`See all settings`** (सभी सेटिंग देखें) बटन पर क्लिक करें।
+
 4. **General (सामान्य)** टैब में ही रहें और नीचे की तरफ स्क्रॉल (Scroll) करें, जब तक आपको **Signature** वाला सेक्शन न मिल जाए।
 
 ---
 
-#### 3️⃣ नया Signature बनाएं (New Signature)
+# 3️⃣ नया Signature बनाएं (New Signature)
+
 अगर आप पहली बार सिग्नेचर बना रहे हैं:
+
 1. **`+ Create new`** (नया बनाएं) बटन पर क्लिक करें।
+
 2. अपने सिग्नेचर का कोई भी नाम रखें (जैसे: `DevOps Official`) और **Create** पर क्लिक करें।
+
 3. दाहिने तरफ एक खाली सफेद बॉक्स (Text Box) दिखाई देगा।
+
 4. उस खाली बॉक्स के अंदर क्लिक करें और कीबोर्ड से **`Ctrl + V`** दबाकर अपना कॉपी किया हुआ डिज़ाइन पेस्ट कर दें।
 
 ---
 
-#### 4️⃣ पुराना Signature कैसे बदलें / अपडेट करें? (Edit Existing Signature)
+# 4️⃣ पुराना Signature कैसे बदलें / अपडेट करें? (Edit Existing Signature)
+
 अगर आपका Gmail में पहले से कोई पुराना सिग्नेचर बना हुआ है:
+
 1. Signature सेक्शन में अपने पुराने सिग्नेचर के नाम पर क्लिक करें।
+
 2. दाहिने तरफ वाले बॉक्स में जो पुराना कंटेंट है, उसे माउस से सेलेक्ट करके **Delete** कर दें।
+
 3. अब उसी खाली बॉक्स में क्लिक करें और **`Ctrl + V`** दबाकर अपना नया डिज़ाइन पेस्ट कर दें।
 
 ---
 
-#### 5️⃣ Signature Defaults सेट करें (अति महत्वपूर्ण ⚠️)
+# 5️⃣ Signature Defaults सेट करें (अति महत्वपूर्ण ⚠️)
+
 पेस्ट करने के बाद सिग्नेचर बॉक्स के ठीक नीचे **Signature defaults** का ऑप्शन दिखेगा:
 
 * **For new emails use**: इसमें ड्रॉपडाउन पर क्लिक करके अपने बनाए गए सिग्नेचर का नाम (`DevOps Official`) सेलेक्ट करें।
+
 * **On reply/forward use**: इसमें भी अपने सिग्नेचर का नाम सेलेक्ट करें, ताकि किसी को रिप्लाई करते वक्त भी आपका सिग्नेचर अपने आप आ जाए।
 
 ---
 
-#### 6️⃣ Save Changes (बदलाव सुरक्षित करें)
+# 6️⃣ Save Changes (बदलाव सुरक्षित करें)
 1. पेज के सबसे नीचे तक स्क्रॉल (Scroll) करें।
+
 2. **`Save Changes`** (बदलाव सहेजें) बटन पर क्लिक करें।
 
 🎉 **बधाई हो!** अब जब भी आप Gmail में **Compose** (नया ईमेल लिखने) पर क्लिक करेंगे, आपका यह एकदम प्रोफेशनल DevOps सिग्नेचर अपने आप तैयार मिलेगा!
