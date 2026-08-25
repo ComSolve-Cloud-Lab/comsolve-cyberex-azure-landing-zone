@@ -1,53 +1,27 @@
-<p align="center">
-
-  <!-- Core Security & CI/CD -->
-  <img src="https://img.shields.io/badge/DevSecOps-PR%20Security-orange?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/GitHub-Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" />
-  <img src="https://img.shields.io/badge/Checkov-Security%20Gate-success?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Trivy-Security%20Gate-1904DA?style=for-the-badge&logo=trivy&logoColor=white" />
-  
-  <br/>
-
-  <!-- Cloud & IaC -->
-  <img src="https://img.shields.io/badge/AWS-Cloud-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white" />
-  <img src="https://img.shields.io/badge/Azure-Cloud-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white" />
-  <img src="https://img.shields.io/badge/Terraform-IaC-844FBA?style=for-the-badge&logo=terraform&logoColor=white" />
-  <img src="https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/Kubernetes-Orchestration-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
-
-</p>
-
-
-
-
-
-
+# 📧  Professional Email Signature & Identity Gate 📧
 
 <p align="center">
 
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white" />
-  <img src="https://img.shields.io/badge/Gmail-Signature-D14836?style=flat-square&logo=gmail&logoColor=white" />
-  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" />
-  <img src="https://img.shields.io/badge/Security_Scan-Passed-brightgreen?style=flat-square&logo=shieldsdotio&logoColor=white" />
+  <img src="https://img.shields.io/badge/Signature-DevOps%20Specialist-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
+  <img src="https://img.shields.io/badge/Mail-Gmail%20Compatible-EA4335?style=for-the-badge&logo=gmail&logoColor=white" />
+  <img src="https://img.shields.io/badge/HTML5-Custom%20Design-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google%20Drive-Asset%20Host-4285F4?style=for-the-badge&logo=googledrive&logoColor=white" />
+  <img src="https://img.shields.io/badge/Setup-Step%20by%20Step-success?style=for-the-badge" />
 
 </p>
 
+---
 
+# 🎯 Phase Objective
 
+इस Project का मुख्य उद्देश्य DevOps Engineers और Cloud Specialists के लिए एक **Custom HTML Email Signature** तैयार करना और उसे Gmail में Deploy करना है।
 
+इस Guide की मदद से आप:
+* अपनी Passport Size Photo को Google Drive के ज़रिए Public Image URL में बदलेंगे।
+* ऑनलाइन लाइव एडिटर (squarefree) की मदद से बिना किसी सॉफ्टवेयर के HTML कोड कस्टमाइज़ करेंगे।
+* अपने LinkedIn, GitHub प्रोफाइल लिंक्स और Docker, Kubernetes जैसे Tech-Stack Icons ऐड करेंगे।
 
-<p align="center">
-
-  <img src="https://img.shields.io/github/stars/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=for-the-badge&color=gold" />
-  <img src="https://img.shields.io/github/forks/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=for-the-badge&color=blue" />
-  <img src="https://img.shields.io/github/license/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=for-the-badge&color=green" />
-  <img src="https://img.shields.io/badge/Maintenance-Active-brightgreen?style=for-the-badge" />
-
-</p>
-
-
-
+---
 
 # 📂 Step 1: Google Drive में फोल्डर बनाएं, फोटो अपलोड करें और Public Link निकालें
 
@@ -162,10 +136,12 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 ---
 
+```text
+
 
 <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 14px; color: #111111; line-height: 1.5;">
  
-  <!-- Thanks & Regards Section -->
+  ..<!-- Thanks & Regards Section -->
   <div style="font-size: 14px; font-weight: 600; color: #333333; margin-bottom: 10px;"><b>
     Thanks &amp; Regards,</b>
   </div>
@@ -249,6 +225,7 @@ Step 1 में तैयार की गई अपनी Google Drive की 
     </tr>
   </table>
 </div>
+```
 
 
 ---
