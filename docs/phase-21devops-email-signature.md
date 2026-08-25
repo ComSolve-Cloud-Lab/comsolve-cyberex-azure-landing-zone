@@ -1,3 +1,54 @@
+<p align="center">
+
+  <!-- Core Security & CI/CD -->
+  <img src="https://img.shields.io/badge/DevSecOps-PR%20Security-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/GitHub-Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" />
+  <img src="https://img.shields.io/badge/Checkov-Security%20Gate-success?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Trivy-Security%20Gate-1904DA?style=for-the-badge&logo=trivy&logoColor=white" />
+  
+  <br/>
+
+  <!-- Cloud & IaC -->
+  <img src="https://img.shields.io/badge/AWS-Cloud-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white" />
+  <img src="https://img.shields.io/badge/Azure-Cloud-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white" />
+  <img src="https://img.shields.io/badge/Terraform-IaC-844FBA?style=for-the-badge&logo=terraform&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Kubernetes-Orchestration-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
+
+</p>
+
+
+
+
+
+
+
+<p align="center">
+
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white" />
+  <img src="https://img.shields.io/badge/Gmail-Signature-D14836?style=flat-square&logo=gmail&logoColor=white" />
+  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" />
+  <img src="https://img.shields.io/badge/Security_Scan-Passed-brightgreen?style=flat-square&logo=shieldsdotio&logoColor=white" />
+
+</p>
+
+
+
+
+
+<p align="center">
+
+  <img src="https://img.shields.io/github/stars/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=for-the-badge&color=gold" />
+  <img src="https://img.shields.io/github/forks/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=for-the-badge&color=blue" />
+  <img src="https://img.shields.io/github/license/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=for-the-badge&color=green" />
+  <img src="https://img.shields.io/badge/Maintenance-Active-brightgreen?style=for-the-badge" />
+
+</p>
+
+
+
+
 # 📂 Step 1: Google Drive में फोल्डर बनाएं, फोटो अपलोड करें और Public Link निकालें
 
 अगर आपको Google Drive यूज़ करना नहीं आता, तो बस इन आसान स्टेप्स को फॉलो करें:
@@ -124,7 +175,7 @@ Step 1 में तैयार की गई अपनी Google Drive की 
       <!-- Profile Photo Section -->
       <td style="padding-right: 18px; vertical-align: middle;">
         <div style="width: 90px; height: 90px; border-radius: 50%; overflow: hidden; border: 2.5px solid #0077b5; box-shadow: 0 3px 6px rgba(0,0,0,0.18);">
-          <img src="https://lh3.googleusercontent.com/d/1VK8GOlwZ_PjneqZ4VlYGHDFwV2vjkY_2" alt="Shrikant P. Nadgaduda" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;" />
+          <img src="https://lh3.googleusercontent.com/d/1VK8GOlwZ_PjneqZ4VlYGHDFwV2vjkY_207954" alt="Shrikant P. Nadgaduda" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;" />
         </div>
       </td>
 
