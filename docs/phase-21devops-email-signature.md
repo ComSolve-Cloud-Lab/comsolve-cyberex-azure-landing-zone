@@ -110,7 +110,7 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 3. एडिट करने के बाद कोड को **Save (`Ctrl + S`)** कर लें।
 
 ---
-```text
+
 
 <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 14px; color: #111111; line-height: 1.5;">
  
@@ -199,7 +199,7 @@ Step 1 में तैयार की गई अपनी Google Drive की 
   </table>
 </div>
 
-```
+
 ---
 
 # 2️⃣ Code Explanation (शब्द-दर-शब्द आसान भाषा में)
@@ -343,12 +343,13 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 ### 1. Designation के आगे वाला DevOps Symbol बदलें:
 
-HTML
+```HTML
 
 
 <!-- 🔴 Designation के आगे वाला DevOps Icon -->
 <img src="यहाँ_FLATICON_की_LINK_डालें" width="20" height="20" alt="DevOps" style="vertical-align: middle; margin-right: 6px;" />
-```html
+
+```
 
 ### 2. Niche के Tech Icons (Docker, K8s, Git...) बदलें:
 
