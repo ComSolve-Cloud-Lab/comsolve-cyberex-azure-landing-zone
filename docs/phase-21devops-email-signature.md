@@ -348,12 +348,11 @@ Step 1 में तैयार की गई अपनी Google Drive की 
 
 <!-- 🔴 Designation के आगे वाला DevOps Icon -->
 <img src="यहाँ_FLATICON_की_LINK_डालें" width="20" height="20" alt="DevOps" style="vertical-align: middle; margin-right: 6px;" />
-
 ```
 
 ### 2. Niche के Tech Icons (Docker, K8s, Git...) बदलें:
 
-HTML
+```HTML
 
 
 <!-- 🔴 Docker Icon -->
@@ -365,6 +364,7 @@ HTML
 <span title="Kubernetes" style="margin-right: 8px;">
   <img src="यहाँ_K8S_FLATICON_LINK_डालें" width="20" height="20" alt="Kubernetes" style="vertical-align: middle;" />
 </span>
+```
 
 > # ⚠️ सुरक्षा टिप्स:
 
@@ -379,8 +379,9 @@ alt="LinkedIn" और alt="GitHub" वाले <a href="..."> टैग मे�
 यहाँ समझाया गया है कि कोड की कौन सी लाइन क्या काम करती है:
 
 
-# 📌 1. Main Outer Box (<div>)
-HTML
+# 📌 1. Main Outer Box (<.div.>)
+
+```HTML
 
 
 <div style="font-family: 'Segoe UI', Arial; font-size: 14px; color: #111111; line-height: 1.5;">
@@ -391,11 +392,12 @@ font-family: टेक्स्ट की लिखावट का स्टा
 - color: #111111: टेक्स्ट का रंग गहरा काला (Professional Dark Black) रखता है।
 
 - line-height: 1.5: दो लाइनों के बीच सही गैप (अंतर) रखता है ताकि पढ़ने में आसानी हो।
+```
 
 ---
 
-# 📌 2. Table Layout (<table>, <tr>, <td>)
-HTML
+# 📌 2. Table Layout (<.table.>, <.tr.>, <.td.>)
+```HTML
 
 
 <table style="border-collapse: collapse;">
@@ -407,10 +409,11 @@ HTML
 - <td> (Column): दो कॉलम बनाता है—पहला कॉलम फोटो के लिए और दूसरा कॉलम वर्टिकल नीली लाइन के साथ आपकी डिटेल्स के लिए।
 
 - vertical-align: middle: फोटो और लिखावट को ऊपर-नीचे से एकदम सेंटर (बीच में) रखता है।
+```
 
 ---
 
-# 📌 3. Profile Photo Frame (<div> & <img>)
+# 📌 3. Profile Photo Frame (<.div.> & <.img.>)
 
 - width & height: 90px: फोटो का फ्रेम 90x90 पिक्सल पर फिक्स करता है।
 
