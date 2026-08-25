@@ -348,6 +348,7 @@ HTML
 
 <!-- 🔴 Designation के आगे वाला DevOps Icon -->
 <img src="यहाँ_FLATICON_की_LINK_डालें" width="20" height="20" alt="DevOps" style="vertical-align: middle; margin-right: 6px;" />
+```html
 
 ### 2. Niche के Tech Icons (Docker, K8s, Git...) बदलें:
 
@@ -397,6 +398,7 @@ HTML
 
 
 <table style="border-collapse: collapse;">
+
 <table>: ईमेल क्लाइंट्स (Gmail, Outlook) में लेआउट इधर-उधर न हिले, इसके लिए टेबल का इस्तेमाल सबसे सुरक्षित होता है।
 
 - <tr> (Row): एक सीधी पंक्ति बनाता है।
