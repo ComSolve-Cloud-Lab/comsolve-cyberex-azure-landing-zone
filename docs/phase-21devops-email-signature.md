@@ -17,8 +17,11 @@
 इस Project का मुख्य उद्देश्य DevOps Engineers और Cloud Specialists के लिए एक **Custom HTML Email Signature** तैयार करना और उसे Gmail में Deploy करना है।
 
 इस Guide की मदद से आप:
+
 * अपनी Passport Size Photo को Google Drive के ज़रिए Public Image URL में बदलेंगे।
+
 * ऑनलाइन लाइव एडिटर (squarefree) की मदद से बिना किसी सॉफ्टवेयर के HTML कोड कस्टमाइज़ करेंगे।
+
 * अपने LinkedIn, GitHub प्रोफाइल लिंक्स और Docker, Kubernetes जैसे Tech-Stack Icons ऐड करेंगे।
 
 ---

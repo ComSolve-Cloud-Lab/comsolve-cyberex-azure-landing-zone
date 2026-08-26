@@ -13,3 +13,17 @@ resource "azurerm_subnet" "Subnets" {
   address_prefixes = each.value.address_prefixes
 
 }
+
+# ==============================================================================
+# Network Security Group Association
+# ==============================================================================
+
+resource "azurerm_subnet_network_security_group_association" "this" {
+
+  for_each = azurerm_subnet.Subnets
+
+  subnet_id                 = each.value.id
+  network_security_group_id = var.network_security_group_id
+}
+
+

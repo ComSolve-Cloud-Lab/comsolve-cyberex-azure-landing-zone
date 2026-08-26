@@ -75,6 +75,7 @@ module "subnets" {
   depends_on = [
     module.vnet
   ]
+  network_security_group_id = module.nsg.id
 
 }
 
@@ -92,6 +93,27 @@ module "nics" {
   resource_group_name = var.resource_groups["network"].name
   subnet_id           = module.subnets.subnet_ids["web"]
 
+}
+
+
+
+# ==============================================================================
+# Network Security Group Module
+# ==============================================================================
+
+module "nsg" {
+
+  source = "./modules/nsg"
+
+  name                = "cyberex-nsg"
+  location            = var.nic_location
+  resource_group_name = var.resource_groups["network"].name
+
+  tags = {
+    Environment = "Development"
+    Project     = "Cyberex"
+    ManagedBy   = "Terraform"
+  }
 }
 
 
