@@ -1,4 +1,72 @@
-📌 Step 01 — Current Security Baseline
+# 🔐 Phase 17 — Security Findings Analysis & Remediation
+
+<p align="center">
+
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+
+![Terraform](https://img.shields.io/badge/Terraform-Infrastructure%20as%20Code-623CE4?style=for-the-badge&logo=terraform&logoColor=white)
+
+![Trivy](https://img.shields.io/badge/Trivy-IaC%20Security%20Scanning-1904DA?style=for-the-badge)
+
+![Microsoft Azure](https://img.shields.io/badge/Microsoft%20Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+
+![Security Analysis](https://img.shields.io/badge/Security%20Analysis-In%20Progress-orange?style=for-the-badge)
+
+![Remediation](https://img.shields.io/badge/Remediation-Security%20Hardening-yellow?style=for-the-badge)
+
+</p>
+
+> 🎯 **Objective:** Terraform Infrastructure को security perspective से analyze करना, Trivy द्वारा identify किए गए security findings को समझना, वास्तविक security risk को classify करना, आवश्यक remediation लागू करना और remediation के बाद दोबारा security scan करके clean result verify करना।
+
+---
+
+## 📋 Project Information
+
+| Item | Details |
+|------|---------|
+| **Project** | ComSolve Cyberex Azure Landing Zone |
+| **Repository** | `comsolve-cyberex-azure-landing-zone` |
+| **Branch** | `feature/nic-infrastructure` |
+| **Infrastructure** | Microsoft Azure |
+| **IaC Tool** | Terraform |
+| **Security Scanner** | Trivy |
+| **CI/CD Platform** | GitHub Actions |
+
+---
+
+# 🎯 Phase 17 Overview
+
+इस Phase में हमारा focus केवल security scanner को `PASS` करवाना नहीं है।
+
+हम यह verify करेंगे कि Terraform Infrastructure वास्तव में secure है और security findings का उचित analysis तथा remediation किया गया है।
+
+```text
+Terraform Infrastructure
+        ↓
+Security Baseline
+        ↓
+Trivy IaC Scan
+        ↓
+Security Findings
+        ↓
+Finding Analysis
+        ↓
+Risk Classification
+        ↓
+Security Remediation
+        ↓
+Trivy Re-Scan
+        ↓
+Terraform Validation
+        ↓
+Terraform Plan
+        ↓
+GitHub Actions Verification
+        ↓
+Security Baseline Confirmed
+```
+
+# 📌 Step 01 — Current Security Baseline
 
 सबसे पहले repository की current स्थिति verify करेंगे।
 
@@ -19,7 +87,9 @@ git log --oneline -5
 
 यह confirm करना कि हम सही repository और सही feature branch पर काम कर रहे हैं।
 
-📌 Step 02 — Terraform Validation
+---
+
+#📌 Step 02 — Terraform Validation
 
 Terraform directory में जाएँ:
 
@@ -39,7 +109,9 @@ terraform fmt -check -recursive
 
 अगर कोई formatting issue नहीं है तो command successfully complete होगी।
 
-📌 Step 03 — Trivy IaC Security Scan
+---
+
+# 📌 Step 03 — Trivy IaC Security Scan
 
 Current Terraform configuration पर Trivy scan चलाएँ:
 
@@ -53,7 +125,9 @@ Misconfigurations: 0
 
 अगर findings मिलती हैं तो उन्हें सीधे fix करने से पहले उनका root cause analyze किया जाएगा।
 
-📌 Step 04 — Trivy Security Report Generate करना
+---
+
+# 📌 Step 04 — Trivy Security Report Generate करना
 
 Security findings का machine-readable report generate करने के लिए:
 
@@ -65,7 +139,9 @@ Get-Item .\trivy-report.json
 
 इस report का उपयोग security findings के detailed analysis के लिए किया जा सकता है।
 
-📌 Step 05 — Terraform Security Configuration Review
+---
+
+# 📌 Step 05 — Terraform Security Configuration Review
 
 अब उन Terraform modules को review करेंगे जिनका security posture पर direct impact है।
 
@@ -79,9 +155,13 @@ Virtual Network
 Get-Content .\modules\vnet\main.tf
 Root Terraform Configuration
 Get-Content .\main.tf
-📌 Step 06 — Security Architecture Review
+
+---
+# 📌 Step 06 — Security Architecture Review
 
 Current Azure network architecture को समझना जरूरी है।
+
+```text
 
                  Azure VNet
                      │
@@ -95,8 +175,12 @@ Current Azure network architecture को समझना जरूरी है
                     NSG
                      │
                     NIC
+```
 
-हमारे Terraform design में मुख्य components हैं:
+
+### हमारे Terraform design में मुख्य components हैं:
+
+```text
 
 VNet
  │
@@ -107,8 +191,11 @@ VNet
  ├── NSG Associations
  │
  └── Network Interface
+```
 
 Security review के दौरान इन सभी components की configuration verify की जाएगी।
+
+---
 
 ### 📌 Step 07 — Security Findings Classification
 
