@@ -75,7 +75,7 @@ module "subnets" {
   depends_on = [
     module.vnet
   ]
-  network_security_group_id = module.nsg.id
+  # network_security_group_id = module.nsg.id
 
 }
 
@@ -115,6 +115,49 @@ module "nsg" {
     ManagedBy   = "Terraform"
   }
 }
+
+# ==============================================================================
+# Network Security Group Association
+# ==============================================================================
+
+resource "azurerm_subnet_network_security_group_association" "subnet_nsg" {
+
+  for_each = module.subnets.subnet_ids
+
+  subnet_id                 = each.value
+  network_security_group_id = module.nsg.id
+}
+
+# अब architecture:
+
+#                  ┌──────────────┐
+#                  │ module.vnet  │
+#                  └──────┬───────┘
+#                         │
+#                         ▼
+#                  ┌──────────────┐
+#                  │module.subnets│
+#                  │              │
+#                  │  5 Subnets   │
+#                  └──────┬───────┘
+#                         │
+#                         │ subnet_ids
+#                         ▼
+#               ┌─────────────────────┐
+#               │ NSG Association     │
+#               │                     │
+#               │ subnet_id           │
+#               │        +            │
+#               │ nsg.id              │
+#               └──────────┬──────────┘
+#                          │
+#                          ▼
+#                   ┌────────────┐
+#                   │ module.nsg │
+#                   │    NSG     │
+#                   └────────────┘
+
+
 
 
 

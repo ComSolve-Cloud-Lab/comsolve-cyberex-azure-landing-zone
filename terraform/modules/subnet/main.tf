@@ -1,7 +1,6 @@
 # ==============================================================================
 # Create Subnets
 # ==============================================================================
-
 resource "azurerm_subnet" "Subnets" {
 
   for_each = var.subnets
@@ -18,12 +17,10 @@ resource "azurerm_subnet" "Subnets" {
 # Network Security Group Association
 # ==============================================================================
 
-resource "azurerm_subnet_network_security_group_association" "this" {
+# resource "azurerm_subnet_network_security_group_association" "this" {
 
-  for_each = azurerm_subnet.Subnets
+#   for_each = azurerm_subnet.Subnets
 
-  subnet_id                 = each.value.id
-  network_security_group_id = var.network_security_group_id
-}
-
-
+#   subnet_id                 = each.value.id
+#   network_security_group_id = var.network_security_group_id
+# }

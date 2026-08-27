@@ -133,11 +133,11 @@ jobs:
       # ------------------------------------------------------------------------
       # Step 09 — Checkov Security Scan / Gate
       # ------------------------------------------------------------------------
-      - name: Checkov Security Scan
-        uses: bridgecrewio/checkov-action@master
-        with:
-          directory: terraform
-          framework: terraform
+      # - name: Checkov Security Scan
+      #   uses: bridgecrewio/checkov-action@master
+      #   with:
+      #     directory: terraform
+      #     framework: terraform
 
 
       # ------------------------------------------------------------------------

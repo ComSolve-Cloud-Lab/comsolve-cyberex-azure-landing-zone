@@ -30,7 +30,7 @@ variable "resource_group_name" {
 }
 
 
-variable "network_security_group_id" {
-  description = "Network Security Group ID associated with subnets"
-  type        = string
-}
+# variable "network_security_group_id" {
+#   description = "Network Security Group ID associated with subnets"
+#   type        = string
+# }
