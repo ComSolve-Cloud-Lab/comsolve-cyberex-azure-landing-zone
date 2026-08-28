@@ -1554,3 +1554,57 @@ Merge
 यही हमारा Secure PR Flow है। 🔐
 
 ---
+हाँ भाई। पहले feature/required-status-check को feature/nic-infrastructure में merge करो, फिर remote और local branch delete कर दो।
+
+git checkout feature/nic-infrastructure
+git pull origin feature/nic-infrastructure
+git merge feature/required-status-check
+
+---
+
+```text
+Merge branch 'feature/required-status-check' into feature/nic-infrastructure # Please enter a commit message to explain why this merge is necessary, # especially if it merges an updated upstream into a topic branch. # # Lines starting with '#' will be ignored, and an empty message aborts # the commit. ~ ~ ~ ~ ~ ~ ~ ~ .git/MERGE_MSG [unix] (21:59 28/08/2026) 1,1 All"/d/Projects3/comsolve-cyberex-azure-landing-zone/.git/MERGE_MSG" [unix] 6L, 303B
+```
+हाँ भाई 😄 ये error नहीं है। Git ने merge commit message लिखने के लिए Vim editor खोल दिया है।
+
+ऊपर यह already ठीक message है:
+
+Merge branch 'feature/required-status-check' into feature/nic-infrastructure
+अभी बस ये करो:
+Esc
+
+फिर:
+
+:wq
+
+और Enter दबाओ।
+
+मतलब:
+
+Esc
+ ↓
+:wq
+ ↓
+Enter
+
+इसके बाद merge complete हो जाएगा।
+
+---
+फिर ये commands चलाना:
+
+git push origin feature/nic-infrastructure
+git branch -d feature/required-status-check
+git push origin --delete feature/required-status-check
+
+बस भाई, अभी :wq करके Enter कर दे।
+
+Verify:
+
+git branch
+
+अब ideally:
+
+* feature/nic-infrastructure
+  main
+
+⚠️ ध्यान: अगर git merge में conflict आए तो वहीं रुकना—git push या delete मत करना।

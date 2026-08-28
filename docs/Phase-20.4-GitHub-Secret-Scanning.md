@@ -436,7 +436,12 @@ Infrastructure / Configuration
 
 इसलिए दोनों एक-दूसरे के replacement नहीं हैं।
 
-🎯 STEP 18 — Final Security Architecture
+
+---
+
+#  🎯 STEP 18 — Final Security Architecture
+
+```text
                   GitHub Repository
                          │
                          ▼
@@ -468,30 +473,43 @@ Infrastructure / Configuration
                          │
                          ▼
                    Protected main
-📋 Phase 20.3 Validation Checklist
-Validation	Expected
-Secret Scanning available	⏳
-Secret Scanning enabled	⏳
-Push Protection available	⏳
-Push Protection enabled	⏳
-Existing Secret Alerts reviewed	⏳
-Safe test completed	⏳
-Test artifacts removed	⏳
-Credential remediation process documented	⏳
-Azure OIDC confirmed	✅
-Repository remains secret-free	⏳
-📝 Phase 20.3 Status
-Phase 20.3 — GitHub Secret Scanning
+```
 
-Status: ⏳ In Progress
+### 📋 Phase 20.3 Validation Checklist
 
-Secret Scanning: ⏳
-Push Protection: ⏳
-Alert Validation: ⏳
-Safe Testing: ⏳
-Remediation Process: ⏳
-Azure OIDC: ✅
-🚀 Next Phase
+| Validation | Expected | Status |
+| :--- | :-: | :--- |
+| **Secret Scanning available** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Secret Scanning enabled** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Push Protection available** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Push Protection enabled** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Existing Secret Alerts reviewed** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Safe test completed** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Test artifacts removed** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Credential remediation process documented** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Azure OIDC confirmed** | ✅ | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **Repository remains secret-free** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+
+---
+
+### 📝 Phase 20.3 — GitHub Secret Scanning Status
+
+**Overall Status:** ![In Progress](https://img.shields.io/badge/Status-In_Progress-orange?style=flat-square)
+
+| Control / Task | Status |
+| :--- | :--- |
+| **Secret Scanning** | ![Pending](https://img.shields.io/badge/Status-PENDING-yellow?style=flat-square) |
+| **Push Protection** | ![Pending](https://img.shields.io/badge/Status-PENDING-yellow?style=flat-square) |
+| **Alert Validation** | ![Pending](https://img.shields.io/badge/Status-PENDING-yellow?style=flat-square) |
+| **Safe Testing** | ![Pending](https://img.shields.io/badge/Status-PENDING-yellow?style=flat-square) |
+| **Remediation Process** | ![Pending](https://img.shields.io/badge/Status-PENDING-yellow?style=flat-square) |
+| **Azure OIDC** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+
+
+# 🚀 Next Phase
+
+```text 
+
 Phase 20.4
      ↓
 Dependabot
@@ -515,6 +533,7 @@ Phase 20.6
 GitHub Organization
      +
 Team-Based Access
+```
 
 🔐 Security Principle: Secret को detect करना पहला step है; वास्तविक security तभी पूरी होती है जब exposed credential को revoke/rotate करके सुरक्षित authentication mechanism अपनाया जाए।
 
