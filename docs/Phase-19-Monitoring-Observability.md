@@ -494,4 +494,6 @@ Current Security Lifecycle
        Detection & Response
 ```
 
-# 🚀 Next Phase → Phase 20 — GitHub Organization + Repository Governance
+---
+
+### 🚀 Next Phase → Phase 20 — GitHub Organization + Repository Governance

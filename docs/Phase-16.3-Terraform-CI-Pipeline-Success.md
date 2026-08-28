@@ -201,26 +201,21 @@ file_path="modules/public-ip"
 
 इससे confirm हुआ कि Trivy केवल root main.tf को blindly scan नहीं कर रहा था, बल्कि Terraform configuration structure को parse कर रहा था।
 
-📊 10. Trivy Scan Result
+### 📊 Step 10 — Trivy Scan Result
 
-Final Trivy report:
+#### 📋 Final Trivy Report
 
-Report Summary
+| Target | Type | Misconfigurations | Status |
+| :--- | :--- | :-: | :--- |
+| **`.` (Root)** | `terraform` | **0** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **`modules/public-ip`** | `terraform` | **0** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
 
-┌───────────────────┬───────────┬───────────────────┐
-│      Target       │   Type    │ Misconfigurations │
-├───────────────────┼───────────┼───────────────────┤
-│ .                 │ terraform │         0         │
-├───────────────────┼───────────┼───────────────────┤
-│ modules/public-ip │ terraform │         0         │
-└───────────────────┴───────────┴───────────────────┘
-Final Result
-Misconfigurations: 0
+> **Final Result:** Misconfigurations: `0`  
+> **Security Gate:** `TRIVY SECURITY SCAN = PASSED ✅`
 
-Therefore:
 
-TRIVY SECURITY SCAN = PASSED ✅
-🛡️ 11. Trivy Security Gate
+
+# 🛡️ 11. Trivy Security Gate
 
 Pipeline में Trivy को security gate की तरह configure किया गया था:
 
@@ -659,34 +654,43 @@ terraform plan -out=tfplan
 
 और फिर plan artifact को GitHub Actions में store/review किया जा सकता है।
 
-✅ Phase 16.3 Completion Status
-<p align="center">
-🎉 CI PIPELINE SUCCESSFULLY EXECUTED
-Trivy Security Scan → PASSED ✅
-Terraform Validate → PASSED ✅
-Terraform Plan → PASSED ✅
-Security Findings → 0
-Terraform Changes → 16 Add / 0 Change / 0 Destroy
-</p>
-📌 Final Status
-Component	Status
-GitHub Actions	✅ Passed
-Azure OIDC Login	✅ Passed
-Terraform Format	✅ Passed
-Terraform Init	✅ Passed
-Terraform Validate	✅ Passed
-Checkov	❌ Removed
-Trivy IaC Scan	✅ Passed
-Trivy Findings	0
-Terraform Plan	✅ Passed
-Resources to Add	16
-Resources to Change	0
-Resources to Destroy	0
-Overall CI Pipeline	✅ SUCCESS
-<p align="center">
+<div align="center">
 
-Phase 16.3 — Completed Successfully
+# 🎉 CI PIPELINE SUCCESSFULLY EXECUTED
 
-Checkov Removed → Trivy Implemented → CI Pipeline Passed
+![Trivy Scan](https://img.shields.io/badge/Trivy_Security_Scan-PASSED-brightgreen?style=for-the-badge&logo=aquasec)
+![Terraform Validate](https://img.shields.io/badge/Terraform_Validate-PASSED-brightgreen?style=for-the-badge&logo=terraform)
+![Terraform Plan](https://img.shields.io/badge/Terraform_Plan-PASSED-brightgreen?style=for-the-badge&logo=terraform)
 
-</p> ```
+**Security Findings:** `0` &nbsp;|&nbsp; **Terraform Changes:** `16 Add / 0 Change / 0 Destroy`
+
+---
+
+</div>
+
+### 📌 Final Status
+
+| Component | Status |
+| :--- | :--- |
+| **GitHub Actions** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Azure OIDC Login** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Terraform Format** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Terraform Init** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Terraform Validate** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Checkov** | ![Removed](https://img.shields.io/badge/Status-REMOVED-red?style=flat-square) |
+| **Trivy IaC Scan** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Trivy Findings** | ![0 Findings](https://img.shields.io/badge/Findings-0-brightgreen?style=flat-square) |
+| **Terraform Plan** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Resources to Add** | ![16 Add](https://img.shields.io/badge/Add-16-blue?style=flat-square) |
+| **Resources to Change** | ![0 Change](https://img.shields.io/badge/Change-0-lightgrey?style=flat-square) |
+| **Resources to Destroy** | ![0 Destroy](https://img.shields.io/badge/Destroy-0-lightgrey?style=flat-square) |
+| **Overall CI Pipeline** | ![Success](https://img.shields.io/badge/Pipeline-SUCCESS-brightgreen?style=flat-square) |
+
+---
+
+<div align="center">
+
+**Phase 16.3 — Completed Successfully**  
+`Checkov Removed` ➔ `Trivy Implemented` ➔ `CI Pipeline Passed`
+
+</div>
