@@ -1202,11 +1202,16 @@ git commit -m "fix: restore valid terraform configuration"
 Push:
 
 git push
-🟢 STEP 20 — Successful CI Verify करें
+
+### 🟢 STEP 20 — Successful CI Verify करें
+
+
 
 GitHub Actions फिर run होगी।
 
 Expected:
+
+```text
 
 Terraform Format
         ✅
@@ -1222,15 +1227,62 @@ Trivy
 
 Terraform Plan
         ✅
+```
 
 अब:
-
+```text
 Required Checks
        ↓
 ALL PASS
        ↓
 Merge Allowed
-🔐 STEP 21 — Final Security Flow
+```
+
+---
+## ✅ Merge Blocking Validation — PASSED
+
+PR में जानबूझकर Terraform validation failure create किया गया।
+
+GitHub Actions:
+
+```text
+Terraform Validation
+        ↓
+❌ FAILED
+
+इसके बाद Pull Request में देखा गया:
+
+Required Status Check
+        ↓
+❌ Failed
+        ↓
+🚫 Merge Button Disabled / Blocked
+```
+
+# 🔐 Final Result
+
+main branch पर configured Required Status Check successfully enforce हो रहा है।
+
+CI FAILED
+    ↓
+Required Check FAILED
+    ↓
+🚫 PR MERGE BLOCKED
+```
+---
+
+### 🎯 Verification Status
+
+| Validation | Status |
+| :--- | :--- |
+| **Azure OIDC Login** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Terraform Failure Detection** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Required Status Check** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **PR Merge Blocking** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+
+---
+
+# 🔐 STEP 21 — Final Security Flow
 
 हमारे Repository का final PR flow अब:
 
