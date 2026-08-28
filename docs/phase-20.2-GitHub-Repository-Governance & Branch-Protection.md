@@ -989,6 +989,768 @@ GitHub Ruleset
 यही result मिलने पर हम officially कह सकेंगे कि:
 
 Direct push to main is successfully protected by GitHub Repository Governance.
+
+हाँ भाई, यहाँ एक important Git point हुआ है — तुम्हारा commit फिर से feature/governance-test पर बना है, और git push origin main ने local main को push किया, current branch को नहीं। इसलिए Everything up-to-date आया।
+
+इसे documentation में ऐसे रखो:
+
+# 🧪— Direct Main Push Test Result
+
+## 🎯 Objective
+
+इस step में GitHub Ruleset द्वारा `main` branch पर direct push को
+block करने की validation करनी थी।
+
+---
+
+## 🔎 Step 01 — Changes Stage करना
+
+Command:
+
+```powershell
+git add .
+```
+# 💾 Step 02 — Commit Create करना
+
+Command:
+
+git commit -m "test: verify direct main push protection"
+
+Actual Output:
+
+[feature/governance-test 28a5b2f] test: verify direct main push protection
+ 1 file changed, 177 insertions(+)
+⚠️ Important Observation
+
+Commit फिर से:
+
+feature/governance-test
+
+branch पर create हुआ।
+
+Commit ID:
+
+28a5b2f
+
+इसलिए यह commit main branch पर नहीं था।
+
+🚀 Step 03 — Main Branch Push Command
+
+Command:
+
+git push origin main
+
+Actual Output:
+
+Everything up-to-date
+🔎 इसका मतलब
+
+यह command current branch को push नहीं करती।
+
+इसका मतलब है:
+
+git push origin main
+        ↓
+Local main
+        ↓
+Remote main
+
+Git ने देखा कि local main और remote main में push करने के लिए
+कोई नया commit नहीं है।
+
+इसलिए:
+
+Everything up-to-date
+
+आया।
+
+❌ Direct Push Protection अभी Validate नहीं हुआ
+
+इस test से यह साबित नहीं हुआ कि Ruleset ने direct push को reject किया।
+
+Actual स्थिति:
+
+feature/governance-test
+        ↓
+Commit 28a5b2f
+        ↓
+Local feature branch
+
+लेकिन command:
+
+git push origin main
+
+ने main को push किया, और main में कोई नया commit नहीं था।
+
+इसलिए GitHub तक नया commit भेजा ही नहीं गया।
+
+✅ सही Direct Main Push Test
+
+पहले actual local main branch पर switch करें:
+
+git checkout main
+
+Verify करें:
+
+git branch
+
+Expected:
+
+  feature/governance-test
+* main
+
+अब:
+
+git pull origin main
+
+फिर कोई छोटा harmless change करें और:
+
+git add .
+git commit -m "test: verify direct main push protection"
+
+अब सबसे important command:
+
+git push origin main
+
+Expected:
+
+main
+ ↓
+GitHub Ruleset
+ ↓
+❌ Push Rejected
+
+अगर ऐसा result आता है, तभी हमारा Direct Main Push Protection Test = PASSED माना जाएगा।
+
+
+**अभी तुम्हारा `main` safe है भाई। कुछ भी `main` में push नहीं हुआ।**
+
+---
+
+हाँ भाई, अब exact issue clear है। 😄
+
+तुमने सही तरीके से main पर commit करके push किया:
+
+[main 1ee9c7d] test: verify direct main push protection
+...
+main -> main
+
+और GitHub ने accept कर लिया। इसका मतलब अभी तुम्हारा Ruleset direct push को block नहीं कर रहा है।
+
+हाँ, CLI से Ruleset check कर सकते हैं। सबसे पहले यही करते हैं — कोई और commit/push मत करो।
+
+1️⃣ GitHub CLI installed है या नहीं
+
+PowerShell में:
+
+gh --version
+
+अगर version आ जाए तो अगला command:
+
+gh auth status
+
+फिर repository के Rulesets देखने के लिए:
+
+gh api repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/rulesets
+
+अगर output बहुत बड़ा आए तो:
+
+gh api repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/rulesets --jq '.[] | {id, name, enforcement, target}'
+🔎 फिर specific Ruleset की पूरी configuration
+
+पहले ऊपर से id मिलेगा, जैसे:
+
+id: 123456
+
+फिर:
+
+gh api repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/rulesets/123456
+
+इससे हम देख पाएँगे कि वास्तव में:
+
+main target        ✅/❌
+PR required        ✅/❌
+status checks      ✅/❌
+block force push   ✅/❌
+restrict deletion  ✅/❌
+enforcement        ✅/❌
+
+अभी यही करो और पूरा output यहाँ paste कर दो। फिर मैं exact बताऊँगा कि कौन-सी setting के कारण main direct push accept कर रहा है।
+
+---
+```text 
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> gh --version
+gh : The term 'gh' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, 
+or if a path was included, verify that the path is correct and try again.
++ gh --version
++ ~~
+    + CategoryInfo          : ObjectNotFound: (gh:String) [], CommandNotFoundException
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> gh auth status
+gh : The term 'gh' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, 
+At line:1 char:1
++ gh auth status
++ ~~
+    + CategoryInfo          : ObjectNotFound: (gh:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+```
+---
+
+Lekin abhi GitHub CLI install karna zaroori nahi. Pehle browser se verify karte hain ki Ruleset actually active hai ya nahi.
+
+1️⃣ GitHub पर यह path खोलो
+
+Repository → Settings → Rules → Rulesets
+
+फिर अपने बनाए हुए Branch Ruleset को खोलो.
+
+देखो:
+
+Enforcement status
+        ↓
+    Active
+
+और:
+
+Target branches
+        ↓
+main
+
+सबसे important:
+
+Require a pull request before merging
+        ✅ ON
+
+Block force pushes
+        ✅ ON
+
+अगर Enforcement status = Active नहीं है, तो direct push reject नहीं होगा।
+
+2️⃣ एक और important बात
+
+तुमने जो किया:
+
+git push origin main
+
+उससे पहले तुमने main पर ये commit बनाया:
+
+[main 1ee9c7d] test: verify direct main push protection
+
+और फिर push successfully हो गया।
+
+इसका मतलब उस समय तुम्हारी Ruleset ने main पर direct update को block नहीं किया।
+
+इसलिए अभी और random commits मत करो। पहले Ruleset की configuration verify करते हैं।
+
+3️⃣ gh चाहिए तो बाद में install कर सकते हैं
+
+PowerShell में:
+
+winget install --id GitHub.cli
+
+फिर नया PowerShell खोलकर:
+
+gh --version
+
+और:
+
+gh auth login
+
+लेकिन अभी इसकी जरूरत नहीं है।
+
+पहले GitHub → Settings → Rules → Rulesets → तुम्हारा ruleset खोलकर Enforcement status क्या दिख रहा है, वही बताओ।
+
+
+
+---
+
+```text
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> winget install --id GitHub.cli
+Found GitHub CLI [GitHub.cli] Version 2.98.0
+This application is licensed to you by its owner.
+Downloading https://github.com/cli/cli/releases/download/v2.98.0/gh_2.98.0_windows_amd64.msi
+  ██████████████████████████████  14.5 MB / 14.5 MB
+Successfully verified installer hash
+Starting package install...
+Successfully installed
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> gh --version
+gh : The term 'gh' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, 
+or if a path was included, verify that the path is correct and try again.
++ gh --version
++ ~~
+    + CategoryInfo          : ObjectNotFound: (gh:String) [], CommandNotFoundException
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> gh auth status
+gh : The term 'gh' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, 
+At line:1 char:1
++ gh auth status
++ ~~
+    + CategoryInfo          : ObjectNotFound: (gh:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+```
+
+```text
+
+PowerShell session purana PATH use kar raha hai.
+
+बस ये करो
+
+1. Current PowerShell बंद करो
+
+2. नया PowerShell खोलो
+
+फिर:
+
+gh --version
+
+Expected:
+
+gh version 2.98.0 ...
+
+फिर:
+
+gh auth status
+अगर फिर भी gh नहीं मिले
+
+ये command चलाओ:
+
+where.exe gh
+
+और:
+
+$env:Path -split ';' | Select-String "GitHub"
+
+अगर फिर भी नहीं मिलता, तो हम GitHub CLI का exact installation path check करके PATH manually fix कर देंगे।
+
+PC restart मत करना अभी। नया PowerShell session पहले try करो।
+```
+
+🔐 Phase 20.2 — Ruleset को Active करना
+Step 1 — GitHub Repository खोलो
+
+अपने repository पर जाओ:
+
+comsolve-cyberex-azure-landing-zone
+        ↓
+Settings
+        ↓
+Rules
+        ↓
+Rulesets
+
+फिर जो Branch Ruleset हमने बनाया था, उस पर click करो।
+
+Step 2 — Enforcement Status देखो
+
+Ruleset के ऊपर तुम्हें मिलेगा:
+
+Enforcement status
+
+अगर अभी:
+
+○ Disabled
+
+या कोई inactive status है, तो उसे बदलकर:
+
+✅ Active
+
+करना है।
+
+यही सबसे important point है।
+
+Step 3 — Target Branch verify करो
+
+नीचे:
+
+Target branches
+        ↓
+Branch targeting criteria
+
+में यह होना चाहिए:
+
+main
+
+अगर main नहीं है:
+
+Add target
+        ↓
+Include by pattern
+        ↓
+main
+        ↓
+Add target
+
+अब Ruleset सिर्फ main पर लागू होगा।
+
+Step 4 — Bypass List check करो
+
+देखो:
+
+Bypass list
+
+अभी ideally:
+
+Bypass list is empty
+
+रहने दो।
+
+अगर तुम्हारा user/team bypass में है, तो वह Ruleset को bypass करके direct push कर सकता है।
+
+Step 5 — Pull Request Rule verify करो
+
+Rules में:
+
+Require a pull request before merging
+
+✅ Enable
+
+फिर:
+
+Required approvals
+
+हमने जो approval requirement रखी है, उसे रहने दो।
+
+Recommended:
+
+Required approvals: 1
+
+और:
+
+Require conversation resolution before merging
+
+✅ Enable
+
+Step 6 — Force Push Protection
+
+Enable:
+
+Block force pushes
+
+✅
+
+इसका मतलब:
+
+git push --force
+        ↓
+       ❌
+      main
+Step 7 — Status Checks
+
+अभी अगर हमारे CI checks available हैं तो:
+
+Require status checks to pass
+
+✅ Enable
+
+लेकिन पहले existing CI check दिखाई दे रहा है या नहीं देखना है।
+
+इसमें हम बाद में Trivy + Terraform CI को properly required बनाएँगे।
+
+Step 8 — Save Ruleset
+
+सबसे important:
+
+ऊपर/नीचे जाकर:
+
+Save changes
+
+करो।
+
+फिर वापस Rulesets page पर आकर verify करो:
+
+Branch Ruleset
+        ↓
+Enforcement status
+        ↓
+✅ Active
+🧪 Step 9 — अब Direct Push Test
+
+अब test करने के लिए main पर एक छोटा सा change करो।
+
+git checkout main
+
+फिर कोई छोटा documentation change करो:
+
+docs/
+    test file
+
+फिर:
+
+git add .
+git commit -m "test: verify main branch protection"
+
+और:
+
+git push origin main
+Expected Result
+
+अब ideally:
+
+remote: error: GH013: Repository rule violations found
+        ↓
+        ❌ Push rejected
+
+यही हमारा actual proof होगा कि Branch Protection काम कर रही है।
+
+🧠 हमारी अभी की स्थिति
+
+पहले:
+
+Ruleset Created
+      ↓
+Target = main
+      ↓
+Rules configured
+      ↓
+❌ Enforcement = Inactive
+      ↓
+Direct Push = SUCCESS
+
+अब:
+
+Ruleset
+   ↓
+Target = main
+   ↓
+Rules configured
+   ↓
+✅ Enforcement = Active
+   ↓
+Direct Push
+   ↓
+❌ REJECTED
+   ↓
+PR required
+   ↓
+Review + CI
+   ↓
+Merge
+
+अभी बस Ruleset को Active करो और Save Changes करो। उसके बाद direct push test करेंगे।
+
+---
+
+```text
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git push origin main
+Enumerating objects: 7, done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 3.48 KiB | 593.00 KiB/s, done.
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: Review all repository rules at https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/rules?ref=refs%2Fheads%2Fmain
+remote: - Changes must be made through a pull request.
+remote: 
+To https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone.git
+error: failed to push some refs to 'https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone.git'
+
+```
+
+---
+
+🔥 अब सही में Branch Protection काम कर रही है. यही हमारा actual test था और test PASS हुआ.
+
+🧠 Actual Git → GitHub Flow
+
+तुमने चलाया:
+
+git push origin main
+
+इस command के बाद actual flow यह हुआ:
+
+Local Repository
+      │
+      │ git push origin main
+      ▼
+Git
+      │
+      │ commits / objects भेजे
+      ▼
+GitHub Repository
+      │
+      │ main branch update request
+      ▼
+Repository Ruleset
+      │
+      │ Check: "क्या direct push allowed है?"
+      ▼
+❌ NO — Pull Request required
+      │
+      ▼
+Push REJECTED
+✅ GitHub ने कहाँ तक काम किया?
+
+यह हिस्सा देखो:
+
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 3.48 KiB | 593.00 KiB/s, done.
+Total 4 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+
+इसका मतलब:
+
+Local Git
+   ↓
+Objects तैयार
+   ↓
+Compress
+   ↓
+GitHub को भेजे
+   ↓
+GitHub ने receive किया
+   ↓
+GitHub ने objects process किए
+   ↓
+Repository Ruleset check
+
+यहाँ तक success हुआ। ✅
+
+❌ फिर असली rejection कहाँ हुआ?
+
+यह सबसे important line है:
+
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+
+GitHub ने कहा:
+
+main को direct update करने की तुम्हारी request repository rules violate कर रही है।
+
+और अगली line ने exact reason बताया:
+
+remote:
+
+remote: - Changes must be made through a pull request.
+
+मतलब हमारी configured policy successfully लागू हो गई:
+
+Direct Push → main
+       ↓
+      ❌
+       ↓
+Pull Request Required
+
+फिर Git ने final result दिया:
+
+! [remote rejected] main -> main
+(push declined due to repository rule violations)
+
+error: failed to push some refs
+🎯 इसका Final Meaning
+Git Push
+   ↓
+GitHub तक पहुँचा              ✅
+   ↓
+Repository Ruleset check       ✅
+   ↓
+main protection detected       ✅
+   ↓
+Direct Push allowed?           ❌
+   ↓
+GH013 Repository Rule Violation
+   ↓
+Push Rejected                  ✅
+
+ध्यान देना: यह error failure नहीं है। 😄
+हमारे security test के perspective से यही SUCCESS है।
+
+अब सही development flow होगा:
+
+feature/governance-test
+          ↓
+       git push
+          ↓
+      Pull Request
+          ↓
+     main ← PR
+          ↓
+   Reviewer Approval
+          ↓
+     CI / Trivy
+          ↓
+        PASS
+          ↓
+       Merge
+          ↓
+        main
+
+यानी भाई, Phase 20.2 का सबसे important हिस्सा अब genuinely working है — main direct push protected है.
+
+----
+
+```text
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git branch      
+  feature/governance-test
+  feature/nic-infrastructure
+* main
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git checkout feature/nic-infrastructure
+error: Your local changes to the following files would be overwritten by checkout:
+        docs/phase-20.2-GitHub-Repository-Governance & Branch-Protection.md
+Please commit your changes or stash them before you switch branches.
+Aborting
+  feature/governance-test
+* main
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git status
+Your branch is ahead of 'origin/main' by 1 commit.
+
+Changes not staged for commit:
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   docs/phase-20.2-GitHub-Repository-Governance & Branch-Protection.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Saved working directory and index state On main: phase-20.2 governance documentation
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git checkout feature/nic-infrastructure
+Switched to branch 'feature/nic-infrastructure'
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git stash push -m "phase-20.2 governance documentation"
+No local changes to save
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git checkout feature/nic-infrastructure
+Your branch is up to date with 'origin/feature/nic-infrastructure'.
+On branch feature/nic-infrastructure
+Your branch is up to date with 'origin/feature/nic-infrastructure'.
+
+nothing to commit, working tree clean
+```
+
+---
+
+😄 कोई बड़ी problem नहीं है।
+
+Git बोल रहा है:
+
+Your local changes to the following files would be overwritten by checkout:
+
+docs/phase-20.2-GitHub-Repository-Governance & Branch-Protection.md
+इसका मतलब
+
+तुम अभी main branch पर हो:
+
+* main
+
+और इस file में तुम्हारे local changes हैं जो अभी commit नहीं हुए हैं।
+
+अब तुम बोल रहे हो:
+
+git checkout feature/nic-infrastructure
+
+Git डर रहा है कि दूसरी branch पर जाने से तुम्हारे current changes overwrite हो सकते हैं।
+
+इसलिए उसने checkout रोक दिया:
+
+Aborting
+अभी क्या करना है?
+
+पहले देखो कौन-सी files modified हैं:
+
+git status
+
+बस यह command अभी चलाओ।
+
+उसका पूरा output भेज दो। उसके बाद मैं बताऊँगा कि commit करना है या stash करना है — अभी blindly कोई command मत चलाना।
+
 ---
 
 # 📊 Step 15 — Expected Governance Flow
