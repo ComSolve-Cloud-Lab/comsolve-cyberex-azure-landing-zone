@@ -1128,6 +1128,18 @@ Terraform Plan         ✅
       ↓
 Required Status Check  ✅
 
+### 🔄 Successful Pipeline Workflow
+
+```mermaid
+graph TD
+    A[Correct Terraform] --> B[Push to Feature Branch]
+    B --> C[Create Pull Request]
+    C --> D[Azure OIDC Login ✅]
+    D --> E[Terraform Validation ✅]
+    E --> F[Trivy Security Scan ✅]
+    F --> G[Terraform Plan ✅]
+    G --> H[Required Status Check Passed ✅]
+
 और उसके बाद हम वापस Phase 20.2 के मुख्य objective — Required Status Check के कारण failed CI पर Merge Block हो रहा है या नहीं — उसे verify करेंगे।
 -----
 
