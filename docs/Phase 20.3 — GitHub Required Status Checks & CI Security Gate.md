@@ -828,7 +828,133 @@ git push
 Curly bracket हटाने के बजाय यह तरीका ज्यादा साफ है, क्योंकि बाद में तुरंत पता रहेगा कि हमने जानबूझकर test failure बनाया था।
 
 
+---
 
+### Azure login
+
+```text
+
+Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Run azure/login@v2
+Running Azure CLI Login.
+/usr/bin/az cloud set -n azurecloud
+Done setting cloud: "azurecloud"
+Federated token details:
+ issuer - https://token.actions.githubusercontent.com
+ subject claim - repo:Shrikant-Nadgaudaa@247837213/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+ audience - api://AzureADTokenExchange
+ job_workflow_ref - Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/.github/workflows/terraform-ci.yml@refs/pull/4/merge
+Attempting Azure CLI login by using OIDC...
+Subscription is set successfully.
+Azure CLI login succeeds by using OIDC.
+```
+
+---
+### verify Azure login
+```text
+0s
+Run az account show
+{
+  "environmentName": "AzureCloud",
+  "homeTenantId": "402a28d6-9ea1-462e-8338-dc09423ff348",
+  "id": "7cf9c45e-0a1e-4828-9c98-3e8f25397732",
+  "isDefault": true,
+  "managedByTenants": [],
+  "name": "Azure subscription 1",
+  "state": "Enabled",
+  "tenantId": "402a28d6-9ea1-462e-8338-dc09423ff348",
+  "user": {
+    "name": "***",
+    "type": "servicePrincipal"
+  }
+}
+1s
+```
+
+---
+
+### verify Azure Subscription
+```text
+Run az account show --query "{subscription:id, tenant:tenantId, user:user.name}"
+{
+  "subscription": "7cf9c45e-0a1e-4828-9c98-3e8f25397732",
+  "tenant": "402a28d6-9ea1-462e-8338-dc09423ff348",
+  "user": "***"
+}
+1s
+```
+
+---
+### terraform format check
+
+```text
+
+0s
+Run terraform fmt -check -recursive
+╷
+│ Error: Argument or block definition required
+│ 
+│   on modules/resource-group/main.tf line 7, in resource "azurerm_resource_group" "Rgs":
+│    7:   THIS_IS_A_TEST_ERROR ...
+│ 
+│ An argument or block definition is required here. To set an argument, use
+│ the equals sign "=" to introduce the argument value.
+╵
+
+2s
+```
+
+---
+
+### terraform format check
+
+```text
+
+0s
+Run terraform fmt -check -recursive
+╷
+│ Error: Argument or block definition required
+│ 
+│   on modules/resource-group/main.tf line 7, in resource "azurerm_resource_group" "Rgs":
+│    7:   THIS_IS_A_TEST_ERROR ...
+│ 
+│ An argument or block definition is required here. To set an argument, use
+│ the equals sign "=" to introduce the argument value.
+╵
+```
+
+---
+
+
+### terraform init
+
+``` text
+
+0s
+Run terraform init
+Initializing the backend...
+
+Initializing modules...
+- resource_groups in modules/resource-group
+- nsg in modules/nsg
+- nics in modules/nic
+- vnet in modules/vnet
+- subnets in modules/subnet
+╷
+│ Error: Argument or block definition required
+│ 
+│   on modules/resource-group/main.tf line 7, in resource "azurerm_resource_group" "Rgs":
+│    7:   THIS_IS_A_TEST_ERROR ...
+│ 
+│ An argument or block definition is required here. To set an argument, use
+│ the equals sign "=" to introduce the argument value.
+╵
+Error: Terraform exited with code 1.
+Error: Process completed with exit code 1.
+0s
+```
+
+----
 
 STEP 04 — GitHub PR खोलो
 
@@ -901,6 +1027,108 @@ feature/required-status-check
       🚫 MERGE BLOCKED
 
 अगर इसके बाद भी Merge button से merge हो जाता है, तो कुछ भी change मत करना।
+
+----
+
+
+हाँ भाई 🔥 अब Azure OIDC वाला issue successfully solve हो गया है, और उसके बाद हमारा जानबूझकर बनाया हुआ Terraform failure भी पकड़ लिया गया है। यही हमें चाहिए था।
+
+🔐 Actual Flow
+Pull Request #4
+      ↓
+GitHub Actions
+      ↓
+OIDC Token
+      ↓
+Microsoft Entra ID
+      ↓
+Federated Identity Credential
+      ↓
+Azure Login ✅
+      ↓
+Terraform Init
+      ↓
+Terraform Modules Load
+      ↓
+Terraform Syntax Validation
+      ↓
+❌ TEST ERROR DETECTED
+      ↓
+Pipeline STOPPED
+✅ Azure Login अब सही है
+
+यह सबसे important change है:
+
+Subscription is set successfully.
+Azure CLI login succeeds by using OIDC.
+
+मतलब:
+
+GitHub ने OIDC token generate किया
+Azure ने FIC से token match किया
+Azure authentication successful हुआ
+Service Principal के रूप में Azure subscription access मिल गया
+
+इसलिए AADSTS700213 issue खत्म हो गया। ✅
+
+❌ Terraform Failure भी Expected है
+
+हमने जानबूझकर यह line डाली थी:
+
+THIS_IS_A_TEST_ERROR
+
+Terraform ने उसे पकड़ लिया:
+
+Error: Argument or block definition required
+
+modules/resource-group/main.tf line 7
+
+THIS_IS_A_TEST_ERROR
+
+इसका मतलब Terraform ने invalid configuration detect कर ली और pipeline को आगे जाने से रोक दिया।
+
+इसलिए:
+
+Terraform Init
+     ↓
+❌ Error
+     ↓
+Terraform exited with code 1
+     ↓
+Remaining steps SKIPPED
+
+और यही कारण है कि Trivy / Plan जैसे बाद के steps इस run में नहीं चले।
+
+### 🎯 Phase Execution — Proof of Concept
+
+| Test Verification | Status |
+| :--- | :--- |
+| **Azure OIDC Authentication** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Azure Subscription Access** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Terraform Initialization** | ![Started](https://img.shields.io/badge/Status-STARTED-blue?style=flat-square) |
+| **Terraform Error Detection** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+| **Pipeline Failure on Error** | ![Passed](https://img.shields.io/badge/Status-PASSED-brightgreen?style=flat-square) |
+अब बहुत important: यह test पूरा हो गया है, इसलिए THIS_IS_A_TEST_ERROR को वापस हटाकर Terraform code सही करना है।
+
+फिर:
+
+Correct Terraform
+      ↓
+Push
+      ↓
+PR
+      ↓
+Azure OIDC Login       ✅
+      ↓
+Terraform Validation   ✅
+      ↓
+Trivy                  ✅
+      ↓
+Terraform Plan         ✅
+      ↓
+Required Status Check  ✅
+
+और उसके बाद हम वापस Phase 20.2 के मुख्य objective — Required Status Check के कारण failed CI पर Merge Block हो रहा है या नहीं — उसे verify करेंगे।
 -----
 
 # 🚨 STEP 17 — Failure Test
