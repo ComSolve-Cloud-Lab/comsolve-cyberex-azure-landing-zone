@@ -3,13 +3,9 @@
 <p align="center">
 
 ![GitHub](https://img.shields.io/badge/GitHub-Secret%20Scanning-181717?style=for-the-badge&logo=github&logoColor=white)
-
 ![Secret Scanning](https://img.shields.io/badge/Secret%20Scanning-Enabled-success?style=for-the-badge)
-
 ![Security](https://img.shields.io/badge/Security-Credential%20Protection-red?style=for-the-badge)
-
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
-
 ![Terraform](https://img.shields.io/badge/Terraform-Infrastructure%20as%20Code-623CE4?style=for-the-badge&logo=terraform&logoColor=white)
 
 </p>
