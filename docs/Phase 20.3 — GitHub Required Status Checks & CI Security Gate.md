@@ -41,16 +41,20 @@ Merge Decision
 ```
 
 
-🎯 2. Phase 20.2 Goals
-Control	Target
-GitHub Actions CI	Required
-Terraform Format	Required
-Terraform Validate	Required
-Trivy IaC Scan	Required
-Terraform Plan	Required
-Failed CI	Merge Blocked
-Successful CI	Merge Allowed
-Direct Main Push	Blocked
+### 🎯 Phase 20.2 Goals
+
+| Control | Target Status |
+| :--- | :--- |
+| **GitHub Actions CI** | ![Required](https://img.shields.io/badge/Status-REQUIRED-blue?style=flat-square) |
+| **Terraform Format** | ![Required](https://img.shields.io/badge/Status-REQUIRED-blue?style=flat-square) |
+| **Terraform Validate** | ![Required](https://img.shields.io/badge/Status-REQUIRED-blue?style=flat-square) |
+| **Trivy IaC Scan** | ![Required](https://img.shields.io/badge/Status-REQUIRED-blue?style=flat-square) |
+| **Terraform Plan** | ![Required](https://img.shields.io/badge/Status-REQUIRED-blue?style=flat-square) |
+| **Failed CI** | ![Merge Blocked](https://img.shields.io/badge/Behavior-MERGE_BLOCKED-red?style=flat-square) |
+| **Successful CI** | ![Merge Allowed](https://img.shields.io/badge/Behavior-MERGE_ALLOWED-brightgreen?style=flat-square) |
+| **Direct Main Push** | ![Blocked](https://img.shields.io/badge/Behavior-BLOCKED-red?style=flat-square) |
+
+
 📂 3. Existing CI Pipeline
 
 हमारे Repository में existing workflow:
@@ -133,7 +137,74 @@ Expected:
 
 * feature/required-status-check
   main
-🟢 STEP 04 — Safe Test Change करें
+
+
+तुम्हारे case में main से नई branch बनाकर test करना सही नहीं रहेगा, क्योंकि Azure/GitHub Actions की authentication/permission setup अभी feature/nic-infrastructure के साथ जुड़ी हुई है।
+
+इसलिए Phase 20.2 की testing भी feature/nic-infrastructure से branch बनाकर करेंगे।
+
+तुम्हारा current flow:
+
+main
+  ↓
+❌ नई branch
+  ↓
+GitHub Actions
+  ↓
+Azure authentication / permissions issue
+  ↓
+Pipeline FAIL
+
+हमारा practical flow:
+
+feature/nic-infrastructure
+          ↓
+          ↓
+feature/required-status-check
+          ↓
+GitHub Actions
+          ↓
+Azure Authentication
+          ↓
+Terraform CI
+          ↓
+Trivy
+          ↓
+Terraform Plan
+          ↓
+✅ PASS
+इसलिए Step 03 को ऐसे बदलो
+git checkout feature/nic-infrastructure
+
+Latest code:
+
+git pull origin feature/nic-infrastructure
+
+Testing branch:
+
+git checkout -b feature/required-status-check
+
+Verify:
+
+git branch
+
+Expected:
+
+  feature/nic-infrastructure
+* feature/required-status-check
+  main
+⚠️ एक important बात
+
+तुमने जो Azure Agent/Secrets को feature/nic-infrastructure तक restrict किया है, उसकी वजह से feature/* pattern automatically permission नहीं दे रहा — यह branch/ref restriction का behavior है।
+
+इसलिए अभी हम existing working branch से ही testing branch बनाएँगे, ताकि पहले से working Azure authentication और CI setup को disturb न करें।
+
+बाद में Phase 20.6 में हम इस permission model को properly organization/repository governance + environments + branch rules के हिसाब से clean करेंगे।
+
+----
+
+
+# 🟢 STEP 04 — Safe Test Change करें
 
 किसी Terraform resource को modify नहीं करना है।
 
@@ -149,7 +220,7 @@ docs/Phase-20.2-GitHub-Repository-Governance.md
 
 में change करें।
 
-🟢 STEP 05 — Commit करें
+# 🟢 STEP 05 — Commit करें
 git status
 
 फिर:
@@ -159,7 +230,9 @@ git add .
 Commit:
 
 git commit -m "docs: add required status checks governance"
-🟢 STEP 06 — Branch Push करें
+
+
+### 🟢 STEP 06 — Branch Push करें
 git push -u origin feature/required-status-check
 
 अब GitHub पर branch दिखाई देगी।
