@@ -812,6 +812,183 @@ Direct Push to main
 
 यही Branch Protection का मुख्य उद्देश्य है।
 
+
+# 🧪  Direct Main Push Test: Git Branch & Upstream Validation
+
+## 🎯 Objective
+
+इस step का उद्देश्य यह verify करना था कि `main` branch पर direct push
+करने पर GitHub Ruleset उसे reject करता है।
+
+लेकिन test के दौरान पहले यह verify हुआ कि local repository में हम
+किस branch पर मौजूद हैं।
+
+---
+
+## 🔎 Step 01 — Current Branch Check
+
+Command:
+
+```powershell
+git branch
+```
+
+Output:
+
+  feature/nic-infrastructure
+  main
+⚠️ Important Observation
+
+यह output केवल local branches दिखाता है।
+
+Current branch को * से identify किया जाता है।
+
+इस output में * दिखाई नहीं दे रहा था क्योंकि pasted output में
+वह information नहीं थी। लेकिन अगले git commit output से confirm हुआ
+कि current branch:
+
+feature/governance-test
+
+थी।
+
+📝 Step 02 — Changes Stage करना
+
+Command:
+
+git add .
+
+इस command ने working directory में मौजूद सभी changes को
+Git staging area में add किया।
+
+💾 Step 03 — Commit Create करना
+
+Command:
+
+git commit -m "Mian branch push test"
+
+Actual output:
+
+[feature/governance-test 9fa71e7] Mian branch push test
+ 1 file changed, 254 insertions(+), 8 deletions(-)
+🔎 इसका मतलब
+
+Commit successfully create हुआ।
+
+लेकिन सबसे important information:
+
+[feature/governance-test 9fa71e7]
+
+इससे confirm हुआ कि commit:
+
+feature/governance-test
+
+branch पर बनाया गया था।
+
+Commit ID:
+
+9fa71e7
+
+इसलिए यह अभी main branch push test नहीं था।
+
+🚫 Step 04 — Normal Git Push
+
+Command:
+
+git push
+
+Actual output:
+
+fatal: The current branch feature/governance-test has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin feature/governance-test
+
+To have this happen automatically for branches without a tracking
+upstream, see 'push.autoSetupRemote' in 'git help config'.
+🔎 इसका मतलब
+
+Git को पता नहीं था कि local:
+
+feature/governance-test
+
+branch को किस remote branch पर push करना है।
+
+इसलिए Git ने upstream branch configure करने के लिए command suggest की।
+
+🚀 Step 05 — Upstream Branch Configure करके Push
+
+Command:
+
+git push --set-upstream origin feature/governance-test
+
+Actual output:
+
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 2.63 KiB | 672.00 KiB/s, done.
+Total 7 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 4 local objects.
+To https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone.git
+   a41b6b6..9fa71e7  feature/governance-test -> feature/governance-test
+branch 'feature/governance-test' set up to track 'origin/feature/governance-test'.
+✅ Result
+
+Push successfully हुआ:
+
+feature/governance-test
+        ↓
+origin/feature/governance-test
+
+और upstream tracking भी configure हो गई।
+
+⚠️ Important Conclusion
+
+इस test में:
+
+❌ main branch पर push नहीं हुआ
+
+बल्कि:
+
+feature/governance-test
+        ↓
+origin/feature/governance-test
+        ↓
+Push Successful ✅
+
+इसलिए अभी तक Branch Protection का direct-main-push rejection test complete नहीं हुआ है।
+
+🧭 Next Correct Test
+
+अब actual test के लिए पहले:
+
+git checkout main
+
+फिर:
+
+git pull origin main
+
+उसके बाद एक छोटा harmless change करके:
+
+git add .
+git commit -m "test: verify direct main push protection"
+git push origin main
+🎯 Expected Result
+
+अगर हमारा GitHub Ruleset सही तरीके से configured है:
+
+Local main
+    ↓
+git push origin main
+    ↓
+GitHub Ruleset
+    ↓
+❌ PUSH REJECTED
+
+यही result मिलने पर हम officially कह सकेंगे कि:
+
+Direct push to main is successfully protected by GitHub Repository Governance.
 ---
 
 # 📊 Step 15 — Expected Governance Flow
