@@ -1348,21 +1348,31 @@ Terraform Plan
 Reviewer Approval
      ↓
 Merge
-🧪 STEP 24 — Final Validation Checklist
-Validation	Expected
-Feature branch created	✅
-Pull Request created	✅
-GitHub Actions executed	✅
-Exact CI check identified	✅
-Required Status Check configured	⏳
-CI failure blocks merge	⏳
-CI success allows merge	⏳
-Main branch protected	⏳
-PR approval required	⏳
-Force push disabled	⏳
-📊 STEP 25 — Phase 20.2 Final State
+```
+---
+
+
+# ### 🧪 Step 24 — Final Validation Checklist
+
+| Validation | Expected | Status |
+| :--- | :-: | :--- |
+| **Feature branch created** | ✅ | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **Pull Request created** | ✅ | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **GitHub Actions executed** | ✅ | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **Exact CI check identified** | ✅ | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **Required Status Check configured** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **CI failure blocks merge** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **CI success allows merge** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Main branch protected** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **PR approval required** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Force push disabled** | ⏳ | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+
+
+# 📊 STEP 25 — Phase 20.2 Final State
 
 Implementation complete होने के बाद:
+
+```text
 
                     GitHub Repository
                            │
@@ -1391,18 +1401,25 @@ Implementation complete होने के बाद:
                     │
                     ▼
                 Merge main
-📝 Phase 20.2 Status
-Governance Control	Status
-Main Branch Protection	✅ Phase 20.1
-Pull Request Requirement	✅ Phase 20.1
-Required Status Checks	⏳ Phase 20.2
-Terraform CI Gate	⏳
-Trivy Security Gate	⏳
-Failed CI Merge Blocking	⏳
-Successful CI Merge	⏳
-Force Push Protection	⏳
-Branch Deletion Protection	⏳
-🧠 What We Implemented
+```
+
+#  📝 Phase 20.2 Status
+
+| Governance Control | Status |
+| :--- | :--- |
+| **Main Branch Protection** | ![Passed](https://img.shields.io/badge/Phase_20.1-PASSED-brightgreen?style=flat-square) |
+| **Pull Request Requirement** | ![Passed](https://img.shields.io/badge/Phase_20.1-PASSED-brightgreen?style=flat-square) |
+| **Required Status Checks** | ![Pending](https://img.shields.io/badge/Phase_20.2-PENDING-yellow?style=flat-square) |
+| **Terraform CI Gate** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Trivy Security Gate** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Failed CI Merge Blocking** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Successful CI Merge** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Force Push Protection** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Branch Deletion Protection** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+
+---
+
+# 🧠 What We Implemented
 
 इस Phase में हमारा मुख्य practical achievement होगा:
 
@@ -1458,6 +1475,8 @@ Bilkul bhai 👍 manual approval लगा है, इसलिए CI PASS → M
 
 हमारा actual flow यह है:
 
+```text
+
 Developer
     ↓
 feature branch पर code change
@@ -1496,6 +1515,8 @@ CI / Trivy / Terraform
 ❌ FAIL
     ↓
 Merge ❌ BLOCKED
+```
+
 
 और अगर CI PASS लेकिन reviewer approval नहीं है:
 
@@ -1510,6 +1531,8 @@ CI PASS अकेले merge नहीं करता।
 CI PASS + Required Reviewer Approval + सभी Repository Rules PASS होने के बाद ही human reviewer/maintainer merge करता है।
 
 तो तुम्हारे document में:
+
+```text
 
 CI PASS
    ↓
@@ -1526,5 +1549,8 @@ Repository Rules PASS
 Human Reviewer / Maintainer
    ↓
 Merge
+```
 
 यही हमारा Secure PR Flow है। 🔐
+
+---
