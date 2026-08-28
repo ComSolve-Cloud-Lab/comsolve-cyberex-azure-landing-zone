@@ -514,22 +514,227 @@ graph TD
 | **Code Coverage** | ❌ अभी नहीं | Terraform infrastructure repo में अभी relevant नहीं |
 | **Copilot Review** | ❌ अभी नहीं | अभी आवश्यक नहीं |
 | **Deployment requirement** | ❌ अभी नहीं | अभी CI/Plan stage पर हैं |
+```
+---
 
-🔀 Step 12 — Pull Request Create करें
+# 🔀 Step 12 — Pull Request Create करके Governance Test
 
-GitHub पर जाएँ।
+### 🎯 इसका उद्देश्य
 
-अब:
+हम यह verify करेंगे:
+```text 
 
 feature/governance-test
         ↓
-Pull Request
+   Pull Request
         ↓
-main
+   Review / Approval
+        ↓
+   CI Checks
+        ↓
+   Ruleset Validation
+        ↓
+   Merge to main
+```
+---
 
-PR create करें।
+मतलब अब developer सीधे main में code नहीं डालेगा। पहले Feature Branch → PR → Review → CI → Merge होगा।
 
-🧪 Step 13 — CI Validation देखें
+1️⃣ Feature Branch पर जाएँ
+
+GitHub Repository खोलें और अपनी branch:
+
+feature/governance-test
+
+select करें।
+
+अगर branch अभी नहीं है तो local PowerShell से:
+
+git checkout -b feature/governance-test
+
+फिर कोई छोटा test change करें, जैसे documentation में एक line add करें।
+
+2️⃣ Change Commit और Push करें
+git add .
+git commit -m "test: validate repository governance"
+git push -u origin feature/governance-test
+
+अब GitHub पर यह branch दिखाई देगी।
+
+3️⃣ Pull Request Create करें
+
+GitHub में:
+
+Repository
+   ↓
+Pull Requests
+   ↓
+New Pull Request
+
+फिर:
+
+base repository : comsolve-cyberex-azure-landing-zone
+base branch     : main
+
+compare branch  : feature/governance-test
+
+फिर:
+
+Create Pull Request
+ध्यान रखना
+
+Direction यह होना चाहिए:
+
+feature/governance-test
+          │
+          ▼
+        main
+
+main → feature नहीं।
+
+4️⃣ अब क्या होगा?
+
+PR create होते ही हमारा governance flow trigger होगा:
+
+Developer
+   ↓
+Feature Branch
+   ↓
+Pull Request → main
+   ↓
+┌─────────────────────────┐
+│ GitHub Ruleset           │
+│                         │
+│ PR Required      ✅     │
+│ Approval Required ✅     │
+│ CI Required       ✅     │
+│ Force Push        ❌     │
+└─────────────────────────┘
+   ↓
+Terraform CI
+   ↓
+Trivy Scan
+   ↓
+Terraform Plan
+   ↓
+Reviewer Approval
+   ↓
+Merge
+5️⃣ Reviewer क्या करेगा?
+
+PR में Reviewers section में जो reviewer हमने configure किया है, वह PR को review करेगा।
+
+Reviewer:
+
+Review changes
+      ↓
+Approve
+
+या अगर problem मिले:
+
+Request changes
+
+जब तक required approval नहीं मिलता, PR merge नहीं होना चाहिए।
+
+6️⃣ सबसे important test
+
+PR page पर Merge button के पास GitHub तुम्हें बताएगा कि कौन-कौन सी requirements पूरी हुई हैं।
+
+हमें ideally यह देखना है:
+
+Required approval       ✅
+Required status checks  ✅
+Terraform CI            ✅
+Trivy scan              ✅
+Conversations resolved  ✅
+Branch up to date       ✅
+
+```text
+
+तभी:
+
+Merge Pull Request
+        ↓
+      main
+```
+
+# 🧠 पूरा flow short में
+
+```text 
+
+Feature Branch
+      ↓
+   git push
+      ↓
+ Create PR
+      ↓
+ Reviewer Approval
+      ↓
+ Terraform CI
+      ↓
+ Trivy Security Scan
+      ↓
+ Terraform Plan
+      ↓
+ Ruleset Requirements
+      ↓
+    MERGE ✅
+      ↓
+     main
+```
+---
+
+📝 Title में यह डालो
+test: validate repository governance
+📄 Description में यह डालो
+## 🎯 Purpose
+
+This Pull Request is created to validate the GitHub repository governance and branch protection configuration.
+
+## 🔐 Governance Checks
+
+- Pull Request approval requirement
+- Required CI status checks
+- Trivy IaC security scan
+- Terraform validation
+- Terraform plan
+- Direct changes to `main` branch protection
+
+## 🧪 Test Branch
+
+`feature/governance-test`
+
+## 🎯 Target Branch
+
+`main`
+
+## ✅ Expected Result
+
+The PR should require the configured reviewer approval and required CI checks before it can be merged into `main`.
+
+फिर नीचे Create Pull Request पर click कर दो।
+
+इसके बाद हमारा flow
+feature/governance-test
+          ↓
+     Create PR
+          ↓
+   Reviewer Approval
+          ↓
+   Terraform CI
+          ↓
+      Trivy Scan
+          ↓
+    Terraform Plan
+          ↓
+   Ruleset Validation
+          ↓
+      Merge → main
+
+अभी PR create कर दो। उसके बाद जो screen/result आए उसका screenshot या text भेज देना — वहीं से अगला step करेंगे।
+
+---
+# 🧪 Step 13 — CI Validation देखें
 
 Pull Request में GitHub Actions checks दिखाई देने चाहिए।
 
@@ -553,7 +758,48 @@ Terraform Plan
 
 होने चाहिए।
 
-🚫 Step 14 — Direct Main Push Test
+🔎 CI Checks देखने का Path
+GitHub Repository
+      ↓
+Pull Requests
+      ↓
+अपना PR खोलो
+      ↓
+Conversation
+      ↓
+नीचे scroll करो
+      ↓
+Checks / Status Checks
+
+PR के अंदर तुम्हें कुछ ऐसा दिखेगा:
+
+Checks
+
+Terraform CI
+    ├── Terraform Format Check       ✅
+    ├── Terraform Init               ✅
+    ├── Terraform Validate           ✅
+    ├── Trivy IaC Security Scan      ✅
+    └── Terraform Plan               ✅
+अगर detail देखनी हो
+
+PR में Checks के सामने Details पर click करो:
+
+PR
+ ↓
+Checks
+ ↓
+Terraform CI
+ ↓
+Details
+
+वहाँ पूरा GitHub Actions job log दिखाई देगा।
+
+बस इतना ही करना है Step 13 में।
+
+---
+
+# 🚫 Step 14 — Direct Main Push Test
 
 अब जानबूझकर main में direct push करने की कोशिश नहीं करनी चाहिए।
 
