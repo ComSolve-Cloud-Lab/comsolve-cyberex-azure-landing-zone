@@ -237,20 +237,17 @@ git push -u origin feature/required-status-check
 
 अब GitHub पर branch दिखाई देगी।
 
-🟢 STEP 07 — Pull Request Create करें
+🟢 STEP 07 — Pull Request Create
 
-GitHub Repository खोलें।
+GitHub Repository → Pull requests → New pull request
 
-Path:
+अब branches ऐसे select करो:
 
-Pull requests
-     ↓
-New pull request
-
-Select करें:
+base repository:
+comsolve-cyberex-azure-landing-zone
 
 base:
-main
+feature/nic-infrastructure
 
 compare:
 feature/required-status-check
@@ -258,6 +255,62 @@ feature/required-status-check
 फिर:
 
 Create pull request
+🔐 हमारा actual test
+feature/nic-infrastructure
+          ↑
+          │ PR
+          │
+feature/required-status-check
+          ↓
+GitHub Actions
+          ↓
+Terraform CI
+          ↓
+Trivy
+          ↓
+Terraform Plan
+          ↓
+✅ PASS
+          ↓
+Required Approval
+          ↓
+Merge
+
+यही हमारे environment के हिसाब से सही flow है। main को अभी touch करके testing नहीं करेंगे।
+
+
+हाँ भाई, git push -u origin feature/required-status-check feature/nic-infrastructure में push नहीं करेगा।
+
+यह नई branch को ही GitHub पर push करेगा:
+
+LOCAL
+feature/required-status-check
+        ↓
+        git push -u origin feature/required-status-check
+        ↓
+REMOTE
+origin/feature/required-status-check
+
+लेकिन ध्यान रखना:
+
+feature/nic-infrastructure
+        ↓
+   (जिससे branch बनाई)
+        ↓
+feature/required-status-check
+        ↓
+   GitHub पर push
+
+इसलिए code की starting point NIC branch की होगी, लेकिन push नई feature/required-status-check branch में होगा।
+
+और PR में:
+
+base    = feature/nic-infrastructure
+compare = feature/required-status-check
+
+रखोगे तो changes NIC branch में merge होंगे। ✅
+
+
 🟢 STEP 08 — GitHub Actions Run होने दें
 
 PR open करने के बाद GitHub Actions automatically run होगी।
@@ -427,7 +480,430 @@ Terraform CI
 
 अब merge button available होना चाहिए, provided बाकी branch protection requirements भी satisfied हों।
 
-🚨 STEP 17 — Failure Test
+
+# test fail ho gaya ahi
+
+```text
+
+Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Run azure/login@v2
+Running Azure CLI Login.
+/usr/bin/az cloud set -n azurecloud
+Done setting cloud: "azurecloud"
+Federated token details:
+ issuer - https://token.actions.githubusercontent.com
+ subject claim - repo:Shrikant-Nadgaudaa@247837213/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/feature/required-status-check
+ audience - api://AzureADTokenExchange
+ job_workflow_ref - Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/.github/workflows/terraform-ci.yml@refs/heads/feature/required-status-check
+Attempting Azure CLI login by using OIDC...
+Error: AADSTS700213: No matching federated identity record found for presented assertion subject 'repo:Shrikant-Nadgaudaa@247837213/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/feature/required-status-check'. Check your federated identity credential Subject, Audience and Issuer against the presented assertion. https://learn.microsoft.com/entra/workload-id/workload-identity-federation Trace ID: 67e611a0-ba10-4b67-9602-577db58a2800 Correlation ID: 89d93192-1308-4c7a-9193-a77d7edc3b87 Timestamp: 2026-08-28 12:42:55Z
+
+Error: Run the command below to authenticate interactively; additional arguments may be added as needed:
+az logout
+az login
+
+Error: Login failed with Error: The process '/usr/bin/az' failed with exit code 1. Double check if the 'auth-type' is correct. Refer to https://github.com/Azure/login#readme for more information.
+
+```
+
+## ❓ महत्वपूर्ण प्रश्न
+
+ऊपर बताए गए सभी Repository Protection, Pull Request Approval और Required Status Check rules configure करने के बाद भी `main` branch में Pull Request merge कैसे हो गया?
+
+साथ ही, GitHub Actions में `Azure Login` step क्यों fail हुआ?
+
+> 🔎 **Hypothesis:** संभव है कि Azure App Registration में Federated Identity Credential केवल `feature/nic-infrastructure` branch के लिए configured है। इसलिए जब GitHub Actions किसी दूसरी branch या Pull Request context से Azure authentication करने की कोशिश करता है, तो Azure OIDC authentication fail हो जाता है।
+
+**इस issue का exact कारण और उसका समाधान हम अगले step में verify करेंगे।**
+
+हाँ भाई, अब actual issue साफ हो गया है। तुम्हारा PR merge इसलिए हुआ क्योंकि जिस check को तुम देख रहे हो — Terraform Validation — वह जरूरी नहीं कि Ruleset में Required Status Check के रूप में configured हो।
+
+GitHub में सिर्फ check का FAIL होना = automatically merge block होना नहीं है। केवल वही checks merge को रोकते हैं जिन्हें target branch के ruleset में explicitly required किया गया है।
+
+अभी तुम्हारे case में flow
+PR
+ ↓
+GitHub Actions
+ ↓
+Terraform Validation
+ ↓
+❌ FAIL
+ ↓
+लेकिन Ruleset में यह check REQUIRED नहीं है
+ ↓
+GitHub
+ ↓
+✅ Merge allowed
+
+इसलिए तुम्हारा observation बिल्कुल सही है।
+
+
+⚠️ एक और महत्वपूर्ण बात
+
+तुम्हारा current failure:
+
+AADSTS700213
+No matching federated identity record
+
+Azure OIDC authentication failure है, Trivy/Terraform code failure नहीं।
+
+और अभी हमें इसे दो अलग चीजों की तरह देखना है:
+
+Azure OIDC
+   ↓
+❌ Authentication problem
+
+और
+
+GitHub Required Status Check
+   ↓
+❌/✅ Merge Gate
+
+पहले Ruleset में Terraform Validation को Required बनाओ। उसके बाद PR को दोबारा test करेंगे।
+
+
+----
+
+👍 पहले Azure OIDC login वाला issue solve करते हैं, फिर Required Status Check का fail/merge test करेंगे।
+
+अभी तुम्हारा actual blocker यही है:
+
+azure/login@v2
+      ↓
+OIDC Authentication
+      ↓
+AADSTS700213
+      ↓
+No matching federated identity record found
+
+इसका मतलब GitHub Actions का OIDC token Azure तक पहुँच रहा है, लेकिन Azure App Registration में उसके subject से matching Federated Credential नहीं है।
+
+पहले इसे fix करते हैं। उसके बाद ही Terraform Validation को intentionally fail करके governance test करेंगे।
+
+हमारा flow
+STEP 1
+Azure App Registration
+        ↓
+STEP 2
+Federated Credentials check
+        ↓
+STEP 3
+GitHub branch / PR के लिए सही Subject configure
+        ↓
+STEP 4
+GitHub Actions re-run
+        ↓
+azure/login
+        ↓
+✅ SUCCESS
+        ↓
+Terraform Validation
+        ↓
+Trivy
+        ↓
+Terraform Plan
+
+अभी Terraform में कोई { } मत हटाना और कोई failure मत बनाना। पहले Azure authentication ठीक करते हैं।
+
+---
+आपके स्क्रीन पर अब जो फ़ील्ड्स बचे हैं, उनको इसी नए immutable-subject फ़ॉर्मेट में फ़िल करना है:
+
+### 📋 OIDC Configuration Fields Reference
+
+| Field | क्या select/enter करना है |
+| :--- | :--- |
+| **Issuer** | `https://token.actions.githubusercontent.com` |
+| **Organization** | `Shrikant-Nadgaudaa` |
+| **Organization ID** | GitHub का Organization ID |
+| **Repository** | `comsolve-cyberex-azure-landing-zone` |
+| **Repository ID** | GitHub repo का Repository ID |
+| **Entity type** | Branch / Pull request — workflow के अनुसार |
+| **Subject identifier** | Auto-generated रहने दो |
+| **Name** | `github-actions-oidc` |
+| **Audience** | `api://AzureADTokenExchange` |
+
+---
+
+1️⃣ Repository ID निकालो
+
+GitHub पर अपना repository खोलो:
+
+comsolve-cyberex-azure-landing-zone
+        ↓
+Settings
+        ↓
+General
+        ↓
+सबसे नीचे
+Danger Zone
+
+लेकिन Repository ID के लिए easiest तरीका GitHub API है।
+
+PowerShell में:
+
+(Invoke-RestMethod "https://api.github.com/repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone").id
+
+Output ऐसा number आएगा:
+
+1338145312
+
+यही:
+
+Repository ID = 1338145312
+2️⃣ Organization ID निकालो
+
+तुम्हारे GitHub account/repository के organization का नाम यहाँ दिख रहा है:
+
+Shrikant-Nadgaudaa
+
+PowerShell:
+
+(Invoke-RestMethod "https://api.github.com/orgs/Shrikant-Nadgaudaa").id
+
+अगर यह organization नहीं बल्कि personal account है, तो command अलग होगी:
+
+(Invoke-RestMethod "https://api.github.com/users/Shrikant-Nadgaudaa").id
+🔥 पहले ये दो commands चला
+(Invoke-RestMethod "https://api.github.com/repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone").id
+(Invoke-RestMethod "https://api.github.com/users/Shrikant-Nadgaudaa").id
+
+---
+
+Perfect bhai ✅ अब दोनों IDs मिल गईं।
+
+तुम्हारे case में:
+
+GitHub Account / Owner ID
+247837213
+
+Repository ID
+1338145312
+
+
+Azure के **Add a credential ➔ GitHub Actions deploying Azure resources** फ़ॉर्म में अभी ये भरें:
+
+### 🔐 Azure OIDC Federated Credential Configuration
+
+| Azure Field | Value |
+| :--- | :--- |
+| **Issuer** | `https://token.actions.githubusercontent.com` |
+| **Organization** | `Shrikant-Nadgaudaa` |
+| **Organization ID** | `247837213` |
+| **Repository** | `comsolve-cyberex-azure-landing-zone` |
+| **Repository ID** | `1338145312` |
+
+
+⚠️ अब सबसे important — Entity type
+
+तुम्हारा error PR से भी आया था:
+
+subject ... :pull_request
+
+और branch run से भी:
+
+subject ... :ref:refs/heads/feature/required-status-check
+
+इसलिए एक FIC से दोनों cases automatically cover नहीं होंगे अगर generated subject अलग है।
+
+हमारा अभी objective है:
+
+GitHub Pull Request
+        ↓
+Azure OIDC Login
+        ↓
+Terraform Validation
+        ↓
+Required Status Check
+
+इसलिए पहले Pull request वाला credential बनाना सही रहेगा।
+
+Entity type → Pull request select करो।
+
+फिर Subject identifier को manually edit मत करना — Azure उसे automatically calculate करेगा।
+
+बाकी:
+
+Name:
+github-actions-pr
+
+Audience:
+api://AzureADTokenExchange
+
+फिर Add / Save करो।
+
+इसके बाद GitHub Actions में Re-run failed jobs करेंगे और देखेंगे कि azure/login@v2 अब सफल होता है या नहीं।
+
+---
+
+✅ Azure Login successful hai, लेकिन इसका मतलब पूरी pipeline अभी automatically successful नहीं मानी जाएगी। यह सिर्फ azure/login@v2 authentication step का success है।
+
+Markdown में यह short comment डाल:
+
+> ✅ **Azure OIDC Login Successful:** GitHub Actions ने Azure के साथ OIDC-based authentication successfully complete किया। Azure subscription और tenant details successfully validate हो गईं और Service Principal के रूप में login successful रहा।
+
+Flow:
+
+GitHub Actions
+      ↓
+OIDC Token
+      ↓
+Microsoft Entra ID
+      ↓
+Federated Credential
+      ↓
+Azure Login ✅
+      ↓
+Terraform CI आगे execute
+
+
+
+---
+
+
+हाँ भाई, अब एक controlled retest करते हैं। इस बार हम यह verify करेंगे कि main पर required status check वास्तव में enforce हो रहा है या नहीं।
+
+🧪 Retest — Required Status Check
+STEP 01 — Current test branch पर रहो
+git checkout feature/required-status-check
+
+Check:
+
+git branch
+
+Expected:
+
+  feature/nic-infrastructure
+* feature/required-status-check
+  main
+STEP 02 — जानबूझकर CI fail कराओ
+
+STEP 02 — Temporary Terraform Failure
+
+उदाहरण के लिए किसी .tf file में:
+
+resource "azurerm_resource_group" "test" {
+
+को temporarily ऐसा कर दो:
+
+resource "azurerm_resource_group" "test" {
+  THIS_IS_A_TEST_ERROR
+
+इससे Terraform validation fail होना चाहिए।
+
+STEP 03 — नया commit बनाओ
+
+फिर:
+
+git add .
+git commit -m "test: verify required status check failure"
+git push
+
+GitHub Actions चलेगा:
+
+Pull Request
+    ↓
+Terraform Validation
+    ↓
+❌ FAIL
+    ↓
+Required Status Check
+    ↓
+🚫 MERGE BLOCKED
+⚠️ लेकिन एक बात
+
+Existing production/resource definition में यह मत डालना अगर उसी file में बहुत important infrastructure है। बेहतर है जिस .tf file को बदलो, उसका सिर्फ एक harmless syntax error डालो।
+
+Test complete होने के बाद:
+
+❌ THIS_IS_A_TEST_ERROR
+        ↓
+🗑️ Remove
+        ↓
+Terraform code वापस सही
+        ↓
+git add .
+git commit -m "fix: restore terraform configuration after governance test"
+git push
+
+Curly bracket हटाने के बजाय यह तरीका ज्यादा साफ है, क्योंकि बाद में तुरंत पता रहेगा कि हमने जानबूझकर test failure बनाया था।
+
+
+
+
+STEP 04 — GitHub PR खोलो
+
+GitHub:
+
+Pull requests
+   ↓
+feature/required-status-check → main
+
+अगर existing PR है तो नई PR बनाने की जरूरत नहीं।
+
+PR खोलकर:
+
+Checks
+
+section देखो।
+
+STEP 05 — सबसे important verification
+
+देखो:
+
+Terraform Validation
+
+क्या status है?
+
+❌ Failed
+
+और PR के नीचे GitHub क्या message देता है:
+
+❌ Merge blocked
+
+या:
+
+Merging is blocked
+
+या required checks वाला warning।
+
+STEP 06 — अगर फिर भी Merge button available है
+
+Merge मत करना।
+
+PR में नीचे यह check करो:
+
+Merge checks
+   ↓
+Required status checks
+
+और देखो क्या Terraform Validation के सामने:
+
+Required
+
+लिखा है।
+
+🔥 सबसे important test
+
+हमारा expected final result:
+
+feature/required-status-check
+             ↓
+          Pull Request
+             ↓
+            main
+             ↓
+   Terraform Validation
+             ↓
+          ❌ FAIL
+             ↓
+   Required Check = YES
+             ↓
+      🚫 MERGE BLOCKED
+
+अगर इसके बाद भी Merge button से merge हो जाता है, तो कुछ भी change मत करना।
+-----
+
+# 🚨 STEP 17 — Failure Test
 
 अब हमें security gate को practically test करना है।
 
