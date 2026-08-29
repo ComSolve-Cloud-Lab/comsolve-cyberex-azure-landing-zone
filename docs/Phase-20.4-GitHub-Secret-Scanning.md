@@ -563,13 +563,11 @@ New-Item secret-test.txt -ItemType File
 
 फिर:
 
-notepad secret-test.txt
-
 इसमें सिर्फ fake value डालो:
 
-TEST_SECRET_DO_NOT_USE=not-a-real-credential
-
-Save करके Notepad बंद करो।
+AZURE_CLIENT_ID=00000000-0000-0000-0000-000000000000
+AZURE_CLIENT_SECRET=not-a-real-azure-secret
+AZURE_TENANT_ID=00000000-0000-0000-0000-000000000000
 
 Secret Scanning यह नहीं देखता कि value valid Azure credential है या नहीं। वह मुख्यतः value का pattern/format पहचानता है।
 
@@ -714,19 +712,26 @@ Terraform Plan
 और real Azure credential बिल्कुल मत डालना। Fake string detection guaranteed नहीं है; अगर GitHub उसे detect नहीं करता तो इसका मतलब Secret Protection खराब है ऐसा conclude नहीं करेंगे।
 
 
-# 🔎 STEP 09 — GitHub Security Alerts Check करें
+# 🔎 STEP 09 — Secret Scanning Alert Check
+अपना GitHub repository खोलो:
+comsolve-cyberex-azure-landing-zone
+ऊपर वाले menu में Security पर click करो।
+Security page में Secret scanning section ढूँढो।
+वहाँ Alerts पर click करो।
 
-GitHub Repository में:
+Path:
 
+GitHub Repository
+       ↓
 Security
-   ↓
+       ↓
 Secret scanning
-   ↓
+       ↓
 Alerts
 
-check करें।
+अगर secret detect हुआ है तो वहाँ alert दिखाई देगा।
 
-यहाँ GitHub द्वारा detected secrets दिखाई दे सकते हैं।
+अगर 0 alerts दिखे तो इसका मतलब हमारे fake test value को GitHub ने supported secret pattern नहीं माना — यह भी expected हो सकता है।
 
 ⚠️ Dummy value को GitHub secret के रूप में detect करना guaranteed नहीं है। Detection provider patterns और supported secret types पर निर्भर करता है। इसलिए test का उद्देश्य feature availability और workflow समझना है, न कि arbitrary dummy string से detection guarantee करना।
 
