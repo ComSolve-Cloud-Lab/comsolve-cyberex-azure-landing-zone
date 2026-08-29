@@ -739,6 +739,8 @@ Alerts
 
 अगर कभी real credential repository में commit हो जाए:
 
+```text
+
 DO NOT
    ↓
 सिर्फ Git history से delete करके छोड़ देना
@@ -758,17 +760,164 @@ Remove Secret from Code
 Move Secret to Secure Store
       ↓
 Validate Again
-🔐 STEP 11 — Azure Credentials के लिए सही Pattern
+```
+---
+PowerShell में उसी testing branch पर:
 
-Terraform/GitHub Actions में credentials source code में नहीं रखने हैं।
+Remove-Item .\secret-test.txt
+
+फिर:
+
+git status
+
+अगर secret-test.txt deleted दिखे तो:
+
+git add .
+git commit -m "test: cleanup secret scanning test"
+git push
+
+बस। अभी real Azure Client ID/Secret डालकर दोबारा test मत करना।
+
+## Some additionl information 
+
+🚨 अगर Real Secret कभी Leak हो जाए
+
+अगर किसी developer से गलती से real Azure credential / API key / token / password repository में commit हो जाए, तो केवल file delete करना पर्याप्त नहीं है।
+
+सबसे important बात:
+
+🔴 Git में secret commit हो जाने के बाद उसे compromised मानना चाहिए।
+
+क्योंकि secret Git history, PR, logs या अन्य locations में मौजूद हो सकता है।
+
+❌ गलत तरीका
+Real Secret Commit
+       ↓
+File Delete
+       ↓
+git commit
+       ↓
+Done ❌
+
+यह secure remediation नहीं है।
+
+✅ सही Security Response
+
+```text
+
+Secret Detected
+       ↓
+Immediately Revoke
+       ↓
+Rotate / Regenerate Credential
+       ↓
+Check Azure Usage / Activity Logs
+       ↓
+Remove Secret from Source Code
+       ↓
+Clean Git History if Required
+       ↓
+Move Authentication to Secure Mechanism
+       ↓
+Validate Repository Again
+```
+--- 
+# 🔴  Immediately Revoke
+
+अगर Azure का कोई actual credential leak हुआ है तो सबसे पहले उस credential को invalid करना है।
+
+उदाहरण:
+
+Azure Client Secret
+       ↓
+Revoke / Delete
+       ↓
+Old Secret becomes unusable
+
+सिर्फ GitHub से secret हटाना पर्याप्त नहीं है।
+
+# 🔄 Credential Rotate करें
+
+Revoke के बाद नया credential generate किया जा सकता है।
+
+लेकिन हमारे current project में बेहतर approach है:
+
+GitHub Actions
+       ↓
+OIDC
+       ↓
+Microsoft Entra ID
+       ↓
+Azure
+
+इस architecture में long-lived Azure Client Secret को GitHub repository में रखने की जरूरत नहीं है।
+
+# 🔎  Usage / Logs Check करें
+
+अगर credential वास्तव में exposed हुआ है, तो यह भी check करना चाहिए कि उसका unauthorized use हुआ या नहीं।
+
+Conceptually:
+
+Leaked Credential
+       ↓
+Was it used?
+       ↓
+Azure Activity / Sign-in Logs
+       ↓
+Check suspicious activity
+
+यदि suspicious activity मिले तो incident investigation आगे बढ़ानी होगी।
+
+# 🧹  Source Code से Secret Remove करें
+
+Secret को .tf, .tfvars, .yml, .env, .txt या किसी दूसरे source file में hardcode नहीं करना चाहिए।
 
 गलत:
 
-Terraform Code
-     ↓
-Hardcoded Secret
+Terraform
+    ↓
+Hardcoded Azure Secret
 
 सही:
+
+GitHub Actions
+    ↓
+OIDC Authentication
+    ↓
+Microsoft Entra ID
+    ↓
+Azure
+
+# ⚠️ Important
+
+अगर secret Git history में commit हो चुका है, तो केवल:
+
+Remove-Item secret-file
+git commit
+git push
+
+करने से पुरानी Git history से secret automatically remove नहीं होता।
+
+इसलिए वास्तविक secret leak होने पर credential rotation/revocation हमेशा प्राथमिक कदम है। Git history cleanup अलग remediation step है।
+
+---
+
+# 🔐 STEP 11 — Azure Credentials के लिए सही Pattern
+
+Terraform/GitHub Actions में credentials source code में नहीं रखने हैं।
+
+❌ Traditional / Less Preferred Approach
+GitHub Repository
+       ↓
+AZURE_CLIENT_ID
+AZURE_CLIENT_SECRET
+AZURE_TENANT_ID
+       ↓
+Azure Login
+
+इसमें Client Secret एक long-lived credential हो सकता है।
+
+*** ✅ हमारा Current Secure Approachसही: ***
 
 GitHub Actions
      ↓
@@ -782,7 +931,26 @@ Azure
 
 इसलिए long-lived Azure client secrets को repository में रखने की आवश्यकता कम होती है।
 
-🧹 STEP 12 — Test Cleanup
+इसका फायदा:
+
+Repository में Client Secret hardcode नहीं करना पड़ता।
+Long-lived secret dependency कम होती है।
+GitHub Actions और Azure के बीच federated authentication होता है।
+Authentication workflow-based trust पर आधारित होता है।
+🔐 हमारा Principle
+No Hardcoded Secrets
+        ↓
+Use OIDC
+        ↓
+Use Federated Identity
+        ↓
+Use Least Privilege
+
+इसलिए secret-test.txt में हमने केवल dummy values use की थीं।
+
+---
+
+# 🧹 STEP 12 — Test Cleanup
 
 Testing के बाद temporary file remove करें:
 
@@ -791,25 +959,67 @@ Remove-Item .\secret-test.txt
 फिर:
 
 git status
-🟢 STEP 13 — Commit Cleanup
+
+---
+
+# 🟢 STEP 13 — Commit Cleanup
 git add .
 git commit -m "test: cleanup secret scanning test"
 git push
-🔀 STEP 14 — Pull Request Cleanup
 
-Testing branch के लिए PR create किया हो तो:
+---
+# 🔀 STEP 14 — Pull Request Cleanup
+
+अगर Secret Scanning test के लिए हमने अलग branch बनाई थी:
 
 feature/secret-scanning-test
-        ↓
-main
 
-PR checks verify करें।
+तो उसका उद्देश्य केवल testing था।
 
-अगर test complete हो चुका है और branch की जरूरत नहीं है तो PR close/delete किया जा सकता है।
+Workflow:
+
+feature/secret-scanning-test
+             ↓
+       Secret Scanning Test
+             ↓
+       Cleanup Commit
+             ↓
+          Push
+             ↓
+       Pull Request
+Step 14.1 — PR Checks
+
+GitHub में Pull Request खोलकर verify करें:
+
+Pull Request
+     ↓
+Checks
+     ↓
+Terraform CI
+     ↓
+Trivy
+     ↓
+Terraform Plan
+
+सभी required checks successful होने चाहिए।
+
+Step 14.2 — Testing Complete होने के बाद
+
+अगर यह branch केवल testing के लिए बनाई गई थी और अब इसकी आवश्यकता नहीं है:
+
+Testing Complete
+       ↓
+PR Close / Merge as appropriate
+       ↓
+Delete Testing Branch
+
+Branch delete करने से पहले यह सुनिश्चित करें कि उसमें कोई required production code या configuration बाकी नहीं है।
 
 🔐 STEP 15 — Security Workflow
 
 अब हमारा secure development flow:
+
+```text
 
 Developer
     ↓
@@ -836,16 +1046,22 @@ Code Review
 Approval
     ↓
 Merge
-📊 STEP 16 — Security Controls
-Security Control	Status
-Secret Scanning	⏳
-Push Protection	⏳
-Secret Alerts	⏳
-Credential Remediation Process	⏳
-GitHub OIDC	✅
-Required CI Checks	✅ / Phase 20.2
-Trivy IaC Scan	✅
-Protected Main	✅ / Phase 20.1
+```
+
+---
+
+### 📊 Step 16 — Security Controls
+
+| Security Control | Status |
+| :--- | :--- |
+| **Secret Scanning** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Push Protection** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Secret Alerts** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Credential Remediation Process** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **GitHub OIDC** | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **Required CI Checks** | ![Passed](https://img.shields.io/badge/Phase_20.2-PASSED-brightgreen?style=flat-square) |
+| **Trivy IaC Scan** | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **Protected Main** | ![Passed](https://img.shields.io/badge/Phase_20.1-PASSED-brightgreen?style=flat-square) |
 🧠 STEP 17 — Important Difference
 
 Secret Scanning और Trivy का उद्देश्य अलग है।
