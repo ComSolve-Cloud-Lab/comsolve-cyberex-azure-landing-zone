@@ -3,11 +3,8 @@
 <p align="center">
 
 ![GitHub](https://img.shields.io/badge/GitHub-Repository%20Security-181717?style=for-the-badge\&logo=github\&logoColor=white)
-
 ![Dependabot](https://img.shields.io/badge/Dependabot-Dependency%20Security-025E8C?style=for-the-badge\&logo=github\&logoColor=white)
-
 ![Security](https://img.shields.io/badge/Dependency-Security-success?style=for-the-badge)
-
 ![Automation](https://img.shields.io/badge/Automated-Updates-blue?style=for-the-badge)
 
 </p>

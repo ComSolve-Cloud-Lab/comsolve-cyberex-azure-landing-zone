@@ -802,7 +802,70 @@ PR checks verify करें।
 
 अगर test complete हो चुका है और branch की जरूरत नहीं है तो PR close/delete किया जा सकता है।
 
-🔐 STEP 15 — Security Workflow
+अगर feature/secret-scanning-test सिर्फ testing branch है, तो पहले उसकी स्थिति verify करेंगे, फिर PR close/delete करेंगे।
+
+STEP 1 — Current branch check
+git branch --show-current
+
+अगर output:
+
+feature/secret-scanning-test
+
+तो ठीक है।
+
+STEP 2 — Cleanup verify
+git status
+
+अगर working tree clean है:
+
+nothing to commit, working tree clean
+
+तो आगे बढ़ो।
+
+STEP 3 — Remote branch verify
+git branch -r
+
+इसमें देखो:
+
+origin/feature/secret-scanning-test
+STEP 4 — GitHub पर PR check
+
+GitHub:
+
+Repository
+   ↓
+Pull requests
+   ↓
+feature/secret-scanning-test
+
+अगर PR सिर्फ testing के लिए है → Close pull request करो।
+
+STEP 5 — Local branch से बाहर आओ
+git checkout feature/nic-infrastructure
+STEP 6 — Testing branch delete करो
+git branch -d feature/secret-scanning-test
+
+अगर Git बोले branch merged नहीं है और delete करने के लिए confirmation चाहिए, अभी -D मत लगाना। पहले output मुझे भेजना।
+
+STEP 7 — Remote testing branch delete
+
+PR close करने के बाद:
+
+git push origin --delete feature/secret-scanning-test
+STEP 8 — Final verify
+git branch
+
+और:
+
+git branch -r
+
+अब feature/secret-scanning-test नहीं होना चाहिए।
+
+NIC branch सुरक्षित रहेगी। उसमें कुछ merge करने की जरूरत नहीं है।
+
+# 🔐 STEP 15 — Security Workflow
+
+```text
 
 अब हमारा secure development flow:
 
@@ -831,17 +894,25 @@ Code Review
 Approval
     ↓
 Merge
-📊 STEP 16 — Security Controls
-Security Control	Status
-Secret Scanning	⏳
-Push Protection	⏳
-Secret Alerts	⏳
-Credential Remediation Process	⏳
-GitHub OIDC	✅
-Required CI Checks	✅ / Phase 20.2
-Trivy IaC Scan	✅
-Protected Main	✅ / Phase 20.1
-🧠 STEP 17 — Important Difference
+```
+---
+
+### 📊 Step 16 — Security Controls
+
+| Security Control | Status |
+| :--- | :--- |
+| **Secret Scanning** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Push Protection** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Secret Alerts** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **Credential Remediation Process** | ![Pending](https://img.shields.io/badge/State-PENDING-yellow?style=flat-square) |
+| **GitHub OIDC** | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **Required CI Checks** | ![Passed](https://img.shields.io/badge/Phase_20.2-PASSED-brightgreen?style=flat-square) |
+| **Trivy IaC Scan** | ![Passed](https://img.shields.io/badge/State-PASSED-brightgreen?style=flat-square) |
+| **Protected Main** | ![Passed](https://img.shields.io/badge/Phase_20.1-PASSED-brightgreen?style=flat-square) |
+
+---
+
+# 🧠 STEP 17 — Important Difference
 
 Secret Scanning और Trivy का उद्देश्य अलग है।
 
