@@ -97,6 +97,8 @@ GitHub Actions
 
 हमारे project में security flow अब:
 
+```text
+
 Pull Request
       ↓
 GitHub Actions
@@ -112,8 +114,13 @@ Required Status Checks
 Code Review
       ↓
 Merge
+```
 
-अब इसमें secret protection जोड़ेंगे:
+---
+
+*** अब इसमें secret protection जोड़ेंगे: ***
+
+```text 
 
 Code
  ↓
@@ -128,9 +135,14 @@ Trivy
 Review
  ↓
 Merge
-🚀 5. Implementation Plan
+```
+----
+
+# 🚀 5. Implementation Plan
 
 इस Phase में implementation:
+
+```text 
 
 Step 01
 Repository Security Settings
@@ -155,7 +167,11 @@ Secret Remediation
         ↓
 Step 08
 Final Security Validation
-🟢 STEP 01 — Repository Security Settings
+
+```
+---
+
+# 🟢 STEP 01 — Repository Security Settings
 
 GitHub Repository खोलें:
 
@@ -171,38 +187,261 @@ Code security and analysis
 
 GitHub UI version के अनुसार menu location थोड़ा अलग दिखाई दे सकता है।
 
-🟢 STEP 02 — Secret Scanning Locate करें
+हाँ भाई, यहाँ थोड़ा confusion होना normal है। Security and variables के अंदर जो options दिख रहे हैं, उनमें हर चीज़ का अलग purpose है।
 
-Security settings में:
+तुम अभी Phase 20.5 — Repository Governance Policy कर रहे हो, इसलिए अभी सही जगह Security / Advanced Security है, बाकी options को अभी छेड़ने की जरूरत नहीं।
 
-Secret scanning
+*** तुम्हारे options का मतलब ***
 
-section खोजें।
+### ⚙️ GitHub Repository Code & Automation Options Summary
 
-यहाँ repository की available secret-protection capabilities दिखाई देंगी।
+| Option | क्या करता है | अभी हमें चाहिए? |
+| :--- | :--- | :-: |
+| **Actions** | GitHub Actions workflows, permissions, policies | ![Yes](https://img.shields.io/badge/Status-YES-brightgreen?style=flat-square) |
+| **Agents** | Self-hosted/hosted agent-related settings | ❌ अभी नहीं |
+| **Codespaces** | GitHub Codespaces development environment | ❌ नहीं |
+| **Dependabot** | Dependency updates + vulnerability alerts | 🟡 Phase 20.4 में |
+| **Advanced Security** | Code/secret/dependency security features | ![Important](https://img.shields.io/badge/Status-IMPORTANT-blue?style=flat-square) |
 
-🔐 STEP 03 — Secret Scanning Enable करें
+🔐 Advanced Security क्या है?
 
-अगर option available है:
+GitHub Advanced Security (GHAS) repository के अंदर security scanning capabilities का group है। इसमें मुख्य रूप से:
 
-Secret scanning
+Advanced Security
+       │
+       ├── Secret Scanning
+       │
+       ├── Push Protection
+       │
+       ├── Code Scanning
+       │
+       └── Dependency / Security features
 
-को enable करें।
-
-Expected:
+हमारे project में इसका सबसे important हिस्सा अभी:
 
 Secret Scanning
        ↓
-    Enabled
-🛡️ STEP 04 — Push Protection Enable करें
+Push Protection
+       ↓
+Accidentally committed secrets को रोकना
 
-अगर repository/account plan में available हो:
+उदाहरण:
+
+अगर कोई गलती से Terraform में ऐसा डाल दे:
+
+client_secret = "xxxxxxxxxxxxxxxx"
+
+तो Secret Scanning उसका detection कर सकता है और Push Protection configured होने पर secret को repository में push होने से रोक सकता है।
+
+अभी क्या करना है?
+
+अभी Advanced Security खोलो।
+
+तुम्हारे repository में Advanced Security के अंदर काफी सारे features हैं। हमें सब कुछ ON नहीं करना है। हमारे project के हिसाब से controlled तरीके से configure करेंगे।
+
+अभी क्या ON करना है?
+
+# 🛡️ STEP 🟢 अभी — Phase 20.5
+
+हमारा immediate target है:
+
+Advanced Security
+      ↓
+Dependency Graph
+      ↓
+Secret Protection
+      ↓
+Push Protection
+      ↓
+Test
+# 🛡️ STEP 1️⃣ Dependency Graph — ✅ ON
+
+इसे ON रखो।
+
+यह repository में इस्तेमाल होने वाली dependencies को identify करता है।
+
+हमारे Terraform project में इसका फायदा आगे Dependabot के लिए होगा।
+
+# 🛡️ STEP 2️⃣ Dependabot Alerts — 🟡 ON कर सकते हैं
+
+यह useful है।
+
+Dependency में vulnerability
+        ↓
+GitHub detects vulnerability
+        ↓
+Dependabot Alert
+
+लेकिन Dependabot Security Updates / Version Updates हम अपने Phase 20.4 में properly configure करेंगे।
+
+3️⃣ CodeQL — ❌ अभी नहीं
+
+यह mainly source-code vulnerabilities detect करने के लिए है।
+
+हमारा current project primarily:
+
+Terraform
+Azure Infrastructure
+GitHub Actions
+
+है।
+
+अभी हमारे लिए Trivy + Terraform validation + Secret Protection ज्यादा relevant है।
+
+बाद में अगर application code आएगा तो CodeQL add कर सकते हैं।
+
+4️⃣ Copilot Autofix — ❌ अभी नहीं
+
+यह CodeQL findings के लिए AI-based fix suggestions देता है।
+
+CodeQL ही अभी enable नहीं कर रहे, इसलिए इसकी जरूरत भी नहीं।
+
+5️⃣ AI Findings — ❌ अभी नहीं
+
+अभी Off ही रहने दो।
+
+# 🛡️ STEP 🔴 सबसे Important — Push Protection
+
+तुम्हारे screen में नीचे:
+
+Secret Protection → Push protection
+
+यही हमें अभी configure करना है।
+
+इसे ON करो।
+
+इसका उद्देश्य:
+
+इसका उद्देश्य है कि developer द्वारा secret push करने से पहले GitHub उसे detect करके push रोक सके।
+
+```text
+
+Developer
+   ↓
+git commit
+   ↓
+git push
+   ↓
+GitHub Secret Scan
+   ↓
+Secret मिला?
+   ├── YES → ❌ Push blocked
+   └── NO  → ✅ Push allowed
+```
+
+
+उदाहरण:
+
+AZURE_CLIENT_SECRET="xxxxxxxx"
+
+अगर accidentally repository में push करने की कोशिश हुई, GitHub supported secret pattern detect करके push रोक सकता है।
+
+तुम्हारे screen में “Secret Scanning” नाम से अलग heading नहीं दिख रही, क्योंकि GitHub के current UI में यह Secret Protection के अंदर दिख रहा है।
+
+तुम्हारे दिए हुए screen में नीचे यही section है:
+
+```text
+
+Advanced Security
+        │
+        ├── Private vulnerability reporting
+        │
+        ├── Dependency graph
+        │
+        ├── Dependabot
+        │
+        ├── Code scanning
+        │
+        └── Secret Protection
+                │
+                └── Push protection
+```
+
+---
+
+# 🔐 तो Secret Scanning कहाँ गया?
+
+तुम्हारे screen में यह line देखो:
+
+### Secret Protection
+
+और उसके नीचे:
 
 Push protection
 
-enable करें।
+यानी Secret Scanning/Secret Protection functionality GitHub के plan/UI के हिसाब से इस section में expose हो रही है।
 
-इसका उद्देश्य है कि developer द्वारा secret push करने से पहले GitHub उसे detect करके push रोक सके।
+*** हाँ भाई, यही वही Secret Scanning / Secret Protection option है जिसे हम ढूँढ रहे थे। ✅ ***
+
+तुम्हारे screen पर:
+
+Disable Secret Protection
+This will disable Secret Protection for your repository.
+Disable secret scanning alerts
+
+इसका मतलब बहुत clear है:
+
+Secret Protection
+        ↓
+       ON ✅
+        ↓
+Secret Scanning Alerts ENABLED
+
+क्योंकि अगर अभी button “Disable Secret Protection” दिख रहा है, तो इसका मतलब Secret Protection अभी already enabled है।
+
+इसलिए अभी क्या करना है?
+
+कुछ मत दबाना। ❌
+
+विशेषकर:
+
+Disable Secret Protection
+
+पर click मत करना, वरना Secret Protection बंद हो जाएगा।
+
+अब हमारा status
+Phase 20.5 — Repository Governance
+
+Secret Protection        ✅ ENABLED
+Secret Scanning Alerts   ✅ ENABLED
+Push Protection          🔍 अब verify करना है
+
+अब उसी Secret Protection section में थोड़ा नीचे/ऊपर देखो कि Push protection का status क्या है।
+
+अगर वहाँ:
+
+Push protection
+[Enable]
+
+दिखता है → उसे enable करेंगे।
+
+अगर:
+
+Push protection
+[Disable]
+
+दिखता है → वह भी already enabled है।
+
+बस Push Protection के सामने जो exact text/button दिख रहा है वो भेज दे। फिर हम next step करेंगे।
+
+*** 🟢 अभी तुम्हारा काम ***
+
+इस screen पर:
+
+### 🛡️ GitHub Security & Analysis Configuration Summary
+
+| Feature / Setting | Current State | Project Requirement |
+| :--- | :-: | :-: |
+| **Dependency graph** | ✅ ON | ![Enabled](https://img.shields.io/badge/Status-ENABLED-brightgreen?style=flat-square) |
+| **Dependabot alerts** | ✅ ON | ![Enabled](https://img.shields.io/badge/Status-ENABLED-brightgreen?style=flat-square) |
+| **Dependabot security updates** | 🟡 Optional | 🟡 बाद में |
+| **Grouped security updates** | 🟡 Optional | 🟡 बाद में |
+| **Dependabot version updates** | ❌ OFF | ❌ अभी नहीं |
+| **CodeQL** | ❌ OFF | ❌ अभी नहीं |
+| **Copilot Autofix** | ❌ OFF | ❌ अभी नहीं |
+| **AI findings** | ❌ OFF | ❌ अभी नहीं |
+| **Push protection** | ✅ ON | ![Enabled](https://img.shields.io/badge/Status-ENABLED-brightgreen?style=flat-square) |
+
 
 Flow:
 
@@ -235,6 +474,8 @@ No secret detected
 या:
 
 Secret alerts found
+
+
 ⚠️ STEP 06 — Real Credentials कभी Test में मत डालना
 
 Secret Scanning test करने के लिए:
@@ -248,44 +489,232 @@ REAL PRIVATE KEY
 
 Testing के लिए केवल dummy/test value का उपयोग करें और पहले यह सुनिश्चित करें कि वह वास्तविक credential नहीं है।
 
-🧪 STEP 07 — Safe Secret Detection Test
+🧪 STEP 07 — Safe Secret Scanning Test Branch
+पहले current NIC changes सुरक्षित करो
 
-एक temporary test branch बनाएँ:
+तुम अभी repository root में हो:
 
-git checkout main
-git pull origin main
-git checkout -b feature/secret-scanning-test
+cd D:\Projects3\comsolve-cyberex-azure-landing-zone
 
-अब एक temporary test file बनाएं:
-
-secret-test.txt
-
-इसमें केवल clearly fake test data रखें।
-
-Example:
-
-TEST_SECRET_DO_NOT_USE=not-a-real-credential
-
-⚠️ इस value को किसी वास्तविक credential जैसा format देने की जरूरत नहीं है। उद्देश्य केवल repository workflow test करना है।
-
-🧪 STEP 08 — Test File Commit करें
-
-पहले:
+सबसे पहले check करो:
 
 git status
 
+अगर तुम्हारे latest changes अभी uncommitted हैं, तो पहले उन्हें commit करो:
+
+git add .
+git commit -m "feat: complete terraform security pipeline"
+
+अब तुम्हारी current feature/nic-infrastructure branch के changes Git में सुरक्षित हैं।
+
+अब NIC branch को GitHub पर push करो
+git push origin feature/nic-infrastructure
+
+यह step important है क्योंकि तुम्हारे Azure OIDC और CI pipeline का current working state GitHub पर भी available होना चाहिए।
+
+अब NIC branch से Test Branch बनाओ
+
+पहले verify:
+
+git branch
+
+तुम्हें ideally:
+
+* feature/nic-infrastructure
+  main
+
+दिखना चाहिए।
+
+अब इसी branch से secret-scanning test branch बनाओ:
+
+git checkout -b feature/secret-scanning-test
+
+Verify:
+
+git branch
+
+अब:
+
+  feature/nic-infrastructure
+* feature/secret-scanning-test
+  main
+
+दिखना चाहिए।
+
+❗ Main से pull क्यों नहीं?
+
+अभी हमारा flow:
+
+feature/nic-infrastructure
+        ↓
+feature/secret-scanning-test
+        ↓
+Secret Scanning Test
+
+है।
+
+main को बीच में लाने की जरूरत नहीं है क्योंकि तुम्हारा current implementation अभी feature/nic-infrastructure में है।
+
+🧪 STEP 08 — Safe Test File Create & Push
+
+अब test file बनाओ:
+
+New-Item secret-test.txt -ItemType File
+
 फिर:
 
+notepad secret-test.txt
+
+इसमें सिर्फ fake value डालो:
+
+TEST_SECRET_DO_NOT_USE=not-a-real-credential
+
+Save करके Notepad बंद करो।
+
+Secret Scanning यह नहीं देखता कि value valid Azure credential है या नहीं। वह मुख्यतः value का pattern/format पहचानता है।
+
+जैसे:
+
+AZURE_CLIENT_SECRET=abc123
+
+यह सिर्फ string है → GitHub इसे Azure secret नहीं मानेगा।
+
+लेकिन कोई supported provider का secret अगर उसके expected pattern से match करे:
+
+<provider-specific secret pattern>
+
+तो GitHub कह सकता है:
+
+⚠️ Potential secret detected
+
+फिर GitHub उसे Azure से जाकर verify नहीं करता कि credential सच में valid है।
+
+इसलिए हमारा test
+Fake but pattern-matching test value
+            ↓
+GitHub Secret Scanning
+            ↓
+Pattern match?
+      ↓           ↓
+     YES          NO
+      ↓            ↓
+   Alert        No Alert
+
+Real Azure Client Secret डालना बिल्कुल नहीं है। उससे accidentally credential expose हो सकता है।
+
+और हाँ—अगर हम सिर्फ:
+
+TEST_SECRET_DO_NOT_USE=not-a-real-credential
+
+डालेंगे, तो detect होना guaranteed नहीं है, क्योंकि यह किसी known secret pattern से match नहीं करता।
+
+अगर तुम्हारा goal सच में “scanner को पकड़ते हुए live test करना” है, तो अगला सही कदम है GitHub का official test pattern use करना।
+
+हाँ भाई, live test कर सकते हैं, लेकिन real Azure credential नहीं डालेंगे। GitHub खुद बताता है कि Secret Scanning pattern matching + validation पर काम करता है, और कुछ provider secrets में ID + secret दोनों एक ही file में होना जरूरी हो सकता है।
+
+तुम्हारे learning test के लिए सबसे अच्छा तरीका है:
+
+🧪 Realistic Azure-style test
+
+secret-test.txt में हम fake Azure-looking values रखेंगे, लेकिन कोई actual credential नहीं:
+
+AZURE_CLIENT_ID=00000000-0000-0000-0000-000000000000
+AZURE_CLIENT_SECRET=not-a-real-azure-secret
+AZURE_TENANT_ID=00000000-0000-0000-0000-000000000000
+
+लेकिन ध्यान रहे: इससे detection guaranteed नहीं है। GitHub supported secret patterns के हिसाब से scan करता है; सिर्फ variable का नाम AZURE_CLIENT_SECRET होने से उसे secret नहीं माना जाता।
+
+अगर हमारा उद्देश्य “Push Protection ने सच में push block किया” देखना है, तो random fake Azure value के बजाय GitHub के supported test/pattern mechanism का इस्तेमाल करना ज्यादा सही है। GitHub के अनुसार push protection supported secret patterns को push के समय block करता है।
+
+अब check:
+
+git status
+
+तुम्हें लगभग यह दिखेगा:
+
+Untracked files:
+    secret-test.txt
+
+अब:
+
 git add secret-test.txt
+
+फिर:
+
+git status
+
+अब file staged दिखाई देनी चाहिए।
 
 Commit:
 
 git commit -m "test: validate secret scanning"
 
-Push:
+और सबसे important:
 
 git push -u origin feature/secret-scanning-test
-🔎 STEP 09 — GitHub Security Alerts Check करें
+
+
+# 🔄 तुम्हारा पूरा current flow
+
+``` text
+
+feature/nic-infrastructure
+        │
+        │  latest Terraform changes
+        ↓
+      git push
+        │
+        ↓
+GitHub
+        │
+        │
+        ↓
+feature/secret-scanning-test
+        │
+        ↓
+secret-test.txt
+        │
+        ↓
+git commit
+        │
+        ↓
+git push
+        │
+        ↓
+GitHub Secret Protection
+        │
+        ├── Secret detected → 🚫 Push/Alert
+        │
+        └── Not detected → ✅ Expected for fake value
+```
+---
+
+# ⚠️ एक जरूरी बात
+
+तुम्हारे workflow में अभी:
+
+push:
+  branches:
+    - "feature/**"
+
+है, इसलिए feature/secret-scanning-test पर भी CI pipeline trigger हो सकती है।
+
+यह actually अच्छा है—हम एक ही test में verify कर सकते हैं:
+
+Secret Protection
+        +
+GitHub Actions
+        +
+Trivy
+        +
+Terraform Validate
+        +
+Terraform Plan
+
+और real Azure credential बिल्कुल मत डालना। Fake string detection guaranteed नहीं है; अगर GitHub उसे detect नहीं करता तो इसका मतलब Secret Protection खराब है ऐसा conclude नहीं करेंगे।
+
+
+# 🔎 STEP 09 — GitHub Security Alerts Check करें
 
 GitHub Repository में:
 
