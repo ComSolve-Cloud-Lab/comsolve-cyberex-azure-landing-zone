@@ -3,11 +3,8 @@
 <p align="center">
 
 ![GitHub](https://img.shields.io/badge/GitHub-Repository%20Governance-181717?style=for-the-badge\&logo=github\&logoColor=white)
-
 ![Security](https://img.shields.io/badge/Repository-Security-success?style=for-the-badge)
-
 ![Policy](https://img.shields.io/badge/Governance-Policy-blue?style=for-the-badge)
-
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-Controlled-orange?style=for-the-badge)
 
 </p>

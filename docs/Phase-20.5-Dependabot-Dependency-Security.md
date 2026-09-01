@@ -650,3 +650,161 @@ Repository Governance Policy
 ```
 
 > 🔐 **Security Principle:** Automated dependency updates useful हैं, लेकिन security तभी मजबूत होती है जब हर update को CI validation, security scanning और controlled Pull Request review के through merge किया जाए।
+
+
+## ❓ प्रश्न — Dependabot Configuration और Workflow Verification
+
+मैंने अपने GitHub Repository में **Dependabot** की सभी आवश्यक settings enable कर दी हैं और `dependabot.yml` configuration भी बनाई है।
+
+GitHub में:
+
+```text
+Dependency graph
+       ↓
+Automatic dependency submission
+
+Dependabot
+       ↓
+Dependabot alerts
+       ↓
+Dependabot rules
+       ↓
+Dependabot security updates
+       ↓
+Grouped security updates
+       ↓
+Dependabot version updates
+```
+
+इनमें आवश्यक options enable हैं और **Dependabot Rules में 1 rule भी enabled** दिखाई दे रहा है।
+
+मेरी `dependabot.yml` configuration इस प्रकार है:
+
+```yaml
+version: 2
+
+updates:
+  - package-ecosystem: "terraform"
+    directory: "/terraform"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+```
+
+इसके अलावा GitHub Actions में Terraform CI pipeline भी configured है।
+
+लेकिन समस्या यह है कि:
+
+* कोई **Dependabot Alert** दिखाई नहीं दे रहा है।
+* कोई **Dependabot Pull Request** भी दिखाई नहीं दे रहा है।
+* GitHub Actions में मेरी Terraform CI pipeline की तरह Dependabot की कोई अलग **workflow run** दिखाई नहीं दे रही है।
+* इसलिए मुझे समझ नहीं आ रहा कि `dependabot.yml` वास्तव में execute हो रही है या नहीं।
+* क्या `dependabot.yml` GitHub Actions workflow की तरह manually या automatically **run** होती है?
+* Dependabot की execution/status को GitHub में कहाँ जाकर verify किया जा सकता है?
+* `/terraform` directory और `terraform` package ecosystem की configuration सही है या नहीं, यह कैसे verify करें?
+* अगर अभी कोई vulnerability या dependency update available नहीं है, तो Dependabot के working होने को practically कैसे verify/test किया जा सकता है?
+* Dependabot द्वारा बनाया गया PR आने पर क्या हमारी existing **Terraform CI → Trivy → Terraform Plan** pipeline automatically trigger होगी?
+
+### 🎯 मेरा उद्देश्य
+
+मैं यह confirm करना चाहता हूँ कि **Dependabot सही तरीके से configured और operational है**, भले ही अभी कोई vulnerability alert या dependency update available न हो।
+
+
+यहाँ एक important distinction है: dependabot.yml खुद GitHub Actions की तरह "Run" नहीं होती। इसलिए Actions में तुम्हारी Terraform CI जैसी run दिखाई नहीं देगी।
+
+तुम्हारे case में 3 चीजें अलग-अलग हैं:
+
+.github/dependabot.yml
+        ↓
+GitHub Dependabot Service
+        ↓
+Weekly dependency check
+        ↓
+Update / Security PR
+
+और:
+
+.github/workflows/terraform-ci.yml
+        ↓
+GitHub Actions
+        ↓
+Workflow Run दिखाई देता है
+अभी क्या check करना है
+
+Repository में जाओ:
+
+Settings
+   ↓
+Security
+   ↓
+Advanced Security
+   ↓
+Dependabot
+
+फिर repository का:
+
+Insights
+   ↓
+Dependency graph
+
+देखो।
+
+और सबसे important:
+
+.github/
+├── workflows/
+│   └── terraform-ci.yml
+│
+└── dependabot.yml
+तुम्हारे dependabot.yml का मतलब
+
+तुमने लिखा है:
+
+version: 2
+
+updates:
+  - package-ecosystem: "terraform"
+    directory: "/terraform"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+इसका मतलब Dependabot हर सप्ताह /terraform में dependency updates check करेगा।
+
+अगर कोई update उपलब्ध नहीं है, तो कोई PR बनना जरूरी नहीं है।
+अगर कोई vulnerability नहीं है, तो Dependabot alert भी नहीं आएगा।
+
+इसलिए:
+
+Dependabot Enabled       ✅
+dependabot.yml मौजूद     ✅
+Terraform ecosystem      ✅
+Weekly schedule          ✅
+Security alerts          0
+Update PRs               0
+
+यह अपने-आप में failure नहीं है।
+
+लेकिन तुम्हारे लिए एक और चीज check करनी है
+
+तुमने कहा:
+
+"pipeline run होते हुए नहीं दिख रही"
+
+Dependabot को Terraform CI से confuse मत करो।
+
+जब Dependabot कोई PR बनाएगा, तब तुम्हारा:
+
+Dependabot PR
+     ↓
+GitHub Actions
+     ↓
+Terraform CI
+     ↓
+Trivy
+     ↓
+Terraform Plan
+
+चल सकता है, अगर तुम्हारी workflow का trigger उस PR/branch को cover करता है।
+
+अगर तुम चाहो तो अगला step हम यही करेंगे: तुम्हारा dependabot.yml और current terraform-ci.yml साथ में verify करके देखेंगे कि Dependabot PR आने पर Terraform CI वास्तव में trigger होगा या नहीं।
