@@ -188,7 +188,7 @@ New organization
 
 या GitHub में Create an organization option से organization creation page खोल सकते हो।
 
-🏷️ STEP 7.3 — Organization Plan चुनें
+# 🏷️ STEP 7.3 — Organization Plan चुनें
 
 GitHub organization बनाते समय GitHub तुमसे plan पूछ सकता है।
 
@@ -252,7 +252,7 @@ Repositories
 
 Owner permission बहुत powerful होती है, इसलिए production environment में Owners की संख्या minimum रखना अच्छा security practice है।
 
-👥 STEP 7.6 — Members को तुरंत Add करना जरूरी नहीं
+# 👥 STEP 7.6 — Members को तुरंत Add करना जरूरी नहीं
 
 Organization create करते समय GitHub members invite करने का option दे सकता है।
 
@@ -266,7 +266,7 @@ Members = बाद में
 
 पहले organization और repository governance properly configure करना बेहतर है।
 
-🔐 STEP 7.7 — Organization Creation के बाद क्या मिलेगा?
+# 🔐 STEP 7.7 — Organization Creation के बाद क्या मिलेगा?
 
 Organization बनने के बाद तुम्हारे पास centralized management होगा:
 
@@ -315,7 +315,7 @@ Final Testing
 
 इससे existing repository और तुम्हारी current feature/nic-infrastructure workflow unnecessarily disturb नहीं होगी।
 
-🧪 STEP 7.8 — Organization Creation के बाद Verification
+# 🧪 STEP 7.8 — Organization Creation के बाद Verification
 
 Organization बनने के बाद यह check करो:
 
@@ -347,6 +347,222 @@ Your Account = Owner
 Organization Successfully Created ✅
 
 बस अभी Organization create करो। Repository transfer और Teams हम उसके बाद अलग step में करेंगे।
+
+
+
+हाँ भाई, Organization successfully create हो गया है ✅
+
+तुम अभी:
+
+ComSolve-Cloud-Lab
+
+के Organization Overview में हो।
+
+अब अगला काम Repository transfer करना नहीं है। पहले Organization की basic governance और Teams तैयार करेंगे।
+
+---
+
+🪜 STEP 01 — Member Permissions पहले configure करो
+
+तुम्हारे screen पर यह option दिख रहा है:
+
+Customize members' permissions
+
+उस पर click करो।
+
+Path:
+
+ComSolve-Cloud-Lab
+        ↓
+Settings
+        ↓
+Member privileges
+        ↓
+Base permissions
+
+यहाँ GitHub members के लिए default permission दिखाई जाएगी।
+
+अगर अभी कोई दूसरा member नहीं है, तो भी setting configure कर सकते हो।
+
+हमारा target ideally:
+
+Base permissions
+        ↓
+Read
+
+मतलब future में organization में कोई member add होने पर उसे automatically repository का unnecessary write/admin access नहीं मिलेगा।
+
+🪜 STEP 02 — अभी Team मत बनाना
+
+पहले यह Base Permission setting देखो।
+
+उस page पर जो options दिख रहे हैं उनका screenshot/text भेज देना। फिर मैं उसी screen से exactly क्या select करना है बताऊँगा।
+
+अभी सिर्फ:
+
+Settings
+   ↓
+Member privileges
+   ↓
+Base permissions
+
+तक जाओ।
+
+-----
+
+
+🔐 STEP 01 — Base permissions
+
+ऊपर Base permissions में:
+
+Read ✅
+
+रखो।
+
+इसका मतलब: organization का normal member repositories को default रूप से Read-only access पाएगा। जरूरत होने पर Team/Repository level पर Write/Triage/Admin दिया जा सकता है।
+
+🔐 STEP 02 — Repository Creation
+
+यहाँ:
+
+Public      ❌
+Private     ❌
+
+दोनों disable रखना बेहतर है।
+
+मतलब कोई normal member अपनी तरफ से organization में नया repository नहीं बना पाएगा।
+
+Repository creation केवल controlled/admin process से होगा।
+
+🔐 STEP 03 — Repository Forking
+Allow forking of private repositories
+
+इसे:
+
+❌ OFF
+
+रखो।
+
+Private repository का fork बाहर/दूसरे location में जाने का risk कम होगा।
+
+🔐 STEP 04 — App Access Requests
+
+Select:
+
+Members only
+
+इससे organization के members apps request कर सकते हैं, लेकिन outside collaborators नहीं।
+
+🔐 STEP 05 — GitHub Apps
+
+यह option:
+
+Allow repository admins to install GitHub Apps
+
+इसे:
+
+❌ OFF
+
+रखना मैं recommend करूँगा।
+
+पहले organization owner/admin review करे, फिर GitHub App install हो।
+
+🔐 STEP 06 — Admin Repository Permissions
+
+इन तीनों को OFF रखो:
+
+Repository visibility change       ❌ OFF
+
+Repository deletion and transfer   ❌ OFF
+
+Issue deletion                     ❌ OFF
+
+इससे repository admin अकेले:
+
+Repository
+   ↓
+Visibility change
+   ↓
+Delete
+   ↓
+Transfer
+
+नहीं कर पाएगा। ऐसे sensitive actions Owner के control में रहेंगे।
+
+🔐 STEP 07 — Branch Renames
+Allow repository administrators
+to rename branches protected by organization rules
+
+इसे:
+
+❌ OFF
+
+रखो।
+
+👥 STEP 08 — Team Creation
+
+सबसे नीचे:
+
+Allow members to create teams
+
+इसे भी:
+
+❌ OFF
+
+रखो।
+
+क्योंकि Team creation भी centrally controlled होना चाहिए।
+
+फिर हम खुद controlled Teams बनाएँगे:
+
+ComSolve-Cloud-Lab
+        ↓
+Teams
+   ├── DevOps
+   ├── Security
+   └── Developers
+🎯 तुम्हारी अभी पूरी setting
+Base Permission                    → Read
+Public Repository Creation         → OFF
+Private Repository Creation        → OFF
+Private Repository Forking         → OFF
+App Access Requests                → Members only
+Repository Admin GitHub Apps       → OFF
+
+Visibility Change                  → OFF
+Repository Delete/Transfer         → OFF
+Issue Deletion                     → OFF
+Branch Rename                      → OFF
+Member Team Creation               → OFF
+
+अब नीचे जाकर Save/Update changes करो। इसके बाद अगला practical काम Team Creation + Team-based Access होगा।
+
+
+-------
+
+🛡️ Security Model
+
+हमारा organization governance model:
+
+                    GitHub Organization
+                           │
+                           ↓
+                  ┌──────────────────┐
+                  │   Organization   │
+                  │      Owner       │
+                  └────────┬─────────┘
+                           │
+              ┌────────────┴────────────┐
+              ↓                         ↓
+           Teams                  Repositories
+              │                         │
+              ↓                         ↓
+       Controlled Access        Protected Resources
+              │                         │
+              └────────────┬────────────┘
+                           ↓
+                    Least Privilege
+
 
 # 🪜 8. Repository Migration
 
