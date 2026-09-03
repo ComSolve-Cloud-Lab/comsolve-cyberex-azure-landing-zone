@@ -1,7 +1,6 @@
-
-
 # 🚀 Phase 21 — GitHub Organization Security Validation & CI/CD Recovery
 <p align="center">
+
 ![GitHub](https://img.shields.io/badge/GitHub-Organization%20Security-black?logo=github)
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-blue?logo=githubactions)
 ![Azure](https://img.shields.io/badge/Microsoft%20Azure-Cloud-blue?logo=microsoftazure)
@@ -11,6 +10,7 @@
 ![RBAC](https://img.shields.io/badge/Azure-RBAC-red)
 ![Security](https://img.shields.io/badge/Security-Validation-green)
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-Recovery-yellow)
+
 </p>
 
 🎯 Objective: ComSolve-Cloud-Lab Organization में repository transfer के बाद टूटे हुए GitHub Actions → Azure OIDC authentication, repository permissions, RBAC और CI/CD security controls को validate और restore करना।
