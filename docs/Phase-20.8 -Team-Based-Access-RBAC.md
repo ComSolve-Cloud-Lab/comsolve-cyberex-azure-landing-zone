@@ -428,7 +428,7 @@ Documentation
 
 ---
 
-# 🔄 STEP 01 — Existing Repository को Organization में Transfer करना
+### 🔄 STEP 01 — Existing Repository को Organization में Transfer करना ###
 
 अपने existing GitHub repository पर जाएँ:
 
@@ -544,10 +544,10 @@ Repository transfer के बाद तुरंत ये चीजें veri
 
 विशेष रूप से हमारे project में:
 
-*** .github/ ***
-*** terraform/ ***
-*** docs/ ***
-*** README.md ***
+***.github/***
+***terraform/***
+***docs/***
+***README.md***
 
 * verify करना है। *
 ---
