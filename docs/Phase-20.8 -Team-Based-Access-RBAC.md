@@ -246,13 +246,14 @@ comsolve-cyberex-azure-landing-zone
 
 Recommended access:
 
-| Team               | Permission |
-| ------------------ | ---------- |
-| `DevOps-Admins`    | Admin      |
-| `DevOps-Engineers` | Maintain   |
-| `Developers`       | Write      |
-| `Security`         | Read       |
-| `Read-Only`        | Read       |
+| Team               | Repository Permission | Purpose                   |
+| ------------------ | --------------------- | ------------------------- |
+| `DevOps-Admins`    | Admin                 | Repository Administration |
+| `DevOps-Engineers` | Maintain              | DevOps / Infrastructure   |
+| `Developers`       | Write                 | Development               |
+| `Security`         | Read                  | Security / Audit          |
+| `Read-Only`        | Read                  | Review / Management       |
+
 
 ### Access model
 
@@ -308,20 +309,6 @@ Admins   DevOps   Developers      Cyberex Landing Zone
 ```
 
 ---
-
-
-
-# 📊 STEP 17 — Final RBAC Matrix
-
-| Team               | Repository Permission | Purpose                   |
-| ------------------ | --------------------- | ------------------------- |
-| `DevOps-Admins`    | Admin                 | Repository Administration |
-| `DevOps-Engineers` | Maintain              | DevOps / Infrastructure   |
-| `Developers`       | Write                 | Development               |
-| `Security`         | Read                  | Security / Audit          |
-| `Read-Only`        | Read                  | Review / Management       |
-
-Final model:
 
 ```text
                     Repository
