@@ -277,7 +277,391 @@ Recommended access:
 
 ---
 
-# 🔐 STEP 08 — Assign Team Repository Access
+# 🏗️ Final Architecture
+
+हमारा final structure:
+
+```text
+                    ComSolve-Cloud-Lab
+                           │
+            ┌──────────────┴──────────────┐
+            │                             │
+          Teams                      Repositories
+            │                             │
+   ┌────────┼────────┐                    │
+   │        │        │                    │
+   ↓        ↓        ↓                    ↓
+Admins   DevOps   Developers      Cyberex Landing Zone
+   │        │        │                    │
+ Admin   Maintain   Write                 │
+   │        │        │                    │
+   └────────┴────────┘                    │
+            │                             │
+            ↓                             ↓
+         Members                    Branch Protection
+                                          │
+                                          ↓
+                                     Pull Request
+                                          │
+                                          ↓
+                                     CI/CD Checks
+```
+
+---
+
+
+
+# 📊 STEP 17 — Final RBAC Matrix
+
+| Team               | Repository Permission | Purpose                   |
+| ------------------ | --------------------- | ------------------------- |
+| `DevOps-Admins`    | Admin                 | Repository Administration |
+| `DevOps-Engineers` | Maintain              | DevOps / Infrastructure   |
+| `Developers`       | Write                 | Development               |
+| `Security`         | Read                  | Security / Audit          |
+| `Read-Only`        | Read                  | Review / Management       |
+
+Final model:
+
+```text
+                    Repository
+                         │
+       ┌─────────────────┼─────────────────┐
+       │                 │                 │
+       ↓                 ↓                 ↓
+ DevOps-Admins    DevOps-Engineers    Developers
+     Admin             Maintain          Write
+       │                 │                 │
+       └─────────────────┼─────────────────┘
+                         │
+                  Cyberex Landing Zone
+                         │
+                  ┌──────┴──────┐
+                  ↓             ↓
+              Security      Read-Only
+                 Read           Read
+```
+
+---
+
+# 🚀 Organization Repository Setup
+<p align="center">
+
+</p>
+
+🎯 Objective: ComSolve-Cloud-Lab Organization में existing comsolve-cyberex-azure-landing-zone repository को लाना और उसके बाद Teams के माध्यम से controlled RBAC (Role-Based Access Control) implement करना।
+
+# 🧠 पहले समझो — अभी Problem क्या है?
+
+हमारा Organization:
+
+ComSolve-Cloud-Lab
+
+अभी बनाया गया है।
+
+लेकिन Organization में:
+
+```text
+Repositories
+    ↓
+0 repositories
+```
+हैं।
+
+इसलिए जब Team में जाकर:
+
+```text
+Team
+   ↓
+Repositories
+```
+देखते हैं तो:
+
+This team doesn’t have any repositories.
+
+आ रहा है।
+
+इसका मतलब
+
+Team में कोई problem नहीं है।
+
+Problem सिर्फ यह है:
+
+```text
+Organization
+      ↓
+No Repository
+      ↓
+Team को क्या assign करें?
+```
+इसलिए पहले:
+
+```text
+Repository
+      ↓
+Organization
+```
+करना है।
+
+फिर:
+
+```text
+
+Organization Repository
+      ↓
+Team
+      ↓
+Permission
+
+करेंगे।
+```
+---
+
+# 🏗️ हमारा Existing Repository
+
+हमारा existing project repository है:
+
+comsolve-cyberex-azure-landing-zone
+
+इसमें हमारा:
+
+Terraform
+Azure
+GitHub Actions
+CI/CD
+Security Scanning
+Landing Zone
+Documentation
+
+का पूरा project है।
+
+इसलिए नया blank repository बनाने की जरूरत नहीं है।
+
+हम existing repository को Organization में transfer करेंगे।
+
+---
+
+# 🔄 STEP 01 — Existing Repository को Organization में Transfer करना
+
+अपने existing GitHub repository पर जाएँ:
+
+comsolve-cyberex-azure-landing-zone
+
+फिर:
+
+```text
+Repository
+    ↓
+Settings
+    ↓
+General
+```
+नीचे scroll करें।
+
+आपको section मिलेगा:
+
+*** Danger Zone ***
+
+इसके अंदर:
+
+*** Transfer ownership ***
+
+option होगा।
+
+---
+
+### ⚠️ STEP 02 — Transfer Ownership ###
+
+Transfer ownership पर click करें।
+
+GitHub आपसे destination पूछेगा।
+
+Destination में:
+
+ComSolve-Cloud-Lab
+
+select करें।
+
+Repository name confirm करने के लिए GitHub कुछ इस प्रकार पूछ सकता है:
+
+comsolve-cyberex-azure-landing-zone
+
+इसे exactly enter करें।
+
+फिर:
+
+Transfer
+
+confirm करें।
+
+---
+
+# 🧠 Transfer करने से क्या होगा?
+
+पहले:
+
+```text
+
+Personal GitHub Account
+        │
+        └── comsolve-cyberex-azure-landing-zone
+```
+Transfer के बाद:
+```text
+ComSolve-Cloud-Lab
+        │
+        └── comsolve-cyberex-azure-landing-zone
+```
+यानी repository अब Organization-owned होगी।
+
+---
+
+# 🔐 STEP 03 — Transfer के बाद Verify करो
+
+Organization में जाएँ:
+```text
+ComSolve-Cloud-Lab
+    ↓
+Repositories
+```
+अब expected:
+
+1 repository
+
+और दिखाई देना चाहिए:
+
+*** comsolve-cyberex-azure-landing-zone ***
+
+अब हमारा architecture बन गया:
+```text
+ComSolve-Cloud-Lab
+        │
+        └── comsolve-cyberex-azure-landing-zone
+```
+---
+
+# ⚠️ STEP 04 — Transfer के बाद Important Checks
+
+Repository transfer के बाद तुरंत ये चीजें verify करनी हैं:
+
+- ☐ Repository visible
+- ☐ Branches available
+- ☐ main branch available
+- ☐ docs folder available
+- ☐ terraform folder available
+- ☐ .github/workflows available
+- ☐ GitHub Actions workflows available
+- ☐ Secrets available / correctly configured
+- ☐ Environments available
+- ☐ Branch protection/rules available
+
+विशेष रूप से हमारे project में:
+
+*** .github/ ***
+*** terraform/ ***
+*** docs/ ***
+*** README.md ***
+
+* verify करना है। *
+---
+
+# 🔐 STEP 05 — GitHub Actions Check
+
+क्योंकि हमारा project GitHub Actions use करता है:
+```text
+GitHub
+   ↓
+GitHub Actions
+   ↓
+Terraform
+   ↓
+Azure
+```
+
+इसलिए transfer के बाद:
+```text
+Repository
+    ↓
+Actions
+```
+में जाकर workflows check करें।
+
+Expected:
+
+Terraform CI
+
+या हमारे configured workflow का नाम दिखाई देगा।
+
+---
+
+# 🔑 STEP 06 — Azure OIDC Check
+
+हमारे project में Azure authentication के लिए:
+
+```text
+GitHub Actions
+       ↓
+OIDC
+       ↓
+Microsoft Entra ID
+       ↓
+Azure
+```
+use हो रहा है।
+
+`Repository transfer के बाद Azure OIDC configuration को verify करना जरूरी है क्योंकि GitHub repository identity में organization/repository context आता है।`
+
+Check:
+
+```text
+
+Azure
+   ↓
+Microsoft Entra ID
+   ↓
+App Registration
+   ↓
+Federated Credentials
+```
+और GitHub repository reference verify करें।
+
+Expected repository:
+
+**ComSolve-Cloud-Lab/comsolve-cyberex-azure-landing-zone**
+
+`⚠️ अगर existing federated credential पुराने personal repository path पर बना है, तो उसे update करना पड़ेगा।`
+
+---
+# अभी सिर्फ यह करो:
+
+Personal GitHub
+      ↓
+comsolve-cyberex-azure-landing-zone
+      ↓
+Settings
+      ↓
+General
+      ↓
+Danger Zone
+      ↓
+Transfer ownership
+      ↓
+ComSolve-Cloud-Lab
+
+Transfer के बाद Organization में Repositories = 1 दिखना चाहिए।
+
+फिर हम Team में जाकर repository assign करेंगे।
+
+🔐 Security Principle: पहले resource (Repository) को Organization में centralized control में लाओ, फिर Team-based RBAC से access दो। Empty Team में repository assign नहीं हो सकती क्योंकि Organization में अभी कोई repository मौजूद ही नहीं है।
+
+
+---
+
+# 🔐👥 STEP 08 — Assign Team Repository Access
+
+अब Team में Repository Assign करो
+
+अब पहले वाली problem solve हो जाएगी।
 
 GitHub में जाएँ:
 
@@ -300,6 +684,30 @@ comsolve-cyberex-azure-landing-zone
 ```
 
 फिर required permission select करें।
+
+---
+
+# 👥 same process for — DevOps-Engineers Team
+
+अब:
+
+```text
+
+Teams
+    ↓
+DevOps-Engineers
+    ↓
+Repositories
+    ↓
+Add repository
+```
+
+Select:
+
+`comsolve-cyberex-azure-landing-zone`
+
+`Permission:`
+`Admin`
 
 ---
 
@@ -339,7 +747,7 @@ Write
 
 ---
 
-## Security
+## 🛡️ Security
 
 ```text
 Repository:
@@ -351,7 +759,7 @@ Read
 
 ---
 
-## Read-Only
+## 👀 Read-Only
 
 ```text
 Repository:
@@ -363,6 +771,30 @@ Read
 
 ---
 
+# 🔐 Final RBAC Architecture
+
+अब हमारा actual setup ऐसा होगा:
+```text
+                 ComSolve-Cloud-Lab
+                         │
+                         ↓
+          comsolve-cyberex-azure-landing-zone
+                         │
+        ┌────────────────┼────────────────┐
+        │                │                │
+        ↓                ↓                ↓
+ DevOps-Admins     DevOps-Engineers   Developers
+     Admin              Maintain          Write
+        │                │                │
+        └────────────────┼────────────────┘
+                         │
+                 ┌───────┴───────┐
+                 ↓               ↓
+              Security       Read-Only
+                Read             Read
+```
+
+---
 # 🧠 STEP 09 — Understand Permission Levels
 
 GitHub repository roles को इस तरह समझें:
@@ -826,7 +1258,7 @@ Audit Evidence
 
 # 🚀 Phase Completion Criteria
 
-Phase 20.6.2 तब complete माना जाएगा जब:
+Phase तब complete माना जाएगा जब:
 
 ```text
 ☐ Required Teams Created
