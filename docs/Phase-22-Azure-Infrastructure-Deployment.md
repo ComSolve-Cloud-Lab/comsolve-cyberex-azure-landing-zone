@@ -1,20 +1,27 @@
 
 
-Azure → Entra ID → App registrations → तुम्हारा GitHub App → Federated credentials
-GitHub → Actions → Failed run → जहाँ Azure Login / OIDC fail हो रहा है
-
----
-
 # 🚀 Phase 21 — GitHub Organization Security Validation & CI/CD Recovery
 <p align="center">
-
+![GitHub](https://img.shields.io/badge/GitHub-Organization%20Security-black?logo=github)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-blue?logo=githubactions)
+![Azure](https://img.shields.io/badge/Microsoft%20Azure-Cloud-blue?logo=microsoftazure)
+![OIDC](https://img.shields.io/badge/OIDC-Workload%20Identity-purple)
+![Entra ID](https://img.shields.io/badge/Microsoft%20Entra%20ID-Identity-0078D4?logo=microsoftazure)
+![FIC](https://img.shields.io/badge/Federated%20Identity-Credential-orange)
+![RBAC](https://img.shields.io/badge/Azure-RBAC-red)
+![Security](https://img.shields.io/badge/Security-Validation-green)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-Recovery-yellow)
 </p>
 
 🎯 Objective: ComSolve-Cloud-Lab Organization में repository transfer के बाद टूटे हुए GitHub Actions → Azure OIDC authentication, repository permissions, RBAC और CI/CD security controls को validate और restore करना।
 
-🧠 Phase 21 में हम क्या करने वाले हैं?
+---
+
+# 🧠 Phase 21 में हम क्या करने वाले हैं?
 
 हमने अभी तक:
+
+```text
 
 Personal GitHub
       ↓
@@ -45,7 +52,7 @@ Federated Credential
 Azure Service Principal
         ↓
 Azure Subscription
-
+```
 Pipeline अब इसी नए identity path से authenticate करेगी।
 
 ---

@@ -8,15 +8,7 @@
 ![OIDC](https://img.shields.io/badge/OIDC-Workload%20Identity-purple)
 ![Security](https://img.shields.io/badge/Security-Validation-red)
 ![Governance](https://img.shields.io/badge/Governance-Audit-green)
-![GitHub](https://img.shields.io/badge/GitHub-Organization%20Security-black?logo=github)
-![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-blue?logo=githubactions)
-![Microsoft Azure](https://img.shields.io/badge/Microsoft%20Azure-Cloud-blue?logo=microsoftazure)
-![OIDC](https://img.shields.io/badge/OIDC-Workload%20Identity-purple)
-![RBAC](https://img.shields.io/badge/Azure-RBAC-orange)
-![Security](https://img.shields.io/badge/Security-Validation-red)
-![Governance](https://img.shields.io/badge/Governance-Audit-green)
 ![Audit](https://img.shields.io/badge/Audit-Evidence-yellow)
-
 
 </p>
 
