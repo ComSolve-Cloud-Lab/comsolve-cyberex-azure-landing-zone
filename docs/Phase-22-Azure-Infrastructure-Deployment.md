@@ -141,7 +141,7 @@ Subject
 # 🧩 STEP 02 — GitHub Repository Check
 
 GitHub में:
-
+```text
 ComSolve-Cloud-Lab
     ↓
 comsolve-cyberex-azure-landing-zone
@@ -149,7 +149,7 @@ comsolve-cyberex-azure-landing-zone
 Settings
     ↓
 Actions
-
+```
 और `workflow` check करो।
 
 `Workflow` में Azure login लगभग इस concept पर होना चाहिए:
@@ -233,7 +233,7 @@ Terraform Plan
 
 यानी Workflow खुद कोई Azure/FIC चीज़ नहीं है।
 
-- *** Workflow बस GitHub Actions की automation instructions वाली YAML file है। ***
+*** Workflow बस GitHub Actions की automation instructions वाली YAML file है। ***
 
 ### 🧒 छोटा real-world example ###
 
@@ -326,8 +326,9 @@ environment: production
 
 ---
 
-🧪 STEP 05 — Pipeline Failure Identify करना
+# 🧪 STEP 05 — Pipeline Failure Identify करना
 
+```text
 GitHub:
 
 Repository
@@ -337,7 +338,7 @@ Actions
 Failed Workflow
     ↓
 Job
-
+```
 देखना है कि failure किस stage पर है।
 ```text
 अगर ऐसा error है:
@@ -348,10 +349,8 @@ No matching federated identity record found
 
 GitHub OIDC Subject
         ≠
-Azure Federated Credential Subject
+Azure Federated Credential Subject है।
 ```
-है।
-
 ---
 
 # 🛠️ STEP 06 — Azure Federated Identity Credential (FIC) Correct करना
@@ -436,7 +435,7 @@ Result:
 
 ---
 
-# 🔎 06.3 — सबसे पहले GitHub Actions का Exact Error देखो
+## 🔎 06.3 — सबसे पहले GitHub Actions का Exact Error देखो
 
 GitHub Repository खोलो:
 
@@ -466,7 +465,7 @@ Common error इस तरह का हो सकता है:
 
 ---
 
-# 🛠️ 06.4 — Azure में Existing FIC Check करो
+## 🛠️ 06.4 — Azure में Existing FIC Check करो
 
 Azure Portal खोलो।
 
@@ -498,7 +497,7 @@ Path:
 
 ---
 
-# 🔍 06.5 — Existing FIC की तीन चीजें Check करो
+## 🔍 06.5 — Existing FIC की तीन चीजें Check करो
 
 FIC खोलकर नीचे की values check करो:
 
@@ -530,7 +529,7 @@ Repository Organization में transfer होने के बाद यह 
 
 ---
 
-# 🧩 06.6 — Repository Transfer के बाद Subject क्यों बदल सकता है?
+## 🧩 06.6 — Repository Transfer के बाद Subject क्यों बदल सकता है?
 
 पहले repository personal account के under थी।
 
@@ -560,7 +559,7 @@ Result:
 
 ---
 
-# 🔎 06.7 — Exact GitHub OIDC Subject Identify करना
+## 🔎 06.7 — Exact GitHub OIDC Subject Identify करना
 
 यह सबसे important step है।
 
@@ -598,7 +597,7 @@ Repository में जाओ:
 
 ---
 
-# ⚠️ 06.8 — 2026 में Immutable OIDC Subject भी Important है
+## ⚠️ 06.8 — 2026 में Immutable OIDC Subject भी Important है
 
 GitHub ने नए repository identity model में **immutable OIDC subjects** introduce किए हैं।
 
@@ -619,7 +618,7 @@ Exact values GitHub से प्राप्त करनी हैं।
 
 ---
 
-# 🛠️ 06.9 — FIC को Directly Delete मत करो
+## 🛠️ 06.9 — FIC को Directly Delete मत करो
 
 सबसे पहले existing FIC को note करो।
 
@@ -645,7 +644,7 @@ copy/save कर लो।
 
 ---
 
-# 🆕 06.10 — नया Correct FIC Create करना
+## 🆕 06.10 — नया Correct FIC Create करना
 
 Azure Portal में:
 
@@ -709,7 +708,7 @@ Workflow के अनुसार select करो:
 
 ---
 
-# 🔐 06.11 — अगर GitHub Immutable Subject Use कर रहा है
+## 🔐 06.11 — अगर GitHub Immutable Subject Use कर रहा है
 
 अगर GitHub का actual OIDC token immutable subject use कर रहा है, तो FIC में exact immutable subject configure करना होगा।
 
@@ -731,7 +730,7 @@ GitHub से exact values होंगी।
 
 ---
 
-# 🧪 06.12 — नया FIC Save करो
+## 🧪 06.12 — नया FIC Save करो
 
 FIC create करने के बाद Azure में दो credentials दिखाई दे सकते हैं:
 
@@ -757,7 +756,7 @@ Subject:
 
 ---
 
-# ▶️ 06.13 — GitHub Actions दोबारा Run करो
+## ▶️ 06.13 — GitHub Actions दोबारा Run करो
 
 अब GitHub Repository में:
 
@@ -785,7 +784,7 @@ Expected:
 
 ---
 
-# ✅ 06.14 — Authentication Successful होने के बाद Pipeline Check करो
+## ✅ 06.14 — Authentication Successful होने के बाद Pipeline Check करो
 
 Azure Login के बाद pipeline को आगे continue होना चाहिए:
 
@@ -821,7 +820,7 @@ Expected:
 
 ---
 
-# 🧹 06.15 — Old FIC कब Delete करना है?
+## 🧹 06.15 — Old FIC कब Delete करना है?
 
 Old FIC तभी delete करना है जब:
 
@@ -838,7 +837,7 @@ Old FIC तभी delete करना है जब:
 
 ---
 
-# 🧠 06.16 — पूरा Issue एक Line में
+## 🧠 06.16 — पूरा Issue एक Line में
 
 Repository transfer के बाद:
 
@@ -990,7 +989,7 @@ step fail होने लगा।
 
 ---
 
-# 🏗️ 2. Existing CI/CD Architecture
+## 🏗️ 2. Existing CI/CD Architecture
 
 हमारी authentication architecture इस प्रकार है:
 
@@ -1036,7 +1035,7 @@ step fail होने लगा।
 
 ---
 
-# 🔄 3. Pipeline Trigger Architecture
+## 🔄 3. Pipeline Trigger Architecture
 
 हमारी Terraform CI workflow दो conditions पर execute होती है:
 
@@ -1081,7 +1080,7 @@ on:
 
 ---
 
-# ❌ 4. Initial Failure
+## ❌ 4. Initial Failure
 
 Repository Organization में transfer होने के बाद GitHub Actions में:
 
@@ -1108,7 +1107,7 @@ repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312
 
 ---
 
-# 🔎 5. Root Cause Identification
+## 🔎 5. Root Cause Identification
 
 सबसे पहले पुराने successful GitHub Actions run को analyze किया गया।
 
@@ -1146,7 +1145,7 @@ repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312
 
 ---
 
-# 🧠 6. Important Discovery
+### 🧠 6. Important Discovery
 
 Troubleshooting के दौरान तीन critical values compare की गईं:
 
@@ -1192,7 +1191,7 @@ Actual issue:
 
 ---
 
-# 🔐 7. OIDC Values Identified From Failed Run
+### 🔐 7. OIDC Values Identified From Failed Run
 
 Failed GitHub Actions run से exact values प्राप्त हुईं:
 
@@ -1215,7 +1214,7 @@ repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312
 
 ---
 
-# 🛠️ 8. Remediation Performed
+### 🛠️ 8. Remediation Performed
 
 हमने GitHub Actions YAML को modify नहीं किया।
 
@@ -1225,7 +1224,7 @@ Existing OIDC architecture को ही retain किया गया।
 
 ---
 
-# 🔵 9. Pull Request FIC — Updated Configuration
+### 🔵 9. Pull Request FIC — Updated Configuration
 
 ### Old Subject
 
@@ -1284,7 +1283,7 @@ Automatically generated
 
 ---
 
-# 🔵 10. Feature Branch Push FIC
+### 🔵 10. Feature Branch Push FIC
 
 Pipeline `feature/**` branches पर भी execute होती है।
 
@@ -1325,7 +1324,7 @@ Azure Portal ने immutable Organization + Repository IDs के आधार 
 
 ---
 
-# 🔁 11. Before vs After
+### 🔁 11. Before vs After
 
 ## ❌ Before — Authentication Failure
 
@@ -1358,7 +1357,7 @@ AADSTS700213
 
 ---
 
-## ✅ After — Authentication Successful
+### ✅ After — Authentication Successful
 
 ```text
 GitHub Organization
@@ -1397,7 +1396,7 @@ Azure Federated Credential
 
 ---
 
-# 🧪 12. Validation
+### 🧪 12. Validation
 
 Configuration update के बाद pipeline को दो अलग scenarios में test किया गया।
 
@@ -1433,7 +1432,7 @@ Azure CLI login succeeds by using OIDC.
 
 ---
 
-# 🧪 13. Test 2 — Feature Branch Push
+### 🧪 13. Test 2 — Feature Branch Push
 
 Branch:
 
@@ -1473,7 +1472,7 @@ Terraform Plan
 
 ---
 
-# 🎯 14. Final Resolution
+### 🎯 14. Final Resolution
 
 दोनों authentication scenarios successfully validate हुए:
 
@@ -1489,7 +1488,7 @@ Terraform Plan
 
 ---
 
-# 💡 15. Key Learning
+### 💡 15. Key Learning
 
 ### Repository Transfer के बाद OIDC Subject को हमेशा verify करें
 
@@ -1507,7 +1506,7 @@ transfer करने पर GitHub Actions OIDC `sub` claim में Organizat
 
 ---
 
-# 🛡️ 16. Troubleshooting Methodology
+### 🛡️ 16. Troubleshooting Methodology
 
 Future में similar issue आने पर यह sequence follow करें:
 
@@ -1539,7 +1538,7 @@ Future में similar issue आने पर यह sequence follow करे
 
 ---
 
-# 🚨 17. Important Error Interpretation
+### 🚨 17. Important Error Interpretation
 
 अगर future में यह error दिखाई दे:
 
@@ -1569,7 +1568,7 @@ Azure Federated Credential Subject
 
 ---
 
-# 🧩 18. Final Architecture
+### 🧩 18. Final Architecture
 
 ```text
                            ☁️ GitHub
@@ -1614,7 +1613,7 @@ Azure Federated Credential Subject
 
 ---
 
-# 🏁 19. Resolution Summary
+### 🏁 19. Resolution Summary
 
 > **Issue:** GitHub Repository transfer from Personal Account to Organization caused the GitHub Actions OIDC Subject Identifier to change.
 
@@ -1628,7 +1627,7 @@ Azure Federated Credential Subject
 
 ---
 
-## 📝 Final Takeaway
+### 📝 Final Takeaway
 
 ```text
 Repository Transfer
@@ -1660,7 +1659,7 @@ Feature Push Test ✅
 
 ---
 
-# 🔑 STEP 07 — Audience भी Check करना
+### 🔑 STEP 07 — Audience भी Check करना
 
 Azure FIC में audience सामान्यतः:
 
@@ -1680,7 +1679,7 @@ Audience:
 
 ---
 
-# 🔐 STEP 08 — Azure Role Assignment अलग चीज है
+### 🔐 STEP 08 — Azure Role Assignment अलग चीज है
 
 एक important distinction:
 
@@ -1723,7 +1722,7 @@ AuthorizationFailed
 
 ---
 
-# 🧪 STEP 09 — Azure Role Check
+### 🧪 STEP 09 — Azure Role Check
 
 Azure में:
 
@@ -1748,7 +1747,7 @@ Owner देने की जरूरत सिर्फ इसलिए नह
 
 ---
 
-# 🔐 STEP 10 — GitHub Secrets Check
+### 🔐 STEP 10 — GitHub Secrets Check
 
 Repository:
 
@@ -1778,7 +1777,7 @@ secret itself नहीं होते in the same sense as client secret, ल�
 
 ---
 
-# 🧪 STEP 11 — Pipeline Test
+### 🧪 STEP 11 — Pipeline Test
 
 सब correction के बाद:
 
@@ -1811,7 +1810,7 @@ Terraform Plan
 
 ---
 
-# 🔎 STEP 12 — Successful Authentication का मतलब
+### 🔎 STEP 12 — Successful Authentication का मतलब
 
 अगर:
 
@@ -1837,7 +1836,7 @@ Federated Credential
 
 ---
 
-# 🏢 STEP 13 — Team RBAC को भी Validate करेंगे
+### 🏢 STEP 13 — Team RBAC को भी Validate करेंगे
 
 तुमने testing के लिए अभी 2 Teams बनाए हैं और users add करके repository access दिया है।
 
@@ -1890,7 +1889,7 @@ Push
 
 ---
 
-# 🛡️ STEP 14 — Branch Protection साथ में Validate
+### 🛡️ STEP 14 — Branch Protection साथ में Validate
 
 Repository:
 ```text
@@ -1924,7 +1923,7 @@ controlled रहेगा।
 
 ---
 
-# 🧪 STEP 15 — Complete Security Test
+### 🧪 STEP 15 — Complete Security Test
 
 Phase 21 के अंत में हमारा test matrix:
 
@@ -1977,7 +1976,7 @@ Azure RBAC	✅
           Required Status Checks
 ```
 ---
-# 📋 Phase 21 Implementation Plan
+### 📋 Phase 21 Implementation Plan
 
 ```text
 
@@ -2001,7 +2000,7 @@ Phase 21
 ```
 ---
 
-# 🚨 अभी तुम्हारा सबसे पहला काम
+### 🚨 अभी तुम्हारा सबसे पहला काम
 
 Phase 22 में अभी Team/RBAC को आगे मत छेड़ना।
 
