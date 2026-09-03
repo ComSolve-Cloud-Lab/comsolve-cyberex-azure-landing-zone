@@ -2,7 +2,10 @@
 
 Azure → Entra ID → App registrations → तुम्हारा GitHub App → Federated credentials
 GitHub → Actions → Failed run → जहाँ Azure Login / OIDC fail हो रहा है
-🚀 Phase 21 — GitHub Organization Security Validation & CI/CD Recovery
+
+---
+
+# 🚀 Phase 21 — GitHub Organization Security Validation & CI/CD Recovery
 <p align="center">
 
 </p>
@@ -45,7 +48,9 @@ Azure Subscription
 
 Pipeline अब इसी नए identity path से authenticate करेगी।
 
-🔥 सबसे पहले — Pipeline क्यों fail हुई?
+---
+
+# 🔥 सबसे पहले — Pipeline क्यों fail हुई?
 
 पहले repository शायद:
 
@@ -138,9 +143,9 @@ Settings
     ↓
 Actions
 
-और workflow check करो।
+और `workflow` check करो।
 
-Workflow में Azure login लगभग इस concept पर होना चाहिए:
+`Workflow` में Azure login लगभग इस concept पर होना चाहिए:
 
 permissions:
   id-token: write
@@ -175,9 +180,11 @@ Repository
 
 दोनों exact होने चाहिए।
 
-🔐 STEP 04 — Azure Federated Credential का Concept
+---
 
-अगर workflow main branch से चल रहा है और repository अभी name-based subject use कर रही है, तो traditional subject ऐसा हो सकता है:
+# 🔐 STEP 04 — Azure Federated Credential का Concept
+
+अगर `owrkflow` main branch से चल रहा है और repository अभी name-based subject use कर रही है, तो traditional subject ऐसा हो सकता है:
 
 repo:ComSolve-Cloud-Lab/comsolve-cyberex-azure-landing-zone:ref:refs/heads/main
 
@@ -188,6 +195,129 @@ GitHub OIDC documentation इसी प्रकार के repository/branch 
 क्योंकि 15 July 2026 के बाद transferred repositories immutable subject behavior में जा सकते हैं, जिसमें owner/repository IDs भी शामिल होते हैं।
 
 इसलिए पहले screenshot से exact value निकालेंगे।
+
+---
+
+### 🔹 Workflow आखिर है क्या? ###
+
+Simple भाषा में:
+
+GitHub Actions Workflow = एक YAML file जिसमें हम GitHub को बताते हैं कि code के साथ कौन-कौन से काम automatically करने हैं।
+
+हमारे project में उदाहरण के लिए:
+
+
+``` text
+
+GitHub में code push
+        ↓
+GitHub Actions Workflow शुरू
+        ↓
+Terraform Init
+        ↓
+Terraform Validate
+        ↓
+Trivy Security Scan
+        ↓
+Azure Login
+        ↓
+Terraform Plan
+```
+
+यानी Workflow खुद कोई Azure/FIC चीज़ नहीं है।
+
+- *** Workflow बस GitHub Actions की automation instructions वाली YAML file है। ***
+
+### 🧒 छोटा real-world example ###
+
+मान ले तू कहता है:
+
+"जब भी मैं main branch में code डालूं, Terraform automatically check और plan होना चाहिए।"
+
+तो हम एक YAML file बनाते हैं:
+```text
+.github/
+└── workflows/
+    └── terraform.yml
+```
+इस terraform.yml में लिखा होगा:
+
+```text
+name: Terraform CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+```
+**बस यही Workflow है।**
+
+अब तेरे तीन terms समझ
+
+1️⃣ main branch
+
+अगर Workflow में लिखा है:
+```text
+on:
+  push:
+    branches:
+      - main
+```
+मतलब:
+
+जब main में code push होगा → Workflow चलेगा।
+
+इस case में Azure FIC का Subject branch-based हो सकता है।
+
+2️⃣ pull_request
+
+अगर लिखा है:
+```text
+on:
+  pull_request:
+```
+मतलब:
+
+कोई व्यक्ति Pull Request बनाएगा → Workflow चलेगा।
+
+इसका OIDC identity context main push से अलग हो सकता है।
+
+3️⃣ environment
+
+GitHub में हम Environment बना सकते हैं:
+
+Development
+Staging
+Production
+
+Workflow में अगर:
+
+environment: production
+
+है, तो Workflow Production Environment के context में चलेगा।
+
+इसलिए FIC का Subject भी अलग format का हो सकता है।
+
+**बस यही Workflow है।**
+
+---
 
 🧪 STEP 05 — Pipeline Failure Identify करना
 
@@ -202,7 +332,7 @@ Failed Workflow
 Job
 
 देखना है कि failure किस stage पर है।
-
+```text
 अगर ऐसा error है:
 AADSTS70021
 No matching federated identity record found
@@ -212,8 +342,10 @@ No matching federated identity record found
 GitHub OIDC Subject
         ≠
 Azure Federated Credential Subject
-
+```
 है।
+
+---
 
 # 🛠️ STEP 06 — Azure Federated Identity Credential (FIC) Correct करना
 
@@ -764,6 +896,760 @@ Step 06 तब complete माना जाएगा जब:
 
 यह इसलिए जरूरी है क्योंकि FIC का पूरा purpose ही यह verify करना है कि **trusted GitHub identity वही है जिसे Azure access दिया गया है।**
 
+---
+### ✅ Final Checklist
+
+अभी तुम्हें exactly यह करना है:
+
+STEP 1
+☐ App Registration Client ID verify करो
+   666a02fd-9186-4647-bcac-b9fd1943a1e7
+
+STEP 2
+☐ उसी App Registration में FIC बनाओ
+
+STEP 3
+☐ Entity type = Pull request
+
+STEP 4
+☐ Organization = ComSolve-Cloud-Lab
+☐ Organization ID = 322537409
+☐ Repository = comsolve-cyberex-azure-landing-zone
+☐ Repository ID = 1338145312
+
+STEP 5
+☐ Audience = api://AzureADTokenExchange
+
+STEP 6
+☐ Save
+
+STEP 7
+☐ PR #2 → Re-run
+
+STEP 8
+☐ Azure Login PASS verify
+
+STEP 9
+☐ दूसरा FIC बनाओ
+   Entity type = Branch
+   Branch = feature/nic-infrastructure
+
+STEP 10
+☐ Feature branch पर push करके test
+
+---
+
+# 🔐 GitHub Actions → Azure OIDC Authentication Troubleshooting
+
+<p align="center">
+
+![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-2088FF?logo=github\&logoColor=white)
+![Microsoft Entra ID](https://img.shields.io/badge/Microsoft-Entra_ID-0078D4?logo=microsoftazure\&logoColor=white)
+![Azure](https://img.shields.io/badge/Microsoft-Azure-0078D4?logo=microsoftazure\&logoColor=white)
+![OIDC](https://img.shields.io/badge/OIDC-Federated_Identity-orange)
+![Terraform](https://img.shields.io/badge/Terraform-CI%2FCD-7B42BC?logo=terraform\&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Resolved-success)
+
+</p>
+
+> 🎯 **Objective:**
+> GitHub Repository को Personal Account से GitHub Organization में transfer करने के बाद GitHub Actions → Microsoft Entra ID → Azure OIDC authentication failure को troubleshoot करके successfully restore करना।
+
+---
+
+# 📌 1. Incident Overview
+
+GitHub Actions pipeline पहले successfully Azure के साथ **OIDC authentication** कर रही थी।
+
+Repository उस समय Personal GitHub Account के under थी:
+
+```text
+Shrikant-Nadgaudaa
+```
+
+बाद में repository को GitHub Organization में transfer किया गया:
+
+```text
+ComSolve-Cloud-Lab
+```
+
+Repository transfer के बाद Terraform CI pipeline में:
+
+```text
+azure/login@v2
+```
+
+step fail होने लगा।
+
+---
+
+# 🏗️ 2. Existing CI/CD Architecture
+
+हमारी authentication architecture इस प्रकार है:
+
+```text
+                    ┌──────────────────────┐
+                    │      Developer       │
+                    │   git push / PR      │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │    GitHub Actions    │
+                    │   Terraform CI/CD    │
+                    └──────────┬───────────┘
+                               │
+                               │ OIDC Token
+                               ▼
+                 ┌───────────────────────────┐
+                 │ Microsoft Entra ID         │
+                 │ Federated Identity         │
+                 │ Credential (FIC)           │
+                 └────────────┬──────────────┘
+                              │
+                              │ Token Exchange
+                              ▼
+                 ┌───────────────────────────┐
+                 │ Azure App Registration    │
+                 │ Service Principal         │
+                 └────────────┬──────────────┘
+                              │
+                              ▼
+                 ┌───────────────────────────┐
+                 │     Azure Subscription    │
+                 └────────────┬──────────────┘
+                              │
+                              ▼
+                    ┌──────────────────────┐
+                    │      Terraform       │
+                    │ Init / Validate /    │
+                    │ Plan / Deployment    │
+                    └──────────────────────┘
+```
+
+---
+
+# 🔄 3. Pipeline Trigger Architecture
+
+हमारी Terraform CI workflow दो conditions पर execute होती है:
+
+```yaml
+on:
+
+  push:
+    branches:
+      - "feature/**"
+
+  pull_request:
+    branches:
+      - main
+```
+
+इसका मतलब:
+
+```text
+                    GitHub Repository
+                           │
+             ┌─────────────┴─────────────┐
+             │                           │
+             ▼                           ▼
+       Feature Branch               Pull Request
+       feature/**                   → main
+             │                           │
+             ▼                           ▼
+           PUSH                         PR
+             │                           │
+             └─────────────┬─────────────┘
+                           ▼
+                    GitHub Actions
+                           │
+                           ▼
+                     Azure OIDC
+```
+
+इसलिए OIDC authentication के लिए **दो अलग Subject contexts** required थे:
+
+* 🔵 Feature Branch Push
+* 🟢 Pull Request
+
+---
+
+# ❌ 4. Initial Failure
+
+Repository Organization में transfer होने के बाद GitHub Actions में:
+
+```text
+Run azure/login@v2
+```
+
+पर authentication failure आया।
+
+Error:
+
+```text
+AADSTS700213: No matching federated identity record found
+for presented assertion subject
+```
+
+GitHub ने नया OIDC Subject भेजा:
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+लेकिन Microsoft Entra ID में existing FIC पुराने GitHub owner के लिए configured था।
+
+---
+
+# 🔎 5. Root Cause Identification
+
+सबसे पहले पुराने successful GitHub Actions run को analyze किया गया।
+
+### ✅ Old Successful OIDC Subject
+
+```text
+repo:Shrikant-Nadgaudaa@247837213/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+यह Personal GitHub Account based configuration थी।
+
+Repository बाद में Organization में transfer हुई:
+
+```text
+Shrikant-Nadgaudaa
+        │
+        │ Repository Transfer
+        ▼
+ComSolve-Cloud-Lab
+```
+
+इसलिए नया GitHub OIDC Subject बन गया:
+
+### ❌ Old
+
+```text
+repo:Shrikant-Nadgaudaa@247837213/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+### ✅ New
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+---
+
+# 🧠 6. Important Discovery
+
+Troubleshooting के दौरान तीन critical values compare की गईं:
+
+| Parameter      | Old Configuration    | New Configuration    |
+| -------------- | -------------------- | -------------------- |
+| GitHub Owner   | `Shrikant-Nadgaudaa` | `ComSolve-Cloud-Lab` |
+| Owner ID       | `247837213`          | `322537409`          |
+| Repository ID  | `1338145312`         | `1338145312`         |
+| OIDC Issuer    | Same                 | Same                 |
+| Audience       | Same                 | Same                 |
+| Authentication | OIDC                 | OIDC                 |
+
+### 🔥 Key Observation
+
+Repository ID:
+
+```text
+1338145312
+```
+
+**same रहा।**
+
+लेकिन GitHub Organization और Organization ID बदल गए।
+
+इससे confirm हुआ कि समस्या:
+
+```text
+❌ Terraform
+❌ Azure Subscription
+❌ Service Principal
+❌ Azure RBAC
+❌ GitHub Actions YAML
+❌ Azure CLI
+```
+
+में नहीं थी।
+
+Actual issue:
+
+```text
+🔴 Federated Identity Credential Subject Mismatch
+```
+
+---
+
+# 🔐 7. OIDC Values Identified From Failed Run
+
+Failed GitHub Actions run से exact values प्राप्त हुईं:
+
+```text
+Issuer:
+https://token.actions.githubusercontent.com
+```
+
+```text
+Audience:
+api://AzureADTokenExchange
+```
+
+```text
+Subject:
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+इन values को Microsoft Entra ID Federated Credential configuration से compare किया गया।
+
+---
+
+# 🛠️ 8. Remediation Performed
+
+हमने GitHub Actions YAML को modify नहीं किया।
+
+Existing OIDC architecture को ही retain किया गया।
+
+केवल Microsoft Entra ID App Registrations में configured **Federated Credential Subject Identifier** को पुराने Personal Account format से नए Organization immutable-ID format में update किया गया।
+
+---
+
+# 🔵 9. Pull Request FIC — Updated Configuration
+
+### Old Subject
+
+```text
+repo:Shrikant-Nadgaudaa@247837213/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+### New Subject
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+### Common OIDC Configuration
+
+```text
+Issuer:
+https://token.actions.githubusercontent.com
+
+Audience:
+api://AzureADTokenExchange
+```
+
+Azure Portal में:
+
+```text
+Federated credential scenario
+        │
+        ▼
+GitHub Actions deploying Azure resources
+        │
+        ▼
+Organization
+ComSolve-Cloud-Lab
+        │
+        ▼
+Organization ID
+322537409
+        │
+        ▼
+Repository
+comsolve-cyberex-azure-landing-zone
+        │
+        ▼
+Repository ID
+1338145312
+        │
+        ▼
+Entity Type
+Pull request
+        │
+        ▼
+Subject Identifier
+Automatically generated
+```
+
+---
+
+# 🔵 10. Feature Branch Push FIC
+
+Pipeline `feature/**` branches पर भी execute होती है।
+
+इसलिए Feature Branch authentication context भी configure किया गया।
+
+Target branch:
+
+```text
+feature/nic-infrastructure
+```
+
+Azure Portal configuration:
+
+```text
+Federated credential scenario:
+GitHub Actions deploying Azure resources
+
+Organization:
+ComSolve-Cloud-Lab
+
+Organization ID:
+322537409
+
+Repository:
+comsolve-cyberex-azure-landing-zone
+
+Repository ID:
+1338145312
+
+Entity Type:
+Branch
+
+Branch:
+feature/nic-infrastructure
+```
+
+Azure Portal ने immutable Organization + Repository IDs के आधार पर Subject Identifier calculate किया।
+
+---
+
+# 🔁 11. Before vs After
+
+## ❌ Before — Authentication Failure
+
+```text
+GitHub Organization
+        │
+        ▼
+ComSolve-Cloud-Lab
+        │
+        ▼
+OIDC Token
+        │
+        ▼
+Subject:
+repo:ComSolve-Cloud-Lab@322537409/...
+        │
+        ▼
+Azure FIC
+        │
+        ▼
+Old Subject:
+repo:Shrikant-Nadgaudaa@247837213/...
+        │
+        ▼
+❌ NO MATCH
+        │
+        ▼
+AADSTS700213
+```
+
+---
+
+## ✅ After — Authentication Successful
+
+```text
+GitHub Organization
+        │
+        ▼
+ComSolve-Cloud-Lab
+        │
+        ▼
+GitHub Actions
+        │
+        ▼
+OIDC Token
+        │
+        ▼
+New Immutable Subject
+        │
+        ▼
+Azure Federated Credential
+        │
+        │ Exact Match
+        ▼
+✅ Token Exchange
+        │
+        ▼
+✅ Azure Login
+        │
+        ▼
+✅ Azure Subscription
+        │
+        ▼
+✅ Terraform
+        │
+        ▼
+🎉 Pipeline Successful
+```
+
+---
+
+# 🧪 12. Validation
+
+Configuration update के बाद pipeline को दो अलग scenarios में test किया गया।
+
+## Test 1 — Pull Request
+
+```text
+Feature Branch
+      │
+      ▼
+Pull Request → main
+      │
+      ▼
+GitHub Actions
+      │
+      ▼
+Azure OIDC
+      │
+      ▼
+Azure Login
+      │
+      ▼
+Terraform CI
+      │
+      ▼
+✅ SUCCESS
+```
+
+### Result
+
+```text
+Azure CLI login succeeds by using OIDC.
+```
+
+---
+
+# 🧪 13. Test 2 — Feature Branch Push
+
+Branch:
+
+```text
+feature/nic-infrastructure
+```
+
+Push के बाद:
+
+```text
+git push
+     │
+     ▼
+GitHub Actions
+     │
+     ▼
+OIDC Authentication
+     │
+     ▼
+Azure Login
+     │
+     ▼
+Terraform Validation
+     │
+     ▼
+Terraform Plan
+     │
+     ▼
+✅ SUCCESS
+```
+
+### Result
+
+```text
+✅ Feature Branch Pipeline Successful
+```
+
+---
+
+# 🎯 14. Final Resolution
+
+दोनों authentication scenarios successfully validate हुए:
+
+| Scenario                  | Result |
+| ------------------------- | ------ |
+| Feature Branch Push       | ✅ PASS |
+| Pull Request → main       | ✅ PASS |
+| GitHub OIDC               | ✅ PASS |
+| Microsoft Entra FIC       | ✅ PASS |
+| Azure Login               | ✅ PASS |
+| Azure Subscription Access | ✅ PASS |
+| Terraform CI              | ✅ PASS |
+
+---
+
+# 💡 15. Key Learning
+
+### Repository Transfer के बाद OIDC Subject को हमेशा verify करें
+
+GitHub Repository को:
+
+```text
+Personal Account
+       ↓
+Organization
+```
+
+transfer करने पर GitHub Actions OIDC `sub` claim में Organization identity बदल सकती है।
+
+इसलिए existing Azure Federated Credential automatically valid नहीं मानी जानी चाहिए।
+
+---
+
+# 🛡️ 16. Troubleshooting Methodology
+
+Future में similar issue आने पर यह sequence follow करें:
+
+```text
+1️⃣ GitHub Actions failure देखें
+        ↓
+2️⃣ azure/login@v2 logs देखें
+        ↓
+3️⃣ "Federated token details" खोजें
+        ↓
+4️⃣ Issuer identify करें
+        ↓
+5️⃣ Subject claim identify करें
+        ↓
+6️⃣ Audience identify करें
+        ↓
+7️⃣ Azure FIC values compare करें
+        ↓
+8️⃣ GitHub Organization / Repository IDs verify करें
+        ↓
+9️⃣ Entity Type verify करें
+        ↓
+🔟 FIC Subject update करें
+        ↓
+1️⃣1️⃣ Pipeline Re-run करें
+        ↓
+1️⃣2️⃣ Push + PR दोनों test करें
+```
+
+---
+
+# 🚨 17. Important Error Interpretation
+
+अगर future में यह error दिखाई दे:
+
+```text
+AADSTS700213:
+No matching federated identity record found
+```
+
+तो सबसे पहले:
+
+```text
+❌ Client Secret check करने की जरूरत नहीं
+❌ Terraform code check करने की जरूरत नहीं
+❌ Azure CLI reinstall करने की जरूरत नहीं
+❌ Subscription बदलने की जरूरत नहीं
+```
+
+सबसे पहले check करें:
+
+```text
+GitHub OIDC Subject
+        VS
+Azure Federated Credential Subject
+```
+
+इन दोनों का exact match होना आवश्यक है।
+
+---
+
+# 🧩 18. Final Architecture
+
+```text
+                           ☁️ GitHub
+                              │
+                 ┌────────────┴────────────┐
+                 │                         │
+                 ▼                         ▼
+          🌿 Feature Push            🔀 Pull Request
+                 │                         │
+                 └────────────┬────────────┘
+                              │
+                              ▼
+                     ⚙️ GitHub Actions
+                              │
+                              │ OIDC
+                              ▼
+                  🔐 Microsoft Entra ID
+                              │
+                    Federated Credential
+                              │
+                              ▼
+                     🪪 App Registration
+                              │
+                              ▼
+                       ☁️ Azure Login
+                              │
+                              ▼
+                    📦 Azure Subscription
+                              │
+                              ▼
+                       🏗️ Terraform
+                              │
+                ┌─────────────┼─────────────┐
+                ▼             ▼             ▼
+             Init         Validate        Plan
+                │             │             │
+                └─────────────┴─────────────┘
+                              │
+                              ▼
+                         ✅ SUCCESS
+```
+
+---
+
+# 🏁 19. Resolution Summary
+
+> **Issue:** GitHub Repository transfer from Personal Account to Organization caused the GitHub Actions OIDC Subject Identifier to change.
+
+> **Root Cause:** Microsoft Entra ID Federated Identity Credential was still configured with the old Personal Account based Subject Identifier.
+
+> **Fix:** Updated the Federated Credential Subject Identifier in the required App Registrations from the old Personal Account immutable format to the new Organization immutable format.
+
+> **Validation:** Both **Pull Request** and **Feature Branch Push** workflows successfully authenticated to Azure using OIDC.
+
+> **Final Status:** 🟢 **RESOLVED**
+
+---
+
+## 📝 Final Takeaway
+
+```text
+Repository Transfer
+       ↓
+OIDC Subject Changed
+       ↓
+FIC Subject Mismatch
+       ↓
+AADSTS700213
+       ↓
+Inspect GitHub OIDC Token
+       ↓
+Compare FIC Subject
+       ↓
+Update Organization / Repository IDs
+       ↓
+Re-run Pipeline
+       ↓
+PR Test ✅
+       ↓
+Feature Push Test ✅
+       ↓
+🎉 OIDC Authentication Restored
+```
+
+**Lesson:**
+
+> 🔐 **GitHub Actions OIDC troubleshooting में सबसे पहले `issuer`, `subject`, और `audience` को inspect करो। `AADSTS700213` में Federated Credential Subject mismatch सबसे पहले verify किया जाना चाहिए।**
 
 ---
 
@@ -780,13 +1666,18 @@ GitHub की Azure OIDC guidance भी इसे recommended audience बत�
 इसलिए verify:
 
 Issuer:
-https://token.actions.githubusercontent.com
+`https://token.actions.githubusercontent.com`
 
 Audience:
-api://AzureADTokenExchange
-🔐 STEP 08 — Azure Role Assignment अलग चीज है
+`api://AzureADTokenExchange`
+
+---
+
+# 🔐 STEP 08 — Azure Role Assignment अलग चीज है
 
 एक important distinction:
+
+```text
 
 Federated Credential
         ↓
@@ -797,11 +1688,13 @@ Authentication
 Azure RBAC Role
         ↓
 Authorization
+```
 
 दो अलग चीजें हैं।
 
 Example:
 
+```text
 OIDC
  ↓
 "तुम कौन हो?"
@@ -813,6 +1706,7 @@ Azure RBAC
 "तुम क्या कर सकते हो?"
  ↓
 Authorization
+```
 
 इसलिए FIC सही होने के बाद भी अगर:
 
@@ -820,15 +1714,20 @@ AuthorizationFailed
 
 आता है तो Azure RBAC role check करना होगा।
 
-🧪 STEP 09 — Azure Role Check
+---
+
+# 🧪 STEP 09 — Azure Role Check
 
 Azure में:
+
+```text
 
 Subscription
     ↓
 Access control (IAM)
     ↓
 Role assignments
+```
 
 GitHub Actions वाले App/Service Principal को check करें।
 
@@ -840,16 +1739,20 @@ Contributor
 
 Owner देने की जरूरत सिर्फ इसलिए नहीं है कि GitHub Actions चल रही है।
 
-🔐 STEP 10 — GitHub Secrets Check
+---
+
+# 🔐 STEP 10 — GitHub Secrets Check
 
 Repository:
+
+```text
 
 Settings
     ↓
 Secrets and variables
     ↓
 Actions
-
+``` 
 verify:
 
 AZURE_CLIENT_ID
@@ -866,9 +1769,13 @@ Subscription ID
 
 secret itself नहीं होते in the same sense as client secret, लेकिन workflow configuration में centrally manage करना सही practice है।
 
-🧪 STEP 11 — Pipeline Test
+---
+
+# 🧪 STEP 11 — Pipeline Test
 
 सब correction के बाद:
+
+```text
 
 GitHub
    ↓
@@ -893,10 +1800,15 @@ Trivy
 Terraform Plan
    ↓
 ✅ SUCCESS
-🔎 STEP 12 — Successful Authentication का मतलब
+```
+
+---
+
+# 🔎 STEP 12 — Successful Authentication का मतलब
 
 अगर:
 
+```text
 Azure Login
     ↓
 Success
@@ -910,17 +1822,21 @@ OIDC
 Entra ID
    ↓
 Federated Credential
+```
 
 अब सही काम कर रहे हैं।
 
 उसके बाद अगर Terraform fail होता है तो वह OIDC problem नहीं, बल्कि Terraform/Azure permission/configuration problem होगी।
 
-🏢 STEP 13 — Team RBAC को भी Validate करेंगे
+---
+
+# 🏢 STEP 13 — Team RBAC को भी Validate करेंगे
 
 तुमने testing के लिए अभी 2 Teams बनाए हैं और users add करके repository access दिया है।
 
 अब उनका test:
 
+```text
 Team
  ↓
 User
@@ -928,9 +1844,10 @@ User
 Repository
  ↓
 Permission
+```
 
 करना है।
-
+```text
 Example:
 
 Team-A
@@ -962,10 +1879,14 @@ Create Branch
 Push
     ↓
 ✅ Expected Success
-🛡️ STEP 14 — Branch Protection साथ में Validate
+```
+
+---
+
+# 🛡️ STEP 14 — Branch Protection साथ में Validate
 
 Repository:
-
+```text
 Settings
     ↓
 Rules
@@ -983,7 +1904,7 @@ PR required
 Required status checks
  ↓
 Merge
-
+```
 इसका मतलब developer के पास:
 
 Write
@@ -994,7 +1915,9 @@ Direct main push
 
 controlled रहेगा।
 
-🧪 STEP 15 — Complete Security Test
+---
+
+# 🧪 STEP 15 — Complete Security Test
 
 Phase 21 के अंत में हमारा test matrix:
 
@@ -1073,7 +1996,7 @@ Phase 21
 
 # 🚨 अभी तुम्हारा सबसे पहला काम
 
-Phase 21 में अभी Team/RBAC को आगे मत छेड़ना।
+Phase 22 में अभी Team/RBAC को आगे मत छेड़ना।
 
 पहले pipeline वापस green करनी है।
 
