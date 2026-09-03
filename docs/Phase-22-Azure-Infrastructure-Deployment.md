@@ -1659,7 +1659,7 @@ Feature Push Test ✅
 
 ---
 
-### 🔑 STEP 07 — Audience भी Check करना
+# 🔑 STEP 07 — Audience भी Check करना
 
 Azure FIC में audience सामान्यतः:
 
@@ -1679,7 +1679,7 @@ Audience:
 
 ---
 
-### 🔐 STEP 08 — Azure Role Assignment अलग चीज है
+# 🔐 STEP 08 — Azure Role Assignment अलग चीज है
 
 एक important distinction:
 
@@ -1722,7 +1722,7 @@ AuthorizationFailed
 
 ---
 
-### 🧪 STEP 09 — Azure Role Check
+# 🧪 STEP 09 — Azure Role Check
 
 Azure में:
 
@@ -1747,7 +1747,7 @@ Owner देने की जरूरत सिर्फ इसलिए नह
 
 ---
 
-### 🔐 STEP 10 — GitHub Secrets Check
+# 🔐 STEP 10 — GitHub Secrets Check
 
 Repository:
 
@@ -1777,7 +1777,7 @@ secret itself नहीं होते in the same sense as client secret, ल�
 
 ---
 
-### 🧪 STEP 11 — Pipeline Test
+# 🧪 STEP 11 — Pipeline Test
 
 सब correction के बाद:
 
@@ -1810,7 +1810,7 @@ Terraform Plan
 
 ---
 
-### 🔎 STEP 12 — Successful Authentication का मतलब
+# 🔎 STEP 12 — Successful Authentication का मतलब
 
 अगर:
 
@@ -1836,7 +1836,7 @@ Federated Credential
 
 ---
 
-### 🏢 STEP 13 — Team RBAC को भी Validate करेंगे
+# 🏢 STEP 13 — Team RBAC को भी Validate करेंगे
 
 तुमने testing के लिए अभी 2 Teams बनाए हैं और users add करके repository access दिया है।
 
@@ -1889,7 +1889,7 @@ Push
 
 ---
 
-### 🛡️ STEP 14 — Branch Protection साथ में Validate
+# 🛡️ STEP 14 — Branch Protection साथ में Validate
 
 Repository:
 ```text
@@ -1923,7 +1923,7 @@ controlled रहेगा।
 
 ---
 
-### 🧪 STEP 15 — Complete Security Test
+# 🧪 STEP 15 — Complete Security Test
 
 Phase 21 के अंत में हमारा test matrix:
 
