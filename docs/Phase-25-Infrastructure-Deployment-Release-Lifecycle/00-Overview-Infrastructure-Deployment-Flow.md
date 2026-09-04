@@ -151,7 +151,7 @@ CD का उद्देश्य:
 
 ---
 
-# 🔐 Deployment Security Model
+### 🔐 Deployment Security Model
 
 Deployment में long-lived Azure credentials या client secret use नहीं किया जाएगा।
 
@@ -175,7 +175,7 @@ Azure Subscription
 
 ---
 
-# 🛡️ Deployment Control Points
+### 🛡️ Deployment Control Points
 
 Deployment निम्न security gates के बाद ही आगे बढ़ेगा:
 
@@ -215,7 +215,7 @@ Terraform Apply
 
 ---
 
-# 📋 Deployment Evidence
+### 📋 Deployment Evidence
 
 हर deployment के लिए appropriate evidence maintain किया जाएगा:
 
@@ -234,7 +234,7 @@ Terraform Apply
 
 ---
 
-# 🎯 Final Success Criteria
+### 🎯 Final Success Criteria
 
 Phase 25 को successful तभी माना जाएगा जब:
 
@@ -253,7 +253,7 @@ Phase 25 को successful तभी माना जाएगा जब:
 
 ---
 
-# 🔄 Relationship With Other Phases
+### 🔄 Relationship With Other Phases
 
 ```text
 Phase 21
@@ -280,7 +280,7 @@ Monitoring, Observability & Operational Readiness
 
 ---
 
-# 🏁 Phase Outcome
+### 🏁 Phase Outcome
 
 इस Phase के completion के बाद project में एक **controlled, secure और repeatable Terraform deployment lifecycle** उपलब्ध होगा:
 
@@ -320,7 +320,7 @@ Closure
 
 ---
 
-# 📁 Proposed Folder Structure
+### 📁 Proposed Folder Structure
 
 ```text
 
@@ -359,7 +359,7 @@ docs/
     └── 19-Phase-Closure.md
 ```
 
-# 🔥 इसका पूरा Logic
+### 🔥 इसका पूरा Logic
 
 ```text
                     🚀 INFRASTRUCTURE DELIVERY
@@ -462,7 +462,7 @@ docs/
 ```
 
 
-*** और सबसे important architectural separation: ***
+### और सबसे important architectural separation:
 
 ```text
 
@@ -487,7 +487,7 @@ CD में controlled terraform apply आएगा।
 
 ---
 
-*** 🔥 पहले एक चीज़ Clear कर ***
+### 🔥 पहले एक चीज़ Clear कर
 
 हमारे पास अभी जो pipeline है:
 
@@ -499,10 +499,15 @@ terraform-ci.yml
 
 इसलिए इसमें अभी:
 
+
 fmt
+
 init
+
 validate
+
 Trivy
+
 plan
 
 है।
@@ -534,7 +539,7 @@ Azure Resources
 
 होगा।
 
-*** ❌ मैं यह नहीं करूँगा ***
+### ❌ मैं यह नहीं करूँगा
 
 मैं existing terraform-ci.yml में सीधे यह नहीं डालूँगा:
 
