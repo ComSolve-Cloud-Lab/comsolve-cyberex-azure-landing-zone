@@ -200,9 +200,12 @@ terraform {
   }
 }
 
+```
+
 
 
 यह Terraform को बताता है:
+
 
 🗣️ "Terraform भाई, Azure infrastructure manage करना है और इसके लिए AzureRM provider चाहिए."
 
@@ -221,6 +224,8 @@ version = "~> 4.0"
 
 2️⃣ provider "azurerm"
 
+```text
+
 provider "azurerm" {
 
 
@@ -228,10 +233,14 @@ provider "azurerm" {
 
 
 }
+```
+
 
 यह actual Azure provider configuration है।
 
 Simple language में:
+
+```text
 
 terraform {}
      │
@@ -298,9 +307,11 @@ module "resource_groups" {
 
 
 }
+```
 
 
-🧠 इसका simple मतलब
+
+### 🧠 इसका simple मतलब
 
 Parent module बोल रहा है:
 
@@ -312,6 +323,8 @@ Parent module बोल रहा है:
 यह Parent है।
 
 इसका काम सिर्फ Child Module को call करना है।
+
+```text
 
 main.tf
    │
@@ -339,7 +352,11 @@ variable "resource_groups" {
     location = string
   }))
 }
-🧠 यहाँ असली game है
+
+```  
+
+
+###  🧠 यहाँ असली game है
 
 हम Terraform को बता रहे हैं:
 
@@ -350,7 +367,7 @@ location
 
 इसलिए:
 
-
+```text
 resource_groups
       │
       ├── network
@@ -369,11 +386,13 @@ resource_groups
 
 # 6️⃣ terraform.tfvars
 
-```text
+
 
 📄 terraform/terraform.tfvars
 
 यही जगह है जहाँ actual values रखेंगे। 🔥
+
+```text
 
 resource_groups = {
 
@@ -398,9 +417,13 @@ resource_groups = {
 
 }
 
+```
+
 🔥 यहाँ actual values हैं।
 
 इसलिए:
+
+```text
 
 variables.tf
      │
@@ -411,6 +434,7 @@ terraform.tfvars
      │ Actual Values
      ▼
 main.tf
+```
 
 अब देख:
 
@@ -420,7 +444,7 @@ main.tf
 
 ✅ Actual values सिर्फ terraform.tfvars में।
 
-```
+---
 
 
 # 7️⃣ Child variables.tf
@@ -742,4 +766,4 @@ East US
 
 West Europe
 
----
+--

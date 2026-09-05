@@ -1,0 +1,83 @@
+# ==============================================================================
+# Dependabot Configuration
+# ==============================================================================
+# यह file GitHub Dependabot को configure करती है।
+# Dependabot हमारी dependencies के updates और security vulnerabilities
+# को automatically check करेगा।
+# ==============================================================================
+
+
+# ==============================================================================
+# Configuration Version
+# ==============================================================================
+
+# Dependabot configuration का version.
+version: 2
+
+
+# ==============================================================================
+# Dependency Update Configuration
+# ==============================================================================
+
+# यहाँ Dependabot के लिए dependency update rules define किए जाते हैं।
+updates:
+
+
+  # ==============================================================================
+  # Package Ecosystem
+  # ==============================================================================
+
+  # Terraform dependencies को monitor करना है।
+  # Terraform provider/module dependencies के लिए यह ecosystem use होता है।
+  - package-ecosystem: "terraform"
+
+
+    # ============================================================================
+    # Terraform Directory
+    # ============================================================================
+
+    # हमारे Terraform configuration की root directory.
+    # Repository structure:
+    #
+    # comsolve-cyberex-azure-landing-zone/
+    # └── terraform/
+    #
+    directory: "/terraform"
+
+
+    # ============================================================================
+    # Update Schedule
+    # ============================================================================
+
+    # Dependabot हर सप्ताह dependency updates check करेगा।
+    schedule:
+      interval: "weekly"
+
+
+    # ============================================================================
+    # Pull Request Limit
+    # ============================================================================
+
+    # एक समय में maximum 5 Dependabot Pull Requests खुले रह सकते हैं।
+    #
+    # इससे बहुत ज्यादा automated PRs एक साथ create नहीं होंगे।
+    open-pull-requests-limit: 5
+
+    # ============================================================================
+
+# 🧠 इसका पूरा flow
+# GitHub Repository
+#        ↓
+# Dependabot
+#        ↓
+# /terraform
+#        ↓
+# Terraform Dependencies Check
+#        ↓
+# Weekly Scan
+#        ↓
+# Update Available?
+#        ↓
+# Dependabot Pull Request
+#        ↓
+# Maximum 5 Open PRs

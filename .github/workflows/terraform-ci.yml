@@ -1,0 +1,162 @@
+# ==============================================================================
+# Terraform CI Pipeline
+# ==============================================================================
+
+name: Terraform CI
+
+# ==============================================================================
+# Pipeline Trigger
+# ==============================================================================
+
+on:
+
+  push:
+    branches:
+      - "feature/**"
+
+  pull_request:
+    branches:
+      - main
+
+# ==============================================================================
+# Permissions
+# ==============================================================================
+
+permissions:
+
+  # GitHub repository को checkout करने की permission
+  contents: read
+
+  # Azure OIDC authentication के लिए जरूरी
+  id-token: write
+
+# ==============================================================================
+# Terraform CI Job
+# ==============================================================================
+
+jobs:
+
+  terraform:
+
+    name: Terraform Validation
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+
+      # ------------------------------------------------------------------------
+      # # Step 01 — Checkout Repository
+      # ------------------------------------------------------------------------
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------------------
+      # Step 02 — Azure OIDC Login
+      # ------------------------------------------------------------------------
+
+      - name: Azure Login
+
+        uses: azure/login@v2
+
+        with:
+
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      
+
+      # ------------------------------------------------------------------------
+      # Step 03 — Verify Azure Login
+      # ------------------------------------------------------------------------
+
+      - name: Verify Azure Login
+
+        run: az account show
+
+      # ------------------------------------------------------------------------
+      # Step 04 — Verify Azure Subscription
+      # ------------------------------------------------------------------------
+
+      - name: Verify Azure Subscription
+
+        run: az account show --query "{subscription:id, tenant:tenantId, user:user.name}"
+
+      # ------------------------------------------------------------------------
+      # Step 05 — Setup Terraform
+      # ------------------------------------------------------------------------
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # ------------------------------------------------------------------------
+      # Step 06 — Terraform Format Check
+      # ------------------------------------------------------------------------
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      # ------------------------------------------------------------------------
+      # Step 05 Setup Terraform
+      # ------------------------------------------------------------------------
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # ------------------------------------------------------------------------
+      # Step 06 — Terraform Format Check
+      # ------------------------------------------------------------------------
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      # ------------------------------------------------------------------------
+      # Step 07 — Terraform Init
+      # ------------------------------------------------------------------------
+
+      - name: Terraform Init
+        run: terraform init
+
+      # ------------------------------------------------------------------------
+      # Step 08 — Terraform Validate
+      # ------------------------------------------------------------------------
+
+      - name: Terraform Validate
+        run: terraform validate
+      
+      # ------------------------------------------------------------------------
+      # Step 09 — Checkov Security Scan / Gate
+      # ------------------------------------------------------------------------
+      # - name: Checkov Security Scan
+      #   uses: bridgecrewio/checkov-action@master
+      #   with:
+      #     directory: terraform
+      #     framework: terraform
+
+
+      # ------------------------------------------------------------------------
+      # Step 10 — Trivy Security Scan /Gate
+      # ------------------------------------------------------------------------
+      - name: Trivy IaC Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: terraform
+          severity: HIGH,CRITICAL
+          exit-code: 1
+
+      # ------------------------------------------------------------------------
+      # Step 11 — Terraform Plan
+      # ------------------------------------------------------------------------
+
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
+      # ------------------------------------------------------------------------
+      # Terraform CI workflow re-enabled
