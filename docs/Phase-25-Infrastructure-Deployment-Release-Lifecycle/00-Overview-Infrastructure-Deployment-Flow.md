@@ -817,12 +817,12 @@ Azure
 
 ---
 
-*** Phase A — Development ***
+ **Phase A — Development**
 Feature Branch
 
 ---
 
-*** Phase B — CI ***
+**Phase B — CI**
 
 ```text
 
@@ -840,11 +840,11 @@ Approval
 ```
 ---
 
-*** Phase D — Integration ***
+**Phase D — Integration**
 Feature → Main
 
 ---
-*** Phase E — CD ***
+**Phase E — CD**
 
 ```Text
 
@@ -864,7 +864,7 @@ Confirm
 ```
 ---
 
-*** Phase G — बाद में ***
+**Phase G — बाद में***
 
 Monitoring
 Logging
