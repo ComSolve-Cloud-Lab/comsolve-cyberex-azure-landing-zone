@@ -3463,4 +3463,6 @@ Terraform Apply
 
 
 ---
+Now we are testing feature/vnet branch to login azure portal
 
+----
