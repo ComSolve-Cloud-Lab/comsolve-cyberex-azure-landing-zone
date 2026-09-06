@@ -2598,10 +2598,28 @@ PS D:\Projects3\comsolve-cyberex-azure-landing-zone>
 git add docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/
 ```
 
+```text
+
+
+
 फिर:
 
 ```powershell
 git status
+```
+
+```text
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git status
+On branch feature/vnet
+Your branch is up to date with 'origin/feature/vnet'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/02-Pull-Request-Creation.md
+        modified:   docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/03-PR-Approval.md
+        modified:   docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/04-Feature-to-Main-Merge.md
+        modified:   docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/05-CD-Pipeline-Architecture.md
 ```
 
 Expected:
@@ -2620,6 +2638,33 @@ Changes to be committed:
 
 ```powershell
 git commit -m "docs: update phase 25 deployment lifecycle"
+```
+---
+```text
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git commit -m "docs: update phase 25 deployment lifecycle"
+[feature/vnet 31b5508] docs: update phase 25 deployment lifecycle
+ 4 files changed, 6461 insertions(+)
+```
+
+
+---
+
+```text
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git push origin feature/vnet
+Enumerating objects: 15, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (8/8), 26.96 KiB | 1.80 MiB/s, done.
+Total 8 (delta 4), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+remote: This repository moved. Please use the new location:
+remote:   https://github.com/ComSolve-Cloud-Lab/comsolve-cyberex-azure-landing-zone.git
+To https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone.git
+   2aa950f..31b5508  feature/vnet -> feature/vnet
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> 
 ```
 
 अब changes local Git history में save हो जाएंगे।
@@ -2690,6 +2735,30 @@ Merge
       │
       ▼
 main
+```
+### 📌 Title
+
+**feat: update Phase 25 deployment lifecycle documentation**
+
+### 📝 Description
+
+```markdown
+## 📌 Pull Request Summary
+
+This Pull Request updates the Phase 25 Infrastructure Deployment & Release Lifecycle documentation.
+
+## 🔧 Changes
+
+- Updated Pull Request Creation documentation
+- Updated PR Approval documentation
+- Updated Feature-to-Main Merge documentation
+- Updated CD Pipeline Architecture documentation
+
+## ✅ Validation
+
+- Documentation changes reviewed
+- Changes are ready for review and merge
+- Branch can be automatically merged into `main`
 ```
 
 ---
@@ -3559,5 +3628,397 @@ Cleanup
 
 > 🚀 **यही हमारा आगे का hands-on DevOps Git workflow रहेगा — Phase-by-Phase Feature Branch → CI → PR → Review → Approval → Merge → Validation → Branch Cleanup → Next Phase.**
 
+
+---
+
+
+# 🚀 Phase 25.04 — Current Git Status & Next Steps
+
+## 🔍 Tera Current Output
+
+```text
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git switch main
+error: Your local changes to the following files would be overwritten by checkout:
+        docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/04-Feature-to-Main-Merge.md
+Please commit your changes or stash them before you switch branches.
+Aborting
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git pull origin main
+From https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone
+ * branch            main       -> FETCH_HEAD
+Updating 31b5508..415bea3
+Fast-forward
+ terraform/.terraform.lock.hcl | 28 ++++++++++++++--------------
+ terraform/providers.tf        |  2 +-
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> git status
+On branch feature/vnet
+Your branch is ahead of 'origin/feature/vnet' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/04-Feature-to-Main-Merge.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone>
+```
+
+---
+
+# 🧠 अब इसका मतलब
+
+## 1️⃣ `git switch main` क्यों fail हुआ?
+
+```text
+error: Your local changes ... would be overwritten by checkout
+```
+
+इसका मतलब:
+
+```text
+feature/vnet
+   │
+   └── 04-Feature-to-Main-Merge.md
+          ↑
+       Local Change
+```
+
+तूने इस file में **local modification** किया हुआ है।
+
+Git को डर है कि अगर अभी `main` पर switch किया तो यह local change overwrite हो सकता है।
+
+इसलिए Git ने safety के लिए switch रोक दिया।
+
+### ❌ इसका मतलब यह नहीं है कि merge fail हुआ।
+
+बस working tree में uncommitted change है।
+
+---
+
+# 2️⃣ फिर `git pull origin main` कैसे चल गया?
+
+तू अभी भी:
+
+```text
+feature/vnet
+```
+
+पर था।
+
+इसलिए:
+
+```powershell
+git pull origin main
+```
+
+ने **main की latest changes fetch करके current feature/vnet branch में merge/pull कर दीं।**
+
+इसलिए:
+
+```text
+Updating 31b5508..415bea3
+Fast-forward
+```
+
+दिखा।
+
+⚠️ यह command technically अभी नहीं चलानी चाहिए थी।
+
+हमें पहले `main` पर switch करना था।
+
+लेकिन tension नहीं — अभी situation recoverable है।
+
+---
+
+# 3️⃣ सबसे important output
+
+तेरा:
+
+```text
+Your branch is ahead of 'origin/feature/vnet' by 1 commit.
+```
+
+मतलब:
+
+```text
+Local feature/vnet
+       ↓
+       1 commit
+       ↓
+Origin feature/vnet
+```
+
+यानी local branch पर **1 commit है जो remote GitHub branch पर अभी नहीं है।**
+
+इसलिए अभी:
+
+```text
+ALL DONE ❌
+```
+
+नहीं हुआ है।
+
+---
+
+# 4️⃣ और यह सबसे important है
+
+```text
+Changes not staged for commit:
+
+modified:
+docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/04-Feature-to-Main-Merge.md
+```
+
+इसका मतलब:
+
+### GitHub पर commit है
+
+लेकिन उसके बाद तूने फिर इस file को locally modify किया है।
+
+Structure अभी ऐसा है:
+
+```text
+feature/vnet
+
+       ┌── Commit A
+       │
+       ├── Commit B
+       │
+       └── Commit C  ← local commit, remote पर नहीं
+              │
+              └── 04-Feature-to-Main-Merge.md
+                    ↑
+                    Local uncommitted modification
+```
+
+इसलिए Git branch switch नहीं करने दे रहा।
+
+---
+
+# 🛑 अभी कुछ delete मत करना
+
+अभी:
+
+```text
+❌ feature/vnet delete मत करना
+❌ feature/nic-infrastructure delete मत करना
+❌ git reset मत करना
+❌ git restore मत करना
+❌ force push मत करना
+```
+
+पहले इस documentation change को properly handle करेंगे।
+
+---
+
+# ✅ Step 1 — पहले current change देख
+
+बस यह चला:
+
+```powershell
+git diff -- docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/04-Feature-to-Main-Merge.md
+```
+
+इससे पता चलेगा कि `04-Feature-to-Main-Merge.md` में exactly क्या change हुआ है।
+
+---
+
+# ✅ Step 2 — अगर change correct है
+
+अगर diff देखकर लगे कि change रखना है:
+
+```powershell
+git add docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/04-Feature-to-Main-Merge.md
+```
+
+फिर:
+
+```powershell
+git commit -m "docs: finalize Phase 25 merge documentation"
+```
+
+फिर:
+
+```powershell
+git push origin feature/vnet
+```
+
+अब feature branch का local commit भी GitHub पर चला जाएगा।
+
+---
+
+# ✅ Step 3 — फिर PR
+
+अब GitHub पर:
+
+```text
+feature/vnet
+      ↓
+     PR
+      ↓
+main
+```
+
+PR create/update होगा।
+
+CI pass होने दो।
+
+फिर:
+
+```text
+Review
+   ↓
+Approval
+   ↓
+Merge
+```
+
+---
+
+# ✅ Step 4 — Merge के बाद main update
+
+PR merge होने के बाद:
+
+```powershell
+git fetch origin --prune
+```
+
+फिर:
+
+```powershell
+git switch main
+```
+
+अब यह command काम करनी चाहिए।
+
+फिर:
+
+```powershell
+git pull origin main
+```
+
+फिर:
+
+```powershell
+git status
+```
+
+Expected:
+
+```text
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+```
+
+---
+
+# ✅ Step 5 — Branch validation
+
+फिर:
+
+```powershell
+git branch -r --merged origin/main
+```
+
+Expected:
+
+```text
+origin/HEAD -> origin/main
+origin/feature/nic-infrastructure
+origin/feature/vnet
+origin/main
+```
+
+इसका मतलब दोनों branches main में merged हैं।
+
+---
+
+# 🗑️ Step 6 — अब branches delete
+
+Local:
+
+```powershell
+git branch -d feature/vnet
+git branch -d feature/nic-infrastructure
+```
+
+Remote:
+
+```powershell
+git push origin --delete feature/vnet
+git push origin --delete feature/nic-infrastructure
+```
+
+फिर:
+
+```powershell
+git fetch origin --prune
+git branch -a
+```
+
+---
+
+# 🎯 Final Clean State
+
+हमें आखिर में यही चाहिए:
+
+```text
+                    main
+                     │
+                     ▼
+              Latest Code
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+   feature/vnet          feature/nic-infrastructure
+       ❌ deleted                 ❌ deleted
+```
+
+और अगली phase से:
+
+```text
+main
+ │
+ ├── git pull
+ │
+ └── git switch -c feature/phase-25-05-cd-pipeline
+                         │
+                         ▼
+                       Work
+                         │
+                       Commit
+                         │
+                        Push
+                         │
+                        CI
+                         │
+                        PR
+                         │
+                    Review/Approve
+                         │
+                       Merge
+                         │
+                    Delete Branch
+                         │
+                         ▼
+                   Next Phase
+```
+
+## 🔥 अभी सिर्फ एक काम कर
+
+**अभी branch delete या switch करने की कोशिश मत कर।**
+
+पहले यही चला:
+
+```powershell
+git diff -- docs/Phase-25-Infrastructure-Deployment-Release-Lifecycle/04-Feature-to-Main-Merge.md
+```
+
+उसका output भेज दे। फिर हम **exactly decide करेंगे कि इस change को commit करना है या नहीं**।
 
 ---
