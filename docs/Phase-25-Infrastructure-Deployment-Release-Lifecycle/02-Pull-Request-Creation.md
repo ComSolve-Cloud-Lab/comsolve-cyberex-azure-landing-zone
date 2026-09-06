@@ -514,6 +514,226 @@ Does Terraform plan show resource replacement?
 
 ---
 
+### Step 1 — Base aur Compare check
+
+Tumhare screen par ensure karo:
+
+```text
+base:    main
+compare: feature/vnet
+```
+
+Tumhare case mein ye **correct** hai:
+
+```text
+feature/vnet
+     ↓
+   main
+```
+
+Aur GitHub already bol raha hai:
+
+> **Able to merge. These branches can be automatically merged.**
+
+✅ Iska matlab currently branch mein merge conflict nahi hai.
+
+---
+
+### Step 2 — Title भरो
+
+**Add a title** mein ye daal:
+
+```text
+feat: propose VNet infrastructure changes
+```
+
+---
+
+### Step 3 — Description भरो
+
+**Add a description** mein ye paste kar:
+
+## 📌 Pull Request Summary
+
+This Pull Request proposes the VNet infrastructure changes from the `feature/vnet` branch into the `main` branch.
+
+## 🎯 Objective
+
+The objective of this Pull Request is to review and validate the proposed Azure VNet infrastructure changes before merging them into the `main` branch.
+
+## 🔧 Changes
+
+* Added/updated Azure VNet infrastructure configuration
+* Updated Terraform infrastructure code
+* Updated related Terraform configuration and documentation
+* Validated the changes through the CI pipeline
+
+## 🔐 Security & Validation
+
+The Pull Request will be validated through the existing Terraform CI pipeline:
+
+* Terraform Format Check
+* Terraform Init
+* Terraform Validate
+* Trivy IaC Security Scan
+* Terraform Plan
+* Azure OIDC Authentication
+
+## 📋 Expected Result
+
+The Pull Request should pass all required CI checks and receive the required reviewer approval before it is merged into `main`.
+
+## 🚦 Merge Criteria
+
+* [ ] CI checks passed
+* [ ] Terraform Plan reviewed
+* [ ] Security scan passed
+* [ ] Code review completed
+* [ ] Required approval received
+* [ ] No merge conflicts
+
+## 📎 Related Branch
+
+```text
+Source: feature/vnet
+Target: main
+```
+
+---
+
+### Step 4 — Reviewers
+
+Tumhare screen par already ye दिख रहा है:
+
+> **Reviewers — No reviews — at least 1 approving review is required.**
+
+⚠️ **Abhi kuch approve nahi karna hai.**
+
+Agar GitHub mein reviewer select karne ka option available hai, to jis person ko actual reviewer banana hai usko select karo.
+
+Agar practice lab mein **tum khud hi reviewer ho**, to abhi reviewer select karne ki जरूरत नहीं है — hum next **03-PR-Approval** mein approval flow karenge.
+
+---
+
+### Step 5 — Assignees / Labels / Projects
+
+Abhi:
+
+```text
+Assignees → No one
+Labels    → None
+Projects  → None
+Milestone → No milestone
+```
+
+इनको अभी **change करने की जरूरत नहीं है**.
+
+---
+
+### Step 6 — Files changed जरूर देखना
+
+PR create करने से **पहले** नीचे जाकर:
+
+```text
+Files changed
+```
+
+open करो।
+
+तुम्हारे case में GitHub दिखा रहा है:
+
+```text
+94 Files changed
+76 Commits
+```
+
+⚠️ यहाँ एक important बात है bhai:
+
+**94 files changed काफी ज्यादा हैं** अगर हमारा intention सिर्फ VNet change demonstrate करना है।
+
+लेकिन तुम्हारे feature branch के पुराने commits भी इस comparison में हैं, इसलिए GitHub branch divergence के बाद से सारे changes दिखा रहा है।
+
+इसलिए अभी panic नहीं करना 😄
+
+बस check करो कि changes expected हैं।
+
+---
+
+### Step 7 — Create Pull Request
+
+सब check करने के बाद ऊपर वापस जाओ।
+
+Button होगा:
+
+```text
+Create pull request
+```
+
+उस पर click करो.
+
+अब PR create हो जाएगा।
+
+---
+
+## 🟢 PR Create होने के तुरंत बाद
+
+अब screen बदल जाएगी और तुम्हें कुछ ऐसा मिलेगा:
+
+```text
+Open a pull request
+        ↓
+PR Created
+        ↓
+feature/vnet → main
+```
+
+अब **Merge pull request पर click मत करना।**
+
+और **Approve भी अभी मत करना।**
+
+पहले PR के अंदर देखना:
+
+```text
+Conversation
+Commits
+Checks
+Files changed
+```
+
+फिर:
+
+```text
+Checks
+   ↓
+Terraform CI
+   ↓
+Azure Login
+   ↓
+Terraform Init
+   ↓
+Terraform Validate
+   ↓
+Trivy
+   ↓
+Terraform Plan
+```
+
+### हमारा अभी target:
+
+```text
+PR Created
+     ↓
+CI Trigger
+     ↓
+CI Passed ✅
+     ↓
+PR Review
+     ↓
+03 — PR Approval
+```
+
+---
+
 # 🔹 16. PR Create होते ही CI शुरू
 
 हमारे existing:
