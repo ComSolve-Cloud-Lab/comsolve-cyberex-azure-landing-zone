@@ -657,6 +657,80 @@ Syntax valid
 
 ---
 
+
+# 🔹  Azure OIDC Authentication
+
+PR pipeline को Azure resources और Terraform Plan के लिए Azure authentication की आवश्यकता है।
+
+इसके लिए:
+
+```text
+
+GitHub Actions
+      ↓
+GitHub OIDC Token
+      ↓
+Flexible Federated Identity Credential
+      ↓
+Microsoft Entra ID
+      ↓
+Azure Login
+```
+हमारे feature branches के लिए Flexible FIC configured है।
+
+इसलिए:
+
+feature/vnet      → Azure Login ✅
+feature/subnet    → Azure Login ✅
+feature/nic       → Azure Login ✅
+
+और किसी नई feature/* branch के लिए अलग-अलग traditional FIC बनाने की आवश्यकता नहीं है।
+
+
+---
+
+# 🔹 Terraform Plan Validation
+
+Azure authentication successful होने के बाद Terraform Plan execute होगा।
+
+```text
+
+terraform init
+      ↓
+terraform validate
+      ↓
+terraform plan
+```
+Plan reviewer को यह समझने में मदद करता है कि PR merge होने पर Azure infrastructure में क्या बदलाव होंगे।
+
+Example:
+
+Terraform will perform the following actions:
+
+```text
+
+  + create
+  ~ update
+  - destroy
+
+Reviewer को विशेष रूप से ध्यान देना चाहिए:
+
+Create
+Update
+Destroy
+Resource Replacement
+Network Changes
+Security Changes
+```
+
+---
+
+# इस point पर हमें अगला document follow करना है:
+
+03-PR-Approval.md
+
+---
+# Additional Information
 # 🔹 20. AI Code Review कहाँ आएगा?
 
 Industrial flow में:
