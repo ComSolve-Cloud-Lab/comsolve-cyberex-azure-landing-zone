@@ -1,0 +1,39 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.74.0"
+  },
+  "ReportID": "01a04467-be4a-7092-9de1-36fca600d958",
+  "CreatedAt": "2026-08-27T23:37:24.7460375+05:30",
+  "ArtifactID": "sha256:12784c75359b285ed0c233b63ec0a0cc8d8e71e4eefedc09088f0f5dd5ed13e8",
+  "ArtifactName": ".",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone.git",
+    "Branch": "feature/nic-infrastructure",
+    "Commit": "54b7962f1c1bae4dd595316d40cd5df30712444c",
+    "CommitMsg": "docs: document Terraform CI pipeline success",
+    "Author": "Shrikant Nadgauda \u003cshri.gaudaa@gmail.com\u003e",
+    "Committer": "Shrikant Nadgauda \u003cshri.gaudaa@gmail.com\u003e"
+  },
+  "Results": [
+    {
+      "Target": "terraform",
+      "Class": "config",
+      "Type": "terraform",
+      "MisconfSummary": {
+        "Successes": 60,
+        "Failures": 0
+      }
+    },
+    {
+      "Target": "terraform/modules/public-ip",
+      "Class": "config",
+      "Type": "terraform",
+      "MisconfSummary": {
+        "Successes": 51,
+        "Failures": 0
+      }
+    }
+  ]
+}
