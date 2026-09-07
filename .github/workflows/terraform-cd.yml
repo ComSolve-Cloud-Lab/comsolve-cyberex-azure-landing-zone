@@ -1,0 +1,51 @@
+# ==============================================================================
+# Terraform CD Pipeline
+# ==============================================================================
+
+name: Terraform CD
+
+on:
+
+  push:
+    branches:
+      - main
+
+permissions:
+
+  contents: read
+  id-token: write
+
+jobs:
+
+  terraform-cd:
+
+    name: Terraform CD
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Verify Azure Login
+        run: az account show
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -input=false
