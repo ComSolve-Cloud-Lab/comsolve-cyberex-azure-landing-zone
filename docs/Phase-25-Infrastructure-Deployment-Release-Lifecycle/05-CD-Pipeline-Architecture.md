@@ -1145,3 +1145,817 @@ Terraform Apply
 > `main → CD → Plan → Approval → Apply` का controlled deployment architecture establish करना है।
 
 ---
+
+# 🚀 Git Best Practice — New File / Code Change Workflow
+
+<p align="center">
+
+![Git](https://img.shields.io/badge/Git-Version%20Control-orange?logo=git)
+![GitHub](https://img.shields.io/badge/GitHub-Feature%20Branch-black?logo=github)
+![Pull Request](https://img.shields.io/badge/Workflow-Pull%20Request-blue)
+![Branch Protection](https://img.shields.io/badge/Main-Protected-red)
+
+</p>
+
+---
+
+## 🎯 Objective
+
+जब भी project में:
+
+* नई file बनानी हो
+* Existing code में changes करने हों
+* नया Terraform module add करना हो
+* नया GitHub Actions workflow बनाना हो
+* Documentation update करनी हो
+* कोई नया feature implement करना हो
+
+तो **सीधे `main` branch पर काम नहीं करना है।**
+
+हमेशा:
+
+```text
+main
+  │
+  │ create feature branch
+  ▼
+feature/<change-name>
+  │
+  │ code / file changes
+  ▼
+git add
+  │
+  ▼
+git commit
+  │
+  ▼
+git push
+  │
+  ▼
+GitHub Pull Request
+  │
+  ▼
+Code Review
+  │
+  ▼
+Approval
+  │
+  ▼
+Merge → main
+```
+
+---
+
+# ⭐ Golden Rule
+
+> **नई file / नया code / कोई भी change = पहले Feature Branch.**
+
+### ❌ गलत तरीका
+
+```text
+main
+ │
+ ├── नई file बनाई
+ ├── code change किया
+ ├── git add
+ ├── git commit
+ └── git push origin main
+```
+
+Protected `main` होने की वजह से direct push reject भी हो सकता है और governance भी टूटती है।
+
+### ✅ सही तरीका
+
+```text
+main
+ │
+ └── feature/new-change
+          │
+          ├── change
+          ├── add
+          ├── commit
+          ├── push
+          └── Pull Request
+                    │
+                    ├── Review
+                    ├── Approval
+                    └── Merge → main
+```
+
+---
+
+# 🧠 सबसे पहले क्या करना है?
+
+जब भी नया काम शुरू करो, सबसे पहले यह check करो:
+
+```powershell
+git branch
+git status
+```
+
+और ideally:
+
+```text
+* main
+```
+
+और:
+
+```text
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean
+```
+
+इसका मतलब:
+
+```text
+Local main
+     │
+     └── synchronized with origin/main ✅
+```
+
+इसके बाद **नई feature branch बनाओ।**
+
+---
+
+# 🛠️ Real Example — Phase 25.05 CD Pipeline
+
+इस example में हमें नई GitHub Actions file बनानी थी:
+
+```text
+.github/workflows/terraform-cd.yml
+```
+
+पहले user ने पूछा:
+
+> "Direct local से main में push कर दूँ क्या?
+> या remote में branch बनाकर local main push करूँ?"
+
+## हमारा सही decision
+
+**Remote पर manually branch बनाने की जरूरत नहीं थी।**
+
+सबसे clean तरीका:
+
+```text
+Local main
+    ↓
+Local feature branch
+    ↓
+Change
+    ↓
+Commit
+    ↓
+Push feature branch
+    ↓
+Remote feature branch automatically create
+    ↓
+Pull Request
+```
+
+यानी:
+
+> **पहले local में feature branch बनाओ, फिर उसे GitHub पर push करो।**
+
+---
+
+# 📌 Step 1 — Main की स्थिति check
+
+Actual command:
+
+```powershell
+git branch
+git status
+```
+
+Actual स्थिति:
+
+```text
+backup/local-main
+* main
+```
+
+और:
+
+```text
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+```
+
+## इसका मतलब
+
+```text
+main
+ │
+ ├── Local main ✅
+ ├── origin/main के साथ synchronized ✅
+ └── कोई pending change नहीं ✅
+```
+
+इसलिए feature branch बनाने के लिए यह perfect starting point था।
+
+---
+
+# 📌 Step 2 — नई Feature Branch बनाना
+
+Phase 25.05 के लिए हमने branch बनाई:
+
+```powershell
+git switch -c feature/phase-25.05-cd-pipeline
+```
+
+Output:
+
+```text
+Switched to a new branch 'feature/phase-25.05-cd-pipeline'
+```
+
+फिर:
+
+```powershell
+git branch
+```
+
+Output:
+
+```text
+backup/local-main
+* feature/phase-25.05-cd-pipeline
+main
+```
+
+## इसका मतलब
+
+अब हम `main` पर नहीं हैं।
+
+```text
+main
+ │
+ └── feature/phase-25.05-cd-pipeline
+             ↑
+          यहाँ काम होगा
+```
+
+---
+
+# 📌 Step 3 — New File की स्थिति Check
+
+नई file बनाई गई:
+
+```text
+.github/workflows/terraform-cd.yml
+```
+
+फिर:
+
+```powershell
+git status
+```
+
+Output:
+
+```text
+On branch feature/phase-25.05-cd-pipeline
+
+Untracked files:
+
+.github/workflows/terraform-cd.yml
+```
+
+## `Untracked` का मतलब
+
+Git को file दिखाई दे रही है लेकिन Git अभी उस file को track नहीं कर रहा।
+
+```text
+Working Directory
+       │
+       └── terraform-cd.yml
+                │
+                └── Untracked
+```
+
+इस stage पर यह normal है।
+
+---
+
+# 📌 Step 4 — File को Staging Area में Add करना
+
+Command:
+
+```powershell
+git add .github/workflows/terraform-cd.yml
+```
+
+फिर:
+
+```powershell
+git status
+```
+
+Output:
+
+```text
+Changes to be committed:
+
+new file:
+.github/workflows/terraform-cd.yml
+```
+
+## अब क्या हुआ?
+
+Git workflow:
+
+```text
+Working Directory
+       │
+       │ git add
+       ▼
+Staging Area
+       │
+       └── terraform-cd.yml ✅
+```
+
+अभी commit नहीं हुआ था।
+
+---
+
+# 📌 Step 5 — Commit
+
+Command:
+
+```powershell
+git commit -m "feat: add Terraform CD pipeline foundation"
+```
+
+Actual output:
+
+```text
+[feature/phase-25.05-cd-pipeline 52d372a]
+feat: add Terraform CD pipeline foundation
+
+create mode 100644 .github/workflows/terraform-cd.yml
+```
+
+## इसका मतलब
+
+Git ने नया commit बनाया:
+
+```text
+52d372a
+```
+
+और commit message:
+
+```text
+feat: add Terraform CD pipeline foundation
+```
+
+अब change local Git history में सुरक्षित है।
+
+---
+
+# 📌 Step 6 — Working Tree Clean Check
+
+Command:
+
+```powershell
+git status
+```
+
+Output:
+
+```text
+On branch feature/phase-25.05-cd-pipeline
+nothing to commit, working tree clean
+```
+
+## इसका मतलब
+
+```text
+terraform-cd.yml
+       │
+       └── committed ✅
+
+Working Directory
+       │
+       └── clean ✅
+```
+
+---
+
+# 📌 Step 7 — Commit Verify
+
+Command:
+
+```powershell
+git log -1 --oneline
+```
+
+Actual output:
+
+```text
+52d372a (HEAD -> feature/phase-25.05-cd-pipeline)
+feat: add Terraform CD pipeline foundation
+```
+
+इससे confirm हुआ:
+
+* सही branch पर हैं ✅
+* सही commit बना है ✅
+* नया CD workflow commit हो चुका है ✅
+
+---
+
+# 📌 Step 8 — Current Branch Verify
+
+Command:
+
+```powershell
+git branch --show-current
+```
+
+Output:
+
+```text
+feature/phase-25.05-cd-pipeline
+```
+
+इससे confirm:
+
+```text
+हम main पर नहीं हैं
+हम feature branch पर हैं ✅
+```
+
+---
+
+# 📌 Step 9 — Remote Check
+
+Command:
+
+```powershell
+git remote -v
+```
+
+Output:
+
+```text
+origin
+https://github.com/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone.git
+```
+
+GitHub ने message दिया:
+
+```text
+This repository moved.
+
+Please use the new location:
+
+https://github.com/ComSolve-Cloud-Lab/comsolve-cyberex-azure-landing-zone.git
+```
+
+### इसका मतलब
+
+Repository अब organization के अंदर है:
+
+```text
+ComSolve-Cloud-Lab
+        │
+        └── comsolve-cyberex-azure-landing-zone
+```
+
+लेकिन पुराना remote URL अभी redirect हो रहा है।
+
+**Push successful है**, इसलिए immediate problem नहीं है।
+
+---
+
+# 📌 Step 10 — Feature Branch GitHub पर Push
+
+Command:
+
+```powershell
+git push -u origin feature/phase-25.05-cd-pipeline
+```
+
+Actual output:
+
+```text
+[new branch]
+feature/phase-25.05-cd-pipeline
+        ->
+origin/feature/phase-25.05-cd-pipeline
+```
+
+और:
+
+```text
+branch 'feature/phase-25.05-cd-pipeline'
+set up to track
+'origin/feature/phase-25.05-cd-pipeline'
+```
+
+## सबसे important point
+
+हमने GitHub पर manually branch create नहीं की।
+
+इस command ने:
+
+```text
+Local Branch
+     │
+     │ git push -u
+     ▼
+GitHub Remote Branch
+```
+
+automatically बना दी:
+
+```text
+origin/feature/phase-25.05-cd-pipeline
+```
+
+---
+
+# 🏗️ पूरा Actual Workflow
+
+हमारे Phase 25.05 में exactly यह हुआ:
+
+```text
+                 MAIN
+                  │
+                  │
+                  ▼
+       feature/phase-25.05-cd-pipeline
+                  │
+                  │
+          Create terraform-cd.yml
+                  │
+                  ▼
+              UNTRACKED
+                  │
+                  │ git add
+                  ▼
+               STAGED
+                  │
+                  │ git commit
+                  ▼
+              COMMITTED
+              52d372a
+                  │
+                  │ git push -u
+                  ▼
+       GitHub Remote Branch
+                  │
+                  ▼
+    feature/phase-25.05-cd-pipeline
+                  │
+                  ▼
+           Pull Request
+                  │
+                  ▼
+             Code Review
+                  │
+                  ▼
+              Approval
+                  │
+                  ▼
+             Merge → main
+```
+
+---
+
+# 🔥 Universal Rule — हर नए काम के लिए
+
+अब से किसी भी नए task पर यह sequence याद रखना:
+
+## 1️⃣ Main Check
+
+```powershell
+git switch main
+git pull --ff-only origin main
+git status
+```
+
+Expected:
+
+```text
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean
+```
+
+> अगर `main` protected है तो direct changes/push नहीं करने हैं।
+
+---
+
+## 2️⃣ Feature Branch
+
+```powershell
+git switch -c feature/<meaningful-name>
+```
+
+Examples:
+
+```text
+feature/phase-25.06-cd-workflow
+feature/terraform-storage
+feature/add-bastion
+feature/update-network-module
+feature/fix-vnet-routing
+```
+
+---
+
+## 3️⃣ Make Changes
+
+अब:
+
+```text
+New File
+Existing File
+Terraform Code
+GitHub Actions
+Documentation
+Configuration
+```
+
+जो काम करना है करो।
+
+---
+
+## 4️⃣ Check
+
+```powershell
+git status
+```
+
+---
+
+## 5️⃣ Stage
+
+Specific file:
+
+```powershell
+git add <file>
+```
+
+या related changes के लिए:
+
+```powershell
+git add .
+```
+
+> `git add .` तभी use करो जब working directory में मौजूद सभी changes commit में शामिल करने हैं।
+
+---
+
+## 6️⃣ Review Staged Changes
+
+```powershell
+git diff --cached
+```
+
+यह बहुत अच्छी practice है।
+
+इससे commit करने से पहले देख सकते हो कि exactly क्या commit होने वाला है।
+
+---
+
+## 7️⃣ Commit
+
+```powershell
+git commit -m "feat: <short meaningful description>"
+```
+
+Examples:
+
+```text
+feat: add Terraform CD pipeline foundation
+feat: add Azure VNet module
+fix: correct subnet configuration
+docs: update branch protection guide
+```
+
+---
+
+## 8️⃣ Verify
+
+```powershell
+git status
+git log -1 --oneline
+git branch --show-current
+```
+
+---
+
+## 9️⃣ Push Feature Branch
+
+```powershell
+git push -u origin feature/<branch-name>
+```
+
+GitHub पर remote branch automatically create हो जाएगी।
+
+---
+
+# 🔐 फिर GitHub पर
+
+```text
+Feature Branch
+      ↓
+Pull Request
+      ↓
+CI Checks
+      ↓
+Terraform Validation
+      ↓
+Security Scan
+      ↓
+Code Review
+      ↓
+Approval
+      ↓
+Merge
+      ↓
+main
+```
+
+**Protected `main` में direct push नहीं।**
+
+---
+
+# 🚫 क्या नहीं करना है?
+
+### ❌ यह avoid करो
+
+```powershell
+git switch main
+# changes
+git add .
+git commit
+git push origin main
+```
+
+### ❌ यह भी जरूरी नहीं
+
+पहले GitHub website पर manually branch बनाना:
+
+```text
+GitHub → New Branch
+```
+
+फिर local `main` को उसमें push करना।
+
+हमारे normal workflow में यह unnecessary है।
+
+---
+
+# ⭐ Best Practice Cheat Sheet
+
+| Situation                     | क्या करना है           |
+| ----------------------------- | ---------------------- |
+| नया feature                   | Feature branch         |
+| नई file                       | Feature branch         |
+| Terraform change              | Feature branch         |
+| GitHub Actions change         | Feature branch         |
+| Documentation change          | Feature branch         |
+| Bug fix                       | Feature branch         |
+| Main update                   | PR द्वारा              |
+| Production deployment         | Controlled CD workflow |
+| Direct main push              | ❌ Avoid                |
+| Manual remote branch creation | ❌ Usually unnecessary  |
+
+---
+
+# 🧠 याद रखने का सबसे आसान Formula
+
+```text
+CHECK
+  ↓
+BRANCH
+  ↓
+CHANGE
+  ↓
+ADD
+  ↓
+REVIEW
+  ↓
+COMMIT
+  ↓
+PUSH
+  ↓
+PR
+  ↓
+REVIEW + APPROVAL
+  ↓
+MERGE → MAIN
+```
+
+### 🔥 One-Line Rule
+
+> **"Main से branch बनाओ → branch में काम करो → commit करो → push करो → PR बनाओ → review/approval लो → main में merge करो."**
+
+यही हमारा **standard Git workflow** रहेगा।
+
+---
