@@ -4567,3 +4567,842 @@ GitHub Actions
 इस तरह security को deployment से पहले ही validate किया जा सकता है।
 
 ---
+
+# 🔧 Terraform CD — Azure OIDC Authentication Issue & Resolution
+
+<p align="center">
+
+![Azure](https://img.shields.io/badge/Azure-OIDC-0078D4?logo=microsoftazure\&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-2088FF?logo=githubactions\&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-CD-7B42BC?logo=terraform\&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Resolved-success)
+
+</p>
+
+---
+
+## 🎯 Objective
+
+Terraform CD pipeline को `main` branch से Azure में deploy करने के दौरान Azure OIDC authentication failure आया।
+
+इस document में बताया गया है:
+
+* Issue क्या आया
+* Error से issue कैसे identify किया
+* Error में कौन-सी important information मिली
+* Feature/PR और Main branch OIDC में क्या difference है
+* Azure Portal में Federated Credential कैसे configure किया
+* Exact configuration क्या रखी
+* Issue कैसे resolve हुआ
+* Resolution के बाद pipeline flow क्या होगा
+
+---
+
+# 1. 🚨 Issue Encountered
+
+Terraform CD pipeline को `main` branch पर merge होने के बाद automatically trigger किया गया।
+
+Pipeline का expected flow था:
+
+```text
+Pull Request
+      ↓
+PR Approval
+      ↓
+Merge to main
+      ↓
+Terraform CD
+      ↓
+Azure Login using OIDC
+      ↓
+Terraform Plan
+      ↓
+Deployment Approval
+      ↓
+Terraform Apply
+```
+
+लेकिन CD pipeline में **Azure Login step पर failure** आया।
+
+---
+
+# 2. ❌ Actual Error
+
+GitHub Actions में Azure Login step पर following error आया:
+
+```text
+Error: AADSTS7002131: No matching federated identity record found
+for presented assertion subject
+'repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/main'
+or no federated identity credential expression matched.
+```
+
+Pipeline log में यह भी दिखाई दिया:
+
+```text
+issuer - https://token.actions.githubusercontent.com
+
+subject claim -
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/main
+
+audience -
+api://AzureADTokenExchange
+```
+
+---
+
+# 3. 🔍 Error से Issue कैसे Identify किया?
+
+Error को ध्यान से देखने पर सबसे important line थी:
+
+```text
+AADSTS7002131: No matching federated identity record found
+```
+
+इसका मतलब:
+
+> GitHub Actions ने Azure को OIDC token successfully दिया, लेकिन Azure App Registration में उस token के `subject` से match करने वाला Federated Identity Credential मौजूद नहीं था।
+
+### Important Point
+
+यह:
+
+```text
+Azure Login configuration problem
+```
+
+नहीं था।
+
+यह:
+
+```text
+GitHub Secret problem
+```
+
+भी नहीं था।
+
+यह:
+
+```text
+Terraform problem
+```
+
+भी नहीं था।
+
+असल problem थी:
+
+```text
+GitHub main branch
+        ↓
+OIDC Token
+        ↓
+Subject = main branch
+        ↓
+Azure App Registration
+        ↓
+Matching FIC नहीं मिला ❌
+```
+
+---
+
+# 4. 🧠 Error से हमें क्या समझ आया?
+
+GitHub Actions OIDC authentication में GitHub एक token issue करता है।
+
+इस token में important claims होते हैं:
+
+```text
+Issuer
+Subject
+Audience
+```
+
+हमारे error में:
+
+### Issuer
+
+```text
+https://token.actions.githubusercontent.com
+```
+
+### Subject
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/main
+```
+
+### Audience
+
+```text
+api://AzureADTokenExchange
+```
+
+Azure App Registration में Federated Credential को इन्हीं values के आधार पर GitHub token को trust करना होता है।
+
+---
+
+# 5. ⚠️ पहले से FIC होने के बावजूद Issue क्यों आया?
+
+हमारे Azure App Registration में पहले से Federated Credentials configured थे।
+
+लेकिन existing credentials अलग GitHub contexts के लिए थे।
+
+उदाहरण:
+
+### Pull Request
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+### Feature Branch
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/feature/*
+```
+
+लेकिन अब CD pipeline run हुई:
+
+```text
+main
+```
+
+इसलिए GitHub ने नया subject भेजा:
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/main
+```
+
+Existing PR/Feature credentials इस subject से match नहीं हुए।
+
+इसलिए:
+
+```text
+AADSTS7002131
+```
+
+आया।
+
+---
+
+# 6. 🔄 PR OIDC और Main OIDC में Difference
+
+यह distinction बहुत important है।
+
+### PR Pipeline
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:pull_request
+```
+
+### Feature Branch Pipeline
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/feature/*
+```
+
+### Main Branch CD Pipeline
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/main
+```
+
+तीनों अलग subjects हैं।
+
+इसलिए:
+
+```text
+PR FIC ≠ Feature FIC ≠ Main FIC
+```
+
+---
+
+# 7. 🌐 Resolution — Azure Portal Open करना
+
+सबसे पहले Azure Portal open करें:
+
+```text
+https://portal.azure.com
+```
+
+---
+
+# 8. 🔐 Microsoft Entra ID / App Registration Open करें
+
+Azure Portal में:
+
+```text
+Azure Portal
+    ↓
+Microsoft Entra ID
+    ↓
+App registrations
+```
+
+---
+
+# 9. 📱 App Registration Select करें
+
+हमारे GitHub Actions OIDC authentication के लिए जिस App Registration का उपयोग किया जा रहा है उसे open करें।
+
+App Registration:
+
+```text
+GitHub Actions / Terraform OIDC App
+```
+
+इस App Registration में हमारा:
+
+```text
+Application (client) ID
+```
+
+configured है:
+
+```text
+666a02fd-9186-4647-bcac-b9fd1943a1e7
+```
+
+---
+
+# 10. 🔗 Federated Credentials Open करें
+
+App Registration के अंदर:
+
+```text
+App registrations
+    ↓
+[GitHub OIDC App]
+    ↓
+Certificates & secrets
+    ↓
+Federated credentials
+```
+
+अब existing Federated Credentials दिखाई देंगे।
+
+---
+
+# 11. ➕ Add Federated Credential
+
+Click करें:
+
+```text
++ Add credential
+```
+
+फिर:
+
+```text
+Federated credential scenario
+```
+
+में GitHub Actions related option select करें।
+
+अगर portal में GitHub-specific option available नहीं है, तो:
+
+```text
+Other issuer
+```
+
+select करके values manually enter करें।
+
+---
+
+# 12. ⚙️ Main Branch Federated Credential Configuration
+
+हमारे case में exact configuration:
+
+### Issuer
+
+```text
+https://token.actions.githubusercontent.com
+```
+
+### Subject Identifier Type
+
+```text
+Explicit subject identifier
+```
+
+### Subject
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/main
+```
+
+### Audience
+
+```text
+api://AzureADTokenExchange
+```
+
+### Name
+
+```text
+github-main-terraform-cd
+```
+
+### Description
+
+```text
+GitHub Actions OIDC authentication for Terraform CD main branch
+```
+
+---
+
+# 13. 📋 Final Configuration
+
+| Setting      | Value                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------ |
+| Issuer       | `https://token.actions.githubusercontent.com`                                                          |
+| Subject Type | Explicit subject identifier                                                                            |
+| Subject      | `repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/main` |
+| Audience     | `api://AzureADTokenExchange`                                                                           |
+| Name         | `github-main-terraform-cd`                                                                             |
+| Description  | GitHub Actions OIDC authentication for Terraform CD main branch                                        |
+
+---
+
+# 14. 💾 Create Credential
+
+सभी values verify करने के बाद:
+
+```text
+Add
+```
+
+या
+
+```text
+Save
+```
+
+पर click करें।
+
+अब Azure App Registration में नया Federated Credential create हो जाएगा।
+
+---
+
+# 15. 🔎 Credential का Purpose
+
+अब Azure के पास यह trust relationship है:
+
+```text
+GitHub Actions
+      ↓
+ComSolve-Cloud-Lab
+      ↓
+comsolve-cyberex-azure-landing-zone
+      ↓
+main branch
+      ↓
+OIDC Token
+      ↓
+Azure App Registration
+      ↓
+github-main-terraform-cd
+      ↓
+MATCH ✅
+```
+
+इसलिए Azure अब main branch से आने वाले GitHub OIDC token को accept कर सकता है।
+
+---
+
+# 16. 🔁 GitHub Actions Pipeline Re-run
+
+Azure में FIC create करने के बाद GitHub repository open करें:
+
+```text
+GitHub
+   ↓
+ComSolve-Cloud-Lab
+   ↓
+comsolve-cyberex-azure-landing-zone
+   ↓
+Actions
+```
+
+फिर failed:
+
+```text
+Terraform CD
+```
+
+workflow open करें।
+
+Failed run को open करके:
+
+```text
+Re-run failed jobs
+```
+
+select करें।
+
+---
+
+# 17. ✅ Expected Result — Azure Login
+
+इस बार:
+
+```text
+Run azure/login@v2
+```
+
+step successfully complete होना चाहिए।
+
+Expected:
+
+```text
+Running Azure CLI Login.
+Done setting cloud: "azurecloud"
+
+Attempting Azure CLI login by using OIDC...
+
+Login successful.
+```
+
+---
+
+# 18. 🚀 Expected Terraform CD Flow
+
+Azure OIDC login successful होने के बाद pipeline का complete flow:
+
+```text
+main
+ ↓
+Terraform CD
+ ↓
+Checkout
+ ↓
+Azure Login using OIDC
+ ↓
+Verify Azure Login
+ ↓
+Setup Terraform
+ ↓
+Terraform Init
+ ↓
+Terraform Plan
+ ↓
+Upload tfplan
+ ↓
+terraform-apply
+ ↓
+Comsolve_production Environment
+ ↓
+Deployment Approval
+ ↓
+Terraform Apply
+ ↓
+Azure Infrastructure
+```
+
+---
+
+# 19. 🔐 Important — Deployment Approval अभी भी अलग है
+
+यह OIDC issue resolve होने के बाद भी:
+
+```text
+Comsolve_production
+```
+
+environment का approval रहेगा।
+
+मतलब:
+
+### Authentication
+
+```text
+GitHub → Azure
+```
+
+automatically होगा।
+
+### Deployment
+
+```text
+Terraform Apply
+```
+
+से पहले human approval required रहेगा।
+
+इसलिए:
+
+```text
+Azure Login
+    ↓
+Automatic
+```
+
+लेकिन:
+
+```text
+Terraform Apply
+    ↓
+Comsolve_production
+    ↓
+Manual Approval
+```
+
+होगा।
+
+---
+
+# 20. 🧪 Validation
+
+### 🔍 What to Validate
+
+Check करें:
+
+```text
+Azure Login = Success
+Terraform Init = Success
+Terraform Plan = Success
+tfplan Artifact = Uploaded
+Comsolve_production = Waiting for Approval
+Terraform Apply = Approval के बाद execute
+```
+
+---
+
+### ✅ Best Practice
+
+Production CD के लिए:
+
+```text
+OIDC Authentication
+        +
+Saved Terraform Plan
+        +
+Environment Approval
+        +
+Exact Plan Apply
+```
+
+use करना चाहिए।
+
+हमारे workflow में यही architecture implement किया गया है।
+
+---
+
+### 🧪 Validation Test
+
+GitHub Actions में:
+
+```text
+Terraform CD
+```
+
+open करें और verify करें:
+
+```text
+terraform-plan
+    ├── Azure Login ✅
+    ├── Terraform Init ✅
+    ├── Terraform Plan ✅
+    └── Upload tfplan ✅
+
+terraform-apply
+    ├── Environment Approval ⏳
+    └── Terraform Apply
+```
+
+---
+
+### 🎯 Expected Result
+
+Expected final flow:
+
+```text
+main
+  │
+  ▼
+Terraform Plan
+  │
+  ▼
+tfplan Artifact
+  │
+  ▼
+Comsolve_production
+  │
+  ▼
+Manual Approval
+  │
+  ▼
+Terraform Apply
+  │
+  ▼
+Azure Resources
+```
+
+---
+
+# 21. 🧾 Root Cause
+
+### Root Cause
+
+Terraform CD pipeline `main` branch से execute हो रही थी, लेकिन Azure App Registration में `main` branch के exact GitHub OIDC subject के लिए Federated Identity Credential configured नहीं था।
+
+Existing FICs:
+
+```text
+Pull Request
+Feature Branch
+```
+
+के लिए थे।
+
+लेकिन CD को चाहिए था:
+
+```text
+Main Branch
+```
+
+इस mismatch के कारण Azure ने GitHub OIDC assertion को reject किया।
+
+---
+
+# 22. 🛠️ Resolution
+
+Resolution के लिए Azure App Registration में नया Federated Credential add किया गया:
+
+```text
+Name:
+github-main-terraform-cd
+```
+
+जिसमें main branch का exact subject configure किया गया:
+
+```text
+repo:ComSolve-Cloud-Lab@322537409/comsolve-cyberex-azure-landing-zone@1338145312:ref:refs/heads/main
+```
+
+इसके बाद GitHub Actions CD pipeline को re-run किया गया।
+
+---
+
+# 23. 📚 Key Learning
+
+इस issue से सबसे important learning:
+
+```text
+GitHub OIDC Authentication
+```
+
+में केवल:
+
+```text
+Client ID
+Tenant ID
+Subscription ID
+```
+
+सही होना enough नहीं है।
+
+Azure App Registration में GitHub token के:
+
+```text
+Issuer
+Subject
+Audience
+```
+
+का matching Federated Credential भी होना चाहिए।
+
+विशेष रूप से:
+
+```text
+PR
+Feature Branch
+Main Branch
+```
+
+के subjects अलग हो सकते हैं।
+
+इसलिए प्रत्येक required GitHub execution context के लिए appropriate Federated Credential configuration maintain करनी चाहिए।
+
+---
+
+# 24. 🎯 Final Architecture
+
+```text
+                         GitHub
+                            │
+                            │ OIDC Token
+                            ▼
+              ┌──────────────────────────┐
+              │     GitHub Actions       │
+              │                          │
+              │       main branch        │
+              └────────────┬─────────────┘
+                           │
+                           ▼
+              ┌──────────────────────────┐
+              │ Azure App Registration   │
+              │                          │
+              │ Federated Credential     │
+              │                          │
+              │ github-main-terraform-cd │
+              └────────────┬─────────────┘
+                           │
+                           │ Token Match
+                           ▼
+                    Azure Login ✅
+                           │
+                           ▼
+                  Terraform Plan
+                           │
+                           ▼
+                    tfplan Artifact
+                           │
+                           ▼
+                Comsolve_production
+                           │
+                           ▼
+                  Manual Approval
+                           │
+                           ▼
+                    Terraform Apply
+                           │
+                           ▼
+                    Azure Resources
+```
+
+---
+
+# 🏁 Conclusion
+
+Issue का actual कारण **Terraform या GitHub Actions YAML नहीं था**।
+
+Error:
+
+```text
+AADSTS7002131
+No matching federated identity record found
+```
+
+ने clearly बताया कि Azure App Registration में GitHub OIDC token के लिए matching Federated Credential missing था।
+
+हमने error में मिले:
+
+```text
+Issuer
+Subject
+Audience
+```
+
+को identify किया और विशेष रूप से `main` branch के exact `subject` को Azure App Registration में Federated Credential के रूप में configure किया।
+
+इसके बाद CD pipeline Azure से OIDC authentication successfully establish कर सकती है और आगे:
+
+```text
+Plan → Approval → Apply
+```
+
+controlled production deployment flow continue करता है।
+
+
+---
