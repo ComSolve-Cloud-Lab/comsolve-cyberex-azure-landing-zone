@@ -3077,6 +3077,396 @@ GitHub Ruleset
 **अभी तुम्हारा `main` safe है भाई। कुछ भी `main` में push नहीं हुआ।**
 
 ----
+हाँ भाई, अब exact issue clear है। 😄
+
+तुमने सही तरीके से main पर commit करके push किया:
+
+[main 1ee9c7d] test: verify direct main push protection
+...
+main -> main
+
+और GitHub ने accept कर लिया। इसका मतलब अभी तुम्हारा Ruleset direct push को block नहीं कर रहा है।
+
+हाँ, CLI से Ruleset check कर सकते हैं। सबसे पहले यही करते हैं — कोई और commit/push मत करो।
+
+1️⃣ GitHub CLI installed है या नहीं
+
+PowerShell में:
+
+gh --version
+
+अगर version आ जाए तो अगला command:
+
+gh auth status
+
+फिर repository के Rulesets देखने के लिए:
+
+gh api repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/rulesets
+
+अगर output बहुत बड़ा आए तो:
+
+gh api repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/rulesets --jq '.[] | {id, name, enforcement, target}'
+🔎 फिर specific Ruleset की पूरी configuration
+
+पहले ऊपर से id मिलेगा, जैसे:
+
+id: 123456
+
+फिर:
+
+gh api repos/Shrikant-Nadgaudaa/comsolve-cyberex-azure-landing-zone/rulesets/123456
+
+इससे हम देख पाएँगे कि वास्तव में:
+
+main target        ✅/❌
+PR required        ✅/❌
+status checks      ✅/❌
+block force push   ✅/❌
+restrict deletion  ✅/❌
+enforcement        ✅/❌
+
+अभी यही करो और पूरा output यहाँ paste कर दो। फिर मैं exact बताऊँगा कि कौन-सी setting के कारण main direct push accept कर रहा है।
+
+---
+
+
+1️⃣ GitHub पर यह path खोलो
+
+Repository → Settings → Rules → Rulesets
+
+फिर अपने बनाए हुए Branch Ruleset को खोलो.
+
+देखो:
+
+Enforcement status
+        ↓
+    Active
+
+और:
+
+Target branches
+        ↓
+main
+
+सबसे important:
+
+Require a pull request before merging
+        ✅ ON
+
+Block force pushes
+        ✅ ON
+
+अगर Enforcement status = Active नहीं है, तो direct push reject नहीं होगा।
+
+2️⃣ एक और important बात
+
+तुमने जो किया:
+
+git push origin main
+
+उससे पहले तुमने main पर ये commit बनाया:
+
+[main 1ee9c7d] test: verify direct main push protection
+
+और फिर push successfully हो गया।
+
+इसका मतलब उस समय तुम्हारी Ruleset ने main पर direct update को block नहीं किया।
+
+इसलिए अभी और random commits मत करो। पहले Ruleset की configuration verify करते हैं।
+
+3️⃣ gh चाहिए तो बाद में install कर सकते हैं
+
+PowerShell में:
+
+winget install --id GitHub.cli
+
+फिर नया PowerShell खोलकर:
+
+gh --version
+
+और:
+
+gh auth login
+
+लेकिन अभी इसकी जरूरत नहीं है।
+
+पहले GitHub → Settings → Rules → Rulesets → तुम्हारा ruleset खोलकर Enforcement status क्या दिख रहा है, वही बताओ।
+
+
+---
+# ERROR #
+
+```text 
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> gh --version
+gh : The term 'gh' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, 
+or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ gh --version
++ ~~
+    + CategoryInfo          : ObjectNotFound: (gh:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> gh auth status
+gh : The term 'gh' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, 
+or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ gh auth status
++ ~~
+    + CategoryInfo          : ObjectNotFound: (gh:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS D:\Projects3\comsolve-cyberex-azure-landing-zone> 
+
+```
+---
+```text
+Haan bhai 👍 PC restart karne ki zarurat nahi hai. Usually installer ne PATH update kiya hai, but current PowerShell session purana PATH use kar raha hai.
+
+बस ये करो
+
+1. Current PowerShell बंद करो
+
+2. नया PowerShell खोलो
+
+फिर:
+
+gh --version
+
+Expected:
+
+gh version 2.98.0 ...
+
+फिर:
+
+gh auth status
+अगर फिर भी gh नहीं मिले
+
+ये command चलाओ:
+
+where.exe gh
+
+और:
+
+$env:Path -split ';' | Select-String "GitHub"
+
+अगर फिर भी नहीं मिलता, तो हम GitHub CLI का exact installation path check करके PATH manually fix कर देंगे।
+
+PC restart मत करना अभी। नया PowerShell session पहले try करो।
+```
+
+---
+Bilkul bhai 👍 root cause mil gaya — Ruleset बना हुआ था, लेकिन Enforcement status Active नहीं था, इसलिए main पर direct push successfully हो रहा था.
+
+अब इसे सही तरीके से configure करते हैं। और हाँ, Phase 20.2 में यह point भी add करेंगे: Enforcement Status = Active.
+
+# 🔐 Phase 20.2 — Ruleset को Active करना
+
+
+Step 1 — GitHub Repository खोलो
+
+अपने repository पर जाओ:
+
+```text
+
+comsolve-cyberex-azure-landing-zone
+        ↓
+Settings
+        ↓
+Rules
+        ↓
+Rulesets
+```
+
+
+फिर जो Branch Ruleset हमने बनाया था, उस पर click करो।
+
+*** Step 2 — Enforcement Status देखो ***
+
+Ruleset के ऊपर तुम्हें मिलेगा:
+
+Enforcement status
+
+अगर अभी:
+
+○ Disabled
+
+या कोई inactive status है, तो उसे बदलकर:
+
+✅ Active
+
+करना है।
+
+यही सबसे important point है।
+
+Step 3 — Target Branch verify करो
+
+नीचे:
+
+Target branches
+        ↓
+Branch targeting criteria
+
+में यह होना चाहिए:
+
+main
+
+अगर main नहीं है:
+
+Add target
+        ↓
+Include by pattern
+        ↓
+main
+        ↓
+Add target
+
+अब Ruleset सिर्फ main पर लागू होगा।
+
+Step 4 — Bypass List check करो
+
+देखो:
+
+Bypass list
+
+अभी ideally:
+
+Bypass list is empty
+
+रहने दो।
+
+अगर तुम्हारा user/team bypass में है, तो वह Ruleset को bypass करके direct push कर सकता है।
+
+Step 5 — Pull Request Rule verify करो
+
+Rules में:
+
+Require a pull request before merging
+
+✅ Enable
+
+फिर:
+
+Required approvals
+
+हमने जो approval requirement रखी है, उसे रहने दो।
+
+Recommended:
+
+Required approvals: 1
+
+और:
+
+Require conversation resolution before merging
+
+✅ Enable
+
+Step 6 — Force Push Protection
+
+Enable:
+
+Block force pushes
+
+✅
+
+इसका मतलब:
+
+git push --force
+        ↓
+       ❌
+      main
+Step 7 — Status Checks
+
+अभी अगर हमारे CI checks available हैं तो:
+
+Require status checks to pass
+
+✅ Enable
+
+लेकिन पहले existing CI check दिखाई दे रहा है या नहीं देखना है।
+
+इसमें हम बाद में Trivy + Terraform CI को properly required बनाएँगे।
+
+Step 8 — Save Ruleset
+
+सबसे important:
+
+ऊपर/नीचे जाकर:
+
+Save changes
+
+करो।
+
+फिर वापस Rulesets page पर आकर verify करो:
+
+Branch Ruleset
+        ↓
+Enforcement status
+        ↓
+✅ Active
+🧪 Step 9 — अब Direct Push Test
+
+अब test करने के लिए main पर एक छोटा सा change करो।
+
+git checkout main
+
+फिर कोई छोटा documentation change करो:
+
+docs/
+    test file
+
+फिर:
+
+git add .
+git commit -m "test: verify main branch protection"
+
+और:
+
+git push origin main
+Expected Result
+
+अब ideally:
+
+remote: error: GH013: Repository rule violations found
+        ↓
+        ❌ Push rejected
+
+यही हमारा actual proof होगा कि Branch Protection काम कर रही है।
+
+🧠 हमारी अभी की स्थिति
+
+पहले:
+
+Ruleset Created
+      ↓
+Target = main
+      ↓
+Rules configured
+      ↓
+❌ Enforcement = Inactive
+      ↓
+Direct Push = SUCCESS
+
+अब:
+
+Ruleset
+   ↓
+Target = main
+   ↓
+Rules configured
+   ↓
+✅ Enforcement = Active
+   ↓
+Direct Push
+   ↓
+❌ REJECTED
+   ↓
+PR required
+   ↓
+Review + CI
+   ↓
+Merge
+
+अभी बस Ruleset को Active करो और Save Changes करो। उसके बाद direct push test करेंगे।
 
 # 📊 Step 15 — Expected Governance Flow
 
