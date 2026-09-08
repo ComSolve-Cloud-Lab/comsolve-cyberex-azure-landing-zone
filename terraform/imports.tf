@@ -19,3 +19,15 @@ import {
 
   id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-platform"
 }
+
+import {
+  to = module.vnet.azurerm_virtual_network.Vnet
+
+  id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-network/providers/Microsoft.Network/virtualNetworks/vnet-comsolve-cyberex-dev"
+}
+
+import {
+  to = module.nsg.azurerm_network_security_group.this
+
+  id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-network/providers/Microsoft.Network/networkSecurityGroups/cyberex-nsg"
+}
