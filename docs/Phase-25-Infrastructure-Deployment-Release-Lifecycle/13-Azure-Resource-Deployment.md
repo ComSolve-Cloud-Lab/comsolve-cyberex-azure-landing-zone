@@ -1763,23 +1763,23 @@ Difference / Drift दिखाई दे सकता है
 
 ---
 
-# 🛠️ 30. Terraform Commands — Complete Reference Table
+### 🛠️ Step 30 — Terraform Commands Complete Reference Table
 
-| Command                           | हमने क्यों चलाया?                                            | कब use करना है?                        |
-| --------------------------------- | ------------------------------------------------------------ | -------------------------------------- |
-| `terraform init`                  | Terraform working directory initialize करना                  | New Terraform project / backend change |
-| `terraform init -upgrade`         | Provider version/cache refresh करना                          | Provider installation/update issue     |
-| `terraform init -reconfigure`     | Backend configuration को reinitialize करना                   | Backend change/reconfiguration         |
-| `terraform validate`              | Terraform code valid है या नहीं                              | Code change के बाद                     |
-| `terraform fmt`                   | Terraform files format करना                                  | Code formatting                        |
-| `terraform fmt -check -recursive` | Formatting check करना                                        | CI/CD validation                       |
-| `terraform plan`                  | Configuration vs state/infrastructure difference देखना       | Apply से पहले हमेशा                    |
-| `terraform apply`                 | Infrastructure changes deploy करना                           | Approved deployment stage              |
-| `terraform state list`            | State में registered resources देखना                         | Import/state troubleshooting           |
-| `terraform import`                | Existing Azure resource को Terraform state में register करना | Existing resources adopt करने के लिए   |
-| `terraform state show <address>`  | State में particular resource की details देखना               | Specific resource verification         |
-| `terraform state pull`            | Remote state को inspect करना                                 | Advanced state troubleshooting         |
-| `terraform show`                  | Terraform state/plan readable format में देखना               | State/plan inspection                  |
+| Command | हमने क्यों चलाया? | कब use करना है? | Action Category |
+| :--- | :--- | :--- | :-: |
+| `terraform init` | Terraform working directory initialize करना | New Terraform project / Backend change | ![Init](https://img.shields.io/badge/Setup-INITIALIZE-blue?style=flat-square) |
+| `terraform init -upgrade` | Provider version/cache refresh करना | Provider installation / Update issue | ![Upgrade](https://img.shields.io/badge/Setup-UPGRADE-blue?style=flat-square) |
+| `terraform init -reconfigure` | Backend configuration को reinitialize करना | Backend change / Reconfiguration | ![Reconfig](https://img.shields.io/badge/Setup-RECONFIGURE-blue?style=flat-square) |
+| `terraform validate` | Terraform code valid है या नहीं चेक करना | Code change के बाद CI/CD में | ![Validate](https://img.shields.io/badge/Validation-PASSED-brightgreen?style=flat-square) |
+| `terraform fmt` | Terraform files auto-format करना | Code formatting phase | ![Format](https://img.shields.io/badge/Code_Quality-FORMAT-informational?style=flat-square) |
+| `terraform fmt -check -recursive` | Formatting check करना बिना modify किए | CI/CD pipeline validation gate | ![Lint Check](https://img.shields.io/badge/CI_Gate-LINT_CHECK-yellow?style=flat-square) |
+| `terraform plan` | Configuration vs state/infrastructure difference देखना | Apply से पहले हमेशा | ![Plan](https://img.shields.io/badge/Dry_Run-PLAN_PREVIEW-orange?style=flat-square) |
+| `terraform apply` | Infrastructure changes deploy करना | Approved deployment stage | ![Deploy](https://img.shields.io/badge/Execution-APPLY_DEPLOY-brightgreen?style=flat-square) |
+| `terraform state list` | State में registered resources देखना | Import / State troubleshooting | ![State List](https://img.shields.io/badge/State-LIST_RESOURCES-purple?style=flat-square) |
+| `terraform import` | Existing Azure resource को state में register करना | Existing unmanaged resources adopt करना | ![Import](https://img.shields.io/badge/State-IMPORT_RESOURCE-purple?style=flat-square) |
+| `terraform state show <address>` | State में particular resource की details देखना | Specific resource verification | ![State Show](https://img.shields.io/badge/State-INSPECT_RESOURCE-purple?style=flat-square) |
+| `terraform state pull` | Remote state JSON readout pull करना | Advanced state troubleshooting | ![State Pull](https://img.shields.io/badge/State-PULL_REMOTE-purple?style=flat-square) |
+| `terraform show` | Terraform state/plan readable format में देखना | Detailed state & execution plan inspection | ![Inspect](https://img.shields.io/badge/Analysis-READABLE_STATE-blueviolet?style=flat-square) |                |
 
 ---
 
@@ -1825,21 +1825,22 @@ terraform plan
 
 # 📋 32. हमारे Project में Import Mapping
 
-| Azure Resource                 | Terraform Address                                                   | Import क्यों किया?    |
-| ------------------------------ | ------------------------------------------------------------------- | --------------------- |
-| `rg-comsolve-cyberex-network`  | `module.resource_groups.azurerm_resource_group.Rgs["network"]`      | Existing RG           |
-| `rg-comsolve-cyberex-security` | `module.resource_groups.azurerm_resource_group.Rgs["security"]`     | Existing RG           |
-| `rg-comsolve-cyberex-platform` | `module.resource_groups.azurerm_resource_group.Rgs["platform"]`     | Existing RG           |
-| `vnet-comsolve-cyberex-dev`    | `module.vnet.azurerm_virtual_network.Vnet`                          | Existing VNet         |
-| `snet-management`              | `module.subnets.azurerm_subnet.Subnets["management"]`               | Existing subnet       |
-| `snet-web`                     | `module.subnets.azurerm_subnet.Subnets["web"]`                      | Existing subnet       |
-| `snet-data`                    | `module.subnets.azurerm_subnet.Subnets["data"]`                     | Existing subnet       |
-| `snet-application`             | `module.subnets.azurerm_subnet.Subnets["application"]`              | Existing subnet       |
-| `snet-security`                | `module.subnets.azurerm_subnet.Subnets["security"]`                 | Existing subnet       |
-| `cyberex-nsg`                  | `module.nsg.azurerm_network_security_group.this`                    | Existing NSG          |
-| `nic-comsolve-cyberex-web`     | `module.nics.azurerm_network_interface.Nic`                         | Existing NIC          |
-| Subnet ↔ NSG × 5               | `azurerm_subnet_network_security_group_association.subnet_nsg[...]` | Existing associations |
+### 📋 Step 32 — Project Resource Import Mapping Reference
 
+| Azure Resource | Terraform Address | Import क्यों किया? | Action Type |
+| :--- | :--- | :--- | :-: |
+| **`rg-comsolve-cyberex-network`** | `module.resource_groups.azurerm_resource_group.Rgs["network"]` | Existing Resource Group adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`rg-comsolve-cyberex-security`** | `module.resource_groups.azurerm_resource_group.Rgs["security"]` | Existing Resource Group adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`rg-comsolve-cyberex-platform`** | `module.resource_groups.azurerm_resource_group.Rgs["platform"]` | Existing Resource Group adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`vnet-comsolve-cyberex-dev`** | `module.vnet.azurerm_virtual_network.Vnet` | Existing VNet adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`snet-management`** | `module.subnets.azurerm_subnet.Subnets["management"]` | Existing subnet adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`snet-web`** | `module.subnets.azurerm_subnet.Subnets["web"]` | Existing subnet adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`snet-data`** | `module.subnets.azurerm_subnet.Subnets["data"]` | Existing subnet adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`snet-application`** | `module.subnets.azurerm_subnet.Subnets["application"]` | Existing subnet adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`snet-security`** | `module.subnets.azurerm_subnet.Subnets["security"]` | Existing subnet adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`cyberex-nsg`** | `module.nsg.azurerm_network_security_group.this` | Existing NSG adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`nic-comsolve-cyberex-web`** | `module.nics.azurerm_network_interface.Nic` | Existing Network Interface adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
+| **`Subnet ↔ NSG (×5)`** | `azurerm_subnet_network_security_group_association.subnet_nsg[...]` | Existing Subnet-NSG Associations adoption | ![Imported](https://img.shields.io/badge/State-IMPORTED-purple?style=flat-square) |
 ---
 
 # 🔄 33. हमारे पूरे Issue का Root Cause
@@ -2093,4 +2094,506 @@ Terraform Remote State
 
 
 ---
-..
+# 🚀 Azure Infrastructure — Post Deployment Verification
+
+<p align="center">
+
+![Azure](https://img.shields.io/badge/Azure-Post%20Deployment-blue)
+![Terraform](https://img.shields.io/badge/Terraform-Verified-623CE4)
+![CLI](https://img.shields.io/badge/Azure%20CLI-Read--Only-0078D4)
+![Status](https://img.shields.io/badge/Status-Verification-yellow)
+
+</p>
+
+> 🎯 **Objective:** Terraform CD pipeline के बाद Azure में deployed infrastructure को terminal से verify करना।
+>
+> ⚠️ सभी commands **Read-Only** हैं। ये Azure resources को modify नहीं करतीं।
+
+---
+
+# 🧭 Verification Flow
+
+```text
+Azure Login
+    ↓
+Resource Groups
+    ↓
+VNet + Address Space
+    ↓
+5 Subnets + CIDR
+    ↓
+NSG
+    ↓
+Subnet ↔ NSG Association
+    ↓
+NIC + Subnet
+    ↓
+Terraform State
+    ↓
+Storage Account + TFState
+    ↓
+Final Resource Count
+```
+
+---
+
+# 1️⃣ Azure Login Verification
+
+### 🔹 Command
+
+```powershell
+az account show --query "{Subscription:id,Tenant:tenantId,User:user.name}" -o table
+```
+
+### 🧠 Purpose
+
+Current Azure CLI login, Tenant और Subscription verify करता है।
+
+### ✅ Expected
+
+```text
+Subscription
+------------------------------------
+7cf9c45e-0a1e-4828-9c98-3e8f25397732
+```
+
+---
+
+# 2️⃣ Resource Groups Verification
+
+हमारे Terraform infrastructure में 3 Resource Groups हैं।
+
+### 🔹 Command
+
+```powershell
+az group list --query "[?starts_with(name, 'rg-comsolve-cyberex')].{Name:name,Location:location,State:properties.provisioningState}" -o table
+```
+
+### 🧠 Purpose
+
+Azure में तीनों Resource Groups actually मौजूद हैं या नहीं verify करता है।
+
+### ✅ Expected
+
+```text
+Name                              Location
+--------------------------------  -----------
+rg-comsolve-cyberex-network       centralindia
+rg-comsolve-cyberex-security      eastus
+rg-comsolve-cyberex-platform      westeurope
+```
+
+---
+
+# 3️⃣ VNet Verification 🌐
+
+### 🔹 Command
+
+```powershell
+az network vnet show -g rg-comsolve-cyberex-network -n vnet-comsolve-cyberex-dev --query "{Name:name,Location:location,AddressSpace:addressSpace.addressPrefixes,State:provisioningState}" -o table
+```
+
+### 🧠 Purpose
+
+VNet का:
+
+* Name
+* Location
+* Address Space / CIDR
+* Provisioning State
+
+verify करता है।
+
+### 🔍 Important
+
+यहाँ **VNet CIDR जरूर check करना है**।
+
+Example:
+
+```text
+AddressSpace
+----------------
+10.x.x.x/16
+```
+
+---
+
+# 4️⃣ VNet + Subnet Complete View 🧩
+
+एक ही command में VNet और सभी subnet ranges देखने के लिए:
+
+### 🔹 Command
+
+```powershell
+az network vnet show -g rg-comsolve-cyberex-network -n vnet-comsolve-cyberex-dev --query "{VNet:name,AddressSpace:addressSpace.addressPrefixes,Subnets:subnets[].{Name:name,Prefix:addressPrefix,NSG:networkSecurityGroup.id}}" -o json
+```
+
+### 🧠 Purpose
+
+यह सबसे useful network verification command है।
+
+यह दिखाएगा:
+
+```text
+VNet
+ └── Address Space
+      ├── snet-management → CIDR
+      ├── snet-web        → CIDR
+      ├── snet-data       → CIDR
+      ├── snet-application→ CIDR
+      └── snet-security   → CIDR
+```
+
+साथ में प्रत्येक subnet का attached NSG भी दिखेगा।
+
+---
+
+# 5️⃣ सभी 5 Subnets अलग से Verify करें
+
+### 🔹 Command
+
+```powershell
+az network vnet subnet list -g rg-comsolve-cyberex-network --vnet-name vnet-comsolve-cyberex-dev --query "[].{Name:name,Prefix:addressPrefix,NSG:networkSecurityGroup.id,State:provisioningState}" -o table
+```
+
+### 🧠 Purpose
+
+सभी 5 subnets की:
+
+* Name
+* CIDR / Address Prefix
+* NSG
+* Provisioning State
+
+verify करता है।
+
+### ✅ Expected Subnets
+
+```text
+snet-management
+snet-web
+snet-data
+snet-application
+snet-security
+```
+
+---
+
+# 6️⃣ NSG Verification 🛡️
+
+### 🔹 Command
+
+```powershell
+az network nsg show -g rg-comsolve-cyberex-network -n cyberex-nsg --query "{Name:name,Location:location,State:provisioningState,Rules:securityRules[].name}" -o json
+```
+
+### 🧠 Purpose
+
+Actual Azure NSG मौजूद है या नहीं और उसकी state verify करता है।
+
+---
+
+# 7️⃣ Subnet ↔ NSG Association 🔗
+
+### 🔹 Command
+
+```powershell
+az network vnet subnet list -g rg-comsolve-cyberex-network --vnet-name vnet-comsolve-cyberex-dev --query "[].{Subnet:name,NSG:networkSecurityGroup.id}" -o table
+```
+
+### 🧠 Purpose
+
+हर subnet के साथ `cyberex-nsg` associated है या नहीं verify करता है।
+
+### ✅ Expected
+
+हर subnet के सामने NSG ID में:
+
+```text
+cyberex-nsg
+```
+
+आना चाहिए।
+
+---
+
+# 8️⃣ NIC Verification 🖥️
+
+### 🔹 Command
+
+```powershell
+az network nic show -g rg-comsolve-cyberex-network -n nic-comsolve-cyberex-web --query "{Name:name,Location:location,State:provisioningState,Subnet:ipConfigurations[0].subnet.id,PrivateIP:ipConfigurations[0].privateIPAddress}" -o json
+```
+
+### 🧠 Purpose
+
+NIC का:
+
+* Name
+* Location
+* State
+* Connected Subnet
+* Private IP
+
+verify करता है।
+
+---
+
+# 9️⃣ NIC → Subnet Verification 🔌
+
+### 🔹 Command
+
+```powershell
+az network nic show -g rg-comsolve-cyberex-network -n nic-comsolve-cyberex-web --query "ipConfigurations[].{Name:name,PrivateIP:privateIPAddress,Subnet:subnet.id}" -o table
+```
+
+### 🧠 Purpose
+
+NIC किस subnet में connected है यह clearly verify करता है।
+
+Expected हमारे architecture में:
+
+```text
+nic-comsolve-cyberex-web
+        ↓
+snet-web
+```
+
+---
+
+# 🔟 Storage Account Verification 💾
+
+Terraform backend के लिए Storage Account:
+
+```text
+cyberexterraformstate
+```
+
+### 🔹 Command
+
+```powershell
+az storage account show -g rg-comsolve-cyberex-network -n cyberexterraformstate --query "{Name:name,Location:location,SKU:sku.name,Kind:kind,State:provisioningState}" -o table
+```
+
+### 🧠 Purpose
+
+Remote Terraform State वाला Storage Account actual Azure में मौजूद है या नहीं verify करता है।
+
+---
+
+# 1️⃣1️⃣ Terraform State Container Verification 📦
+
+### 🔹 Command
+
+```powershell
+az storage container list --account-name cyberexterraformstate --auth-mode login --query "[].{Name:name}" -o table
+```
+
+### 🧠 Purpose
+
+Storage Account के अंदर Terraform state container मौजूद है या नहीं verify करता है।
+
+### ✅ Expected
+
+```text
+Name
+----------------
+tfstate
+```
+
+---
+
+# 1️⃣2️⃣ Terraform State File Verification 🗂️
+
+### 🔹 Command
+
+```powershell
+az storage blob list --account-name cyberexterraformstate --container-name tfstate --auth-mode login --query "[].{Name:name,Size:properties.contentLength}" -o table
+```
+
+### 🧠 Purpose
+
+Remote backend में actual `.tfstate` blob मौजूद है या नहीं verify करता है।
+
+### ✅ Expected
+
+```text
+cyberex-landing-zone.tfstate
+```
+
+---
+
+# 1️⃣3️⃣ Terraform State Verification 🏗️
+
+अब local Terraform से remote state की resource entries verify करें।
+
+### 🔹 Command
+
+```powershell
+terraform state list
+```
+
+### 🧠 Purpose
+
+Terraform state में currently managed resources दिखाता है।
+
+### ✅ Expected — 16 Resources
+
+```text
+3 × Resource Groups
+1 × VNet
+5 × Subnets
+1 × NSG
+5 × Subnet ↔ NSG Associations
+1 × NIC
+-------------------------
+16 × Terraform Resources
+```
+
+---
+
+# 1️⃣4️⃣ Terraform Plan Final Safety Check ✅
+
+### 🔹 Command
+
+```powershell
+terraform plan
+```
+
+### 🧠 Purpose
+
+Terraform configuration + remote state + actual Azure infrastructure के बीच difference check करता है।
+
+### 🟢 Best Expected Result
+
+```text
+No changes. Your infrastructure matches the configuration.
+```
+
+इसका मतलब:
+
+```text
+Terraform Configuration
+        =
+Terraform State
+        =
+Azure Infrastructure
+```
+
+---
+
+# 1️⃣5️⃣ Final Azure Resource Count 🔢
+
+### 🔹 Command
+
+```powershell
+az resource list --query "[?contains(resourceGroup, 'rg-comsolve-cyberex')].{Name:name,Type:type,ResourceGroup:resourceGroup}" -o table
+```
+
+### 🧠 Purpose
+
+हमारे Cyberex Resource Groups के अंदर actual Azure resources की list दिखाता है।
+
+---
+
+# 1️⃣6️⃣ Final Resource Summary 📊
+
+Terraform-managed infrastructure:
+
+|  # | Resource                   | Expected |
+| -: | -------------------------- | -------: |
+|  1 | Resource Group — Network   |        ✅ |
+|  2 | Resource Group — Security  |        ✅ |
+|  3 | Resource Group — Platform  |        ✅ |
+|  4 | Virtual Network            |        ✅ |
+|  5 | Subnet — Management        |        ✅ |
+|  6 | Subnet — Web               |        ✅ |
+|  7 | Subnet — Data              |        ✅ |
+|  8 | Subnet — Application       |        ✅ |
+|  9 | Subnet — Security          |        ✅ |
+| 10 | Network Security Group     |        ✅ |
+| 11 | Subnet ↔ NSG — Management  |        ✅ |
+| 12 | Subnet ↔ NSG — Web         |        ✅ |
+| 13 | Subnet ↔ NSG — Data        |        ✅ |
+| 14 | Subnet ↔ NSG — Application |        ✅ |
+| 15 | Subnet ↔ NSG — Security    |        ✅ |
+| 16 | Network Interface          |        ✅ |
+
+### Backend Infrastructure — Separate Verification
+
+| Component            | Expected                         |
+| -------------------- | -------------------------------- |
+| Storage Account      | `cyberexterraformstate` ✅        |
+| Blob Container       | `tfstate` ✅                      |
+| Terraform State Blob | `cyberex-landing-zone.tfstate` ✅ |
+
+> ℹ️ **Important:** Storage Account, container और state blob Terraform के 16 managed resources में count नहीं हो रहे हैं; ये हमारे **remote Terraform backend infrastructure** का हिस्सा हैं।
+
+---
+
+# 🏁 Final Acceptance Criteria
+
+Deployment को successful मानने के लिए:
+
+```text
+☑ Azure Login Successful
+☑ 3 Resource Groups Present
+☑ VNet Present
+☑ VNet CIDR Correct
+☑ 5 Subnets Present
+☑ All Subnet CIDRs Correct
+☑ NSG Present
+☑ All Subnets Associated with NSG
+☑ NIC Present
+☑ NIC Connected to snet-web
+☑ Storage Account Present
+☑ tfstate Container Present
+☑ Terraform State Blob Present
+☑ Terraform State Contains 16 Resources
+☑ terraform plan = No changes
+```
+
+## 🎯 Final Architecture Verification
+
+```text
+                    Azure
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+   Resource Groups          Terraform Backend
+          │                       │
+          │                cyberexterraformstate
+          │                       │
+          │                    tfstate
+          │                       │
+          ▼                       ▼
+     Network RG             .tfstate Blob
+          │
+          ▼
+   vnet-comsolve-cyberex-dev
+          │
+   ┌──────┼──────┬──────────┬──────────┐
+   ▼      ▼      ▼          ▼          ▼
+ Mgmt    Web    Data    Application  Security
+   │      │
+   │      └────── NIC
+   │
+   └───────────────┐
+                   ▼
+               cyberex-nsg
+```
+
+### 🟢 Deployment Status
+
+```text
+CI Pipeline       → ✅ PASS
+CD Plan           → ✅ PASS
+Deployment        → ✅ PASS
+Terraform State   → ✅ SYNCED
+Terraform Plan    → ✅ NO CHANGES
+Azure Validation  → 🔍 FINAL CHECK
+```
+
+> 🚀 **Golden Rule:** Pipeline successful होना पहला proof है; `Azure CLI + Terraform State + terraform plan` का combined verification final deployment evidence है।
+
+---
