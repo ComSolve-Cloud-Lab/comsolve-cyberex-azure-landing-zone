@@ -52,7 +52,7 @@ module "vnet" {
 
   location = "Central India"
 
-  resource_group_name = var.resource_groups["network"].name
+  resource_group_name = module.resource_groups.resource_group_names["network"]
 
 }
 
@@ -107,7 +107,7 @@ module "nsg" {
 
   name                = "cyberex-nsg"
   location            = var.nic_location
-  resource_group_name = var.resource_groups["network"].name
+  resource_group_name = module.resource_groups.resource_group_names["network"]
 
   tags = {
     Environment = "Development"
