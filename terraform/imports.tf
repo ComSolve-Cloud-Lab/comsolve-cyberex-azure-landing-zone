@@ -31,3 +31,33 @@ import {
 
   id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-network/providers/Microsoft.Network/networkSecurityGroups/cyberex-nsg"
 }
+
+import {
+  to = module.subnets.azurerm_subnet.Subnets["web"]
+
+  id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-network/providers/Microsoft.Network/virtualNetworks/vnet-comsolve-cyberex-dev/subnets/snet-web"
+}
+
+import {
+  to = module.subnets.azurerm_subnet.Subnets["management"]
+
+  id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-network/providers/Microsoft.Network/virtualNetworks/vnet-comsolve-cyberex-dev/subnets/snet-management"
+}
+
+import {
+  to = module.subnets.azurerm_subnet.Subnets["security"]
+
+  id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-network/providers/Microsoft.Network/virtualNetworks/vnet-comsolve-cyberex-dev/subnets/snet-security"
+}
+
+import {
+  to = module.subnets.azurerm_subnet.Subnets["application"]
+
+  id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-network/providers/Microsoft.Network/virtualNetworks/vnet-comsolve-cyberex-dev/subnets/snet-application"
+}
+
+import {
+  to = module.subnets.azurerm_subnet.Subnets["data"]
+
+  id = "/subscriptions/7cf9c45e-0a1e-4828-9c98-3e8f25397732/resourceGroups/rg-comsolve-cyberex-network/providers/Microsoft.Network/virtualNetworks/vnet-comsolve-cyberex-dev/subnets/snet-data"
+}
