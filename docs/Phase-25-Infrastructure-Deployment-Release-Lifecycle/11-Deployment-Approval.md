@@ -795,3 +795,67 @@ successfully configured और validated हो।
 **Next Phase → `12-Terraform-Apply.md`**
 
 ---
+
+# 🚀 Phase 25.10 — Deployment Approval
+
+<p align="center">
+
+![GitHub](https://img.shields.io/badge/GitHub-Actions-181717)
+![Approval](https://img.shields.io/badge/Approval-Required-orange)
+![Environment](https://img.shields.io/badge/Environment-Production-red)
+
+</p>
+
+## 🎯 Objective
+
+Terraform Apply से पहले production deployment के लिए manual approval control लागू करना।
+
+---
+
+## 🔐 GitHub Environment
+
+```text
+Comsolve_production
+```
+
+Apply job को इस environment के साथ associate किया गया है।
+
+```yaml
+environment:
+  name: Comsolve_production
+```
+
+---
+
+## 🔄 Approval Flow
+
+```text
+Terraform Plan
+      ↓
+Plan Artifact
+      ↓
+Deployment Approval
+      ↓
+Approved
+      ↓
+Terraform Apply
+```
+
+---
+
+## 🛡️ Purpose
+
+Approval gate का उद्देश्य:
+
+* Unreviewed deployment रोकना
+* Production changes पर human control रखना
+* Deployment auditability improve करना
+* Plan और Apply के बीच governance maintain करना
+
+---
+
+## 🏁 Outcome
+
+Production deployment के लिए controlled manual approval mechanism configured है।
+
+---
